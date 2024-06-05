@@ -70,12 +70,16 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     (writeShellScriptBin "rebuild" ./rebuild)
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
-    tree
+    vim
+    gcc
     git
-    ripgrep
+    wget
+    #
     alejandra
+    ripgrep
+    rustup
+    tree
+    zoxide
   ];
 
   environment.variables = {
