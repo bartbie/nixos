@@ -65,6 +65,7 @@
       discord
       firefox
       spotify
+      wezterm
     ];
   };
 
