@@ -77,6 +77,7 @@
       firefox
       spotify
       wezterm
+      telegram-desktop
     ];
   };
 
