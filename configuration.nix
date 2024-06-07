@@ -5,8 +5,11 @@
   config,
   lib,
   pkgs,
+  options,
   ...
-}: {
+}: let
+  is-vm = options ? virtualisation.memorySize;
+in {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -69,17 +72,21 @@
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.bartbie = {
-    isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-      discord
-      firefox
-      spotify
-      wezterm
-      telegram-desktop
-    ];
-  };
+  users.users.bartbie =
+    {
+      isNormalUser = true;
+      extraGroups = ["wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
+      packages = with pkgs; [
+        discord
+        firefox
+        spotify
+        wezterm
+        telegram-desktop
+      ];
+    }
+    // lib.optionalAttrs is-vm {
+      initialPassword = "test";
+    };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
