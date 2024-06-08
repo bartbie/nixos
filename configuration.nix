@@ -78,7 +78,7 @@ in {
       extraGroups = ["wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
       packages = with pkgs; [
         discord
-        firefox
+        firefox-devedition
         spotify
         wezterm
         telegram-desktop
