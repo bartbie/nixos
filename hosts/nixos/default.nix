@@ -7,7 +7,7 @@
   pkgs,
   options,
   ...
-}: let
+} @ inputs: let
   is-vm = options ? virtualisation.memorySize;
 in {
   imports = [
@@ -91,7 +91,6 @@ in {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    (writeShellScriptBin "rebuild" ./rebuild)
     vim
     gcc
     git
@@ -104,6 +103,9 @@ in {
     rustup
     tree
     zoxide
+    #
+    mine.bartbie-nvim
+    mine.rebuild
   ];
 
   environment.variables = {
@@ -147,7 +149,8 @@ in {
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
-  system.copySystemConfiguration = true;
+  # flakes can't be pure with this
+  system.copySystemConfiguration = false;
 
   nix.settings.experimental-features = "nix-command flakes";
   nixpkgs.config.allowUnfree = true;
