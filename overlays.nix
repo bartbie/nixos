@@ -11,9 +11,12 @@
   };
 
   # packages available under nixpkgs.mine
-  mine-pkgs = final: prev: {
+  mine-pkgs = final: prev: let
+    # flakes need to be handled
+    unpack = flake: flake.packages."${final.system}";
+  in {
     mine = {
-      inherit bartbie-nvim;
+      inherit (unpack bartbie-nvim) bartbie-nvim;
       rebuild = final.writeShellApplication {
         name = "rebuild";
         text = builtins.readFile ./rebuild;
