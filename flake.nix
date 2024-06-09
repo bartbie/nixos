@@ -6,7 +6,7 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     bartbie-nvim = {
       url = "github:bartbie/nvim/dev";
-      # bartbie-nvim already follows unstable
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 
