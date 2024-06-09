@@ -23,6 +23,7 @@
         runtimeInputs = with final; [
           git
           alejandra
+          ripgrep
         ];
       };
     };
