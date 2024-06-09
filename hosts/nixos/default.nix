@@ -11,6 +11,7 @@
   is-vm = options ? virtualisation.memorySize;
   shared-aliases = {
     vim = "nvim";
+    cdi = "zoxide";
   };
 in {
   imports = [
@@ -100,10 +101,12 @@ in {
     wget
     #
     alejandra
+    bat
     fastfetch
     fzf
     ripgrep
     rustup
+    starship
     tree
     zoxide
     #
