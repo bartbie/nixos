@@ -91,6 +91,7 @@ in {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    vim
     gcc
     git
     wget
@@ -107,8 +108,13 @@ in {
     mine.rebuild
   ];
 
-  environment.variables = {
-    EDITOR = "nvim";
+  environment = {
+    variables = {
+      EDITOR = "nvim";
+    };
+    shellAliases = {
+      vim = "nvim";
+    };
   };
 
   programs.fish.enable = true;
