@@ -9,6 +9,9 @@
   ...
 } @ inputs: let
   is-vm = options ? virtualisation.memorySize;
+  shared-aliases = {
+    vim = "nvim";
+  };
 in {
   imports = [
     # Include the results of the hardware scan.
@@ -112,12 +115,14 @@ in {
     variables = {
       EDITOR = "nvim";
     };
-    shellAliases = {
-      vim = "nvim";
-    };
+    shellAliases = shared-aliases;
   };
 
-  programs.fish.enable = true;
+  programs.fish = {
+    enable = true;
+    shellAliases = shared-aliases;
+  };
+
   programs.bash = {
     interactiveShellInit = ''
       if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
