@@ -2,7 +2,7 @@ set -e
 
 #which config
 
-if [ "$*" -ge 1 ]
+if [ "$#" -ge 1 ]
 then
     config=".#$1"
 else
