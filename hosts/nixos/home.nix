@@ -19,7 +19,6 @@ in {
     firefox-devedition
     spotify
     telegram-desktop
-    wezterm
 
     ## rest
 
@@ -86,6 +85,20 @@ in {
     userEmail = "bartbie37@gmail.com";
   };
 
+  programs.tmux = {
+    enable = true;
+    extraConfig =
+      /*
+      sh
+      */
+      ''
+        set -g mouse on
+        set-option -g focus-events on
+        set-option -sg escape-time 10
+        set-option -sa terminal-features ',*:RGB'
+      '';
+  };
+
   programs.starship = {
     enable = true;
     # custom settings
@@ -95,6 +108,21 @@ in {
     #   gcloud.disabled = true;
     #   line_break.disabled = true;
     # };
+  };
+
+  programs.wezterm = {
+    enable = true;
+    extraConfig =
+      /*
+      lua
+      */
+      ''
+        return {
+            hide_tab_bar_if_only_one_tab = true, -- i never use tabs but it may happen accidentally
+            window_background_opacity = 0.96,
+            color_scheme = "kanagawabones",
+        };
+      '';
   };
 
   # programs.alacritty = {
@@ -113,9 +141,13 @@ in {
 
   programs.fish = {
     enable = true;
-    interactiveShellInit = ''
-      set fish_greeting # Disable greeting
-    '';
+    interactiveShellInit =
+      /*
+      sh
+      */
+      ''
+        set fish_greeting # Disable greeting
+      '';
     shellAliases = {
       vim = "nvim";
     };
