@@ -1,6 +1,7 @@
 {
   bartbie-nvim,
   nixpkgs-unstable,
+  home-manager,
   ...
 } @ inputs: {
   unstable-pkgs = allowUnfree: final: _prev: {
@@ -19,11 +20,19 @@
       inherit (unpack bartbie-nvim) bartbie-nvim;
       rebuild = final.writeShellApplication {
         name = "rebuild";
-        text = builtins.readFile ./rebuild;
+        text = builtins.readFile ./rebuild.sh;
         runtimeInputs = with final; [
           git
           alejandra
           ripgrep
+        ];
+      };
+
+      home-export = final.writeShellApplication {
+        name = "home-export";
+        text = builtins.readFile ./home-export.sh;
+        runtimeInputs = [
+          (unpack home-manager).default
         ];
       };
     };

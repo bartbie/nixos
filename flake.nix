@@ -46,5 +46,16 @@
         })
       ];
     };
+    # Standalone home-manager configuration entrypoint
+    # Available through 'home-manager --flake .#your-username@your-hostname'
+    homeConfigurations = {
+      "bartbie@nixos" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {system = "x86_64-linux";};
+        modules = [
+          ./hosts/nixos/home.nix
+          {nixpkgs.config.allowUnfree = true;}
+        ];
+      };
+    };
   };
 }

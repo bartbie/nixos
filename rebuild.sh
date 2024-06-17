@@ -1,4 +1,3 @@
-# vim: set ft=sh:
 set -e
 
 # cd to your config dir
