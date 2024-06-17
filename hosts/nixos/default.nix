@@ -82,6 +82,7 @@ in {
     git
     wget
     mine.rebuild
+    mine.home-export
     mine.bartbie-nvim
   ];
 

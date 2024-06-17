@@ -2,7 +2,7 @@ set -e
 
 #which config
 
-if [ $@ -ge 1 ]
+if [ "$*" -ge 1 ]
 then
     config=".#$1"
 else
@@ -16,10 +16,10 @@ where=${2:-$(pwd)}
 pushd /etc/nixos
 
 # run home-manager
-home-manager build --flake config
+home-manager build --flake "$config"
 
 # copy
-cp -L ./result/home-files $where
+cp -L ./result/home-files "$where"
 
 # hide rest
 unlink result

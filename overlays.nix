@@ -27,7 +27,6 @@
           ripgrep
         ];
       };
-
       home-export = final.writeShellApplication {
         name = "home-export";
         text = builtins.readFile ./home-export.sh;
