@@ -88,9 +88,7 @@ in {
   programs.tmux = {
     enable = true;
     extraConfig =
-      /*
-      sh
-      */
+      # sh
       ''
         set -g mouse on
         set-option -g focus-events on
@@ -113,12 +111,11 @@ in {
   programs.wezterm = {
     enable = true;
     extraConfig =
-      /*
-      lua
-      */
+      # lua
       ''
         return {
             hide_tab_bar_if_only_one_tab = true, -- i never use tabs but it may happen accidentally
+            -- enable_tab_bar = false,
             window_background_opacity = 0.96,
             color_scheme = "kanagawabones",
         };
@@ -142,9 +139,7 @@ in {
   programs.fish = {
     enable = true;
     interactiveShellInit =
-      /*
-      sh
-      */
+      # sh
       ''
         set fish_greeting # Disable greeting
       '';
