@@ -19,10 +19,10 @@ pushd /etc/nixos
 home-manager build --flake "$config"
 
 # copy
-cp -L ./result/home-files "$where"
+cp -rL ./result/home-files "$where"
 
 # hide rest
-unlink result
+unlink ./result
 
 popd
 
