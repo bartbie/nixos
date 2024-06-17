@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-23.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     bartbie-nvim = {
       url = "github:bartbie/nvim/dev";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -15,9 +19,12 @@
     nixpkgs,
     nixpkgs-unstable,
     bartbie-nvim,
+    home-manager,
     ...
   } @ inputs: let
     overlays = import ./overlays.nix inputs;
+
+    home = opts: {home-manager = opts;};
 
     add-ol = overlays: {...}: {
       nixpkgs.overlays = overlays;
@@ -31,6 +38,12 @@
           (unstable-pkgs true)
           mine-pkgs
         ]))
+        home-manager.nixosModules.home-manager
+        (home {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          users.bartbie = import ./hosts/nixos/home.nix;
+        })
       ];
     };
   };
