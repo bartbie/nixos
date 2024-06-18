@@ -81,7 +81,7 @@
     cowsay
 
     # fonts
-    (nerdfonts.override {fonts = ["JetBrainsMono"];})
+    (nerdfonts.override {fonts = ["JetBrainsMono" "Terminus"];})
   ];
 
   fonts.fontconfig.enable = true;
