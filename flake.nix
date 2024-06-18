@@ -29,9 +29,9 @@
   } @ inputs: let
     overlays = import ./common/overlays.nix inputs;
     modules = import ./common/modules.nix inputs;
-    stdx-flakes = import ./stdx/flakes.nix inputs;
+    stdx = import ./stdx inputs;
 
-    inherit (stdx-flakes) mkConfig addOverlays shallowMergeList;
+    inherit (stdx.flakes) mkConfig addOverlays shallowMergeList;
     inherit (nixpkgs.lib.attrsets) optionalAttrs;
 
     bartbie-nixos = mkConfig {

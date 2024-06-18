@@ -6,7 +6,7 @@
   user = "bartbie";
 in {
   imports = [
-    (import ../../common/home.nix (inputs // {inherit user;}))
+    (import ../../common/home (inputs // {inherit user;}))
   ];
 
   programs.git = {

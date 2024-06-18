@@ -4,6 +4,9 @@
   pkgs,
   ...
 }: {
+  imports = [
+    ./programs/starship.nix
+  ];
   home.username = user;
   home.homeDirectory = "/home/${user}";
 
@@ -76,7 +79,12 @@
 
     # misc
     cowsay
+
+    # fonts
+    (nerdfonts.override {fonts = ["JetBrainsMono"];})
   ];
+
+  fonts.fontconfig.enable = true;
 
   programs.tmux = {
     enable = true;
@@ -88,13 +96,6 @@
         set-option -sg escape-time 10
         set-option -sa terminal-features ',*:RGB'
       '';
-  };
-
-  programs.starship = {
-    enable = true;
-    settings = {
-      add_newline = false;
-    };
   };
 
   programs.wezterm = {

@@ -87,6 +87,7 @@ in {
 
   environment = {
     variables = {
+      # it's installed globally so make it global too
       EDITOR = "nvim";
     };
     shellAliases = shared-aliases;
@@ -102,10 +103,6 @@ in {
       fi
     '';
   };
-
-  fonts.packages = with pkgs; [
-    (nerdfonts.override {fonts = ["JetBrainsMono"];})
-  ];
 
   # Copy the NixOS configuration file and link it from the resulting system (/run/current-system/configuration.nix).
   # NOTE: flakes can't be pure with this

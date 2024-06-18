@@ -5,6 +5,7 @@
   ...
 } @ inputs: let
   inherit (nixpkgs) lib;
+  inherit (import ./trivial.nix inputs) rpipe;
 
   home-manager-nixos =
     home-manager.nixosModules.home-manager;
@@ -46,7 +47,10 @@ in rec {
     #
       let
         # map users to into a list of sets and shallow merge them
-        mapUsers = f: shallowMergeList {} (mapAttrsToList f hm-users);
+        mapUsers = rpipe [
+          (f: mapAttrsToList f hm-users)
+          (shallowMergeList {})
+        ];
 
         # we will need to map usets for standalone HM config + system-module one
         toStandalone = user: {
