@@ -20,7 +20,7 @@
       inherit (unpack bartbie-nvim) bartbie-nvim;
       rebuild = final.writeShellApplication {
         name = "rebuild";
-        text = builtins.readFile ./scripts/rebuild.sh;
+        text = builtins.readFile ../scripts/rebuild.sh;
         runtimeInputs = with final; [
           git
           alejandra
@@ -29,7 +29,7 @@
       };
       home-export = final.writeShellApplication {
         name = "home-export";
-        text = builtins.readFile ./scripts/home-export.sh;
+        text = builtins.readFile ../scripts/home-export.sh;
         runtimeInputs = [
           (unpack home-manager).default
         ];

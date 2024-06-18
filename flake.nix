@@ -27,8 +27,8 @@
     darwin,
     ...
   } @ inputs: let
-    overlays = import ./overlays.nix inputs;
-    modules = import ./modules.nix inputs;
+    overlays = import ./common/overlays.nix inputs;
+    modules = import ./common/modules.nix inputs;
     stdx-flakes = import ./stdx/flakes.nix inputs;
 
     inherit (stdx-flakes) mkConfig addOverlays shallowMergeList;
