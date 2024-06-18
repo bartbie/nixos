@@ -69,7 +69,7 @@ in {
       os.symbols = {
         Alpaquita = " ";
         Alpine = " ";
-        AlmaLinux = " ";
+        # AlmaLinux = " ";
         Amazon = " ";
         Android = " ";
         Arch = " ";
