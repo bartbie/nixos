@@ -109,7 +109,7 @@
             -- enable_tab_bar = false,
             window_background_opacity = 0.96,
             color_scheme = "kanagawabones",
-            font = wezterm.font("JetBrains Mono Nerd");
+            font = wezterm.font("JetBrains Mono Nerd Font");
         };
       '';
   };
