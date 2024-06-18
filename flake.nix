@@ -8,6 +8,10 @@
       url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    darwin = {
+      url = "github:lnl7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     bartbie-nvim = {
       url = "github:bartbie/nvim/dev";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -20,42 +24,63 @@
     nixpkgs-unstable,
     bartbie-nvim,
     home-manager,
+    darwin,
     ...
   } @ inputs: let
     overlays = import ./overlays.nix inputs;
+    modules = import ./modules.nix inputs;
+    stdx-flakes = import ./stdx/flakes.nix inputs;
 
-    home = opts: {home-manager = opts;};
+    inherit (stdx-flakes) mkConfig addOverlays shallowMergeList;
+    inherit (nixpkgs.lib.attrsets) optionalAttrs;
 
-    add-ol = overlays: {...}: {
-      nixpkgs.overlays = overlays;
-    };
-  in {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+    bartbie-nixos = mkConfig {
+      variant = "nixos";
+      host = "nixos";
       system = "x86_64-linux";
-      modules = [
+      modules = with modules; [
         ./hosts/nixos
-        (add-ol (with overlays; [
+        allowUnfree
+        (addOverlays (with overlays; [
           (unstable-pkgs true)
           mine-pkgs
         ]))
-        home-manager.nixosModules.home-manager
-        (home {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          users.bartbie = import ./hosts/nixos/home.nix;
-        })
       ];
-    };
-    # Standalone home-manager configuration entrypoint
-    # Available through 'home-manager --flake .#your-username@your-hostname'
-    homeConfigurations = {
-      "bartbie@nixos" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {system = "x86_64-linux";};
-        modules = [
-          ./hosts/nixos/home.nix
-          {nixpkgs.config.allowUnfree = true;}
-        ];
+      hm-users = {
+        bartbie = {
+          home = ./hosts/nixos/home.nix;
+          modules = with modules; [
+            allowUnfree
+          ];
+        };
       };
     };
-  };
+
+    # TODO
+    # roosevelt-darwin = mkConfig {
+    #   variant = "darwin";
+    #   host = "roosevelt";
+    #   system = "aarch64-darwin";
+    #   modules = [
+    #     ./hosts/roosevelt
+    #     allowUnfree
+    #   ];
+    #   hm-users = {
+    #     "todo" = {
+    #       home = ./hosts/roosevelt/home.nix;
+    #       modules = [
+    #         allowUnfree
+    #       ];
+    #     };
+    #   };
+    # };
+
+    configs = [
+      bartbie-nixos
+      # roosevelt-darwin
+    ];
+
+    rest = {};
+  in
+    shallowMergeList rest configs;
 }
