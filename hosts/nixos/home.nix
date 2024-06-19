@@ -7,11 +7,6 @@
 in {
   imports = [
     (import ../../common/home (inputs // {inherit user;}))
+    ../../common/home/programs/git-personal.nix
   ];
-
-  programs.git = {
-    enable = true;
-    userName = "bartbie37";
-    userEmail = "bartbie37@gmail.com";
-  };
 }
