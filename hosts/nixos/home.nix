@@ -2,11 +2,10 @@
   config,
   pkgs,
   ...
-} @ inputs: let
-  user = "bartbie";
-in {
+}: {
   imports = [
-    (import ../../common/home (inputs // {inherit user;}))
+    ../../common/home/main.nix
     ../../common/home/programs/git-personal.nix
   ];
+  mine.home.user = "bartbie";
 }

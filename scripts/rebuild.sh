@@ -6,10 +6,10 @@ pushd /etc/nixos
 # Edit your config
 $EDITOR .
 
-if git diff --quiet -- *.{nix,lock,sh}; then
+if git diff --staged --quiet; then
     echo "No changes detected, exiting."
     popd
-    exit 0
+    exit 1
 fi
 
 # Autoformat your nix files

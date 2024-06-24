@@ -63,6 +63,8 @@ in {
 
   sound.enable = true;
   hardware.pulseaudio.enable = true;
+  hardware.opengl.enable = true;
+  hardware.nvidia.modesetting.enable = true;
 
   # Don't forget to set a password with ‘passwd’.
   users.users.bartbie =
