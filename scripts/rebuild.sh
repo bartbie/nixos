@@ -6,7 +6,7 @@ pushd /etc/nixos
 # Edit your config
 $EDITOR .
 
-if git diff --quiet '*.nix'; then
+if git diff --quiet -- *.{nix,lock,sh}; then
     echo "No changes detected, exiting."
     popd
     exit 0
