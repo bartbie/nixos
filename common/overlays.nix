@@ -3,7 +3,14 @@
   nixpkgs-unstable,
   home-manager,
   ...
-} @ inputs: {
+} @ inputs: let
+  mkOverlay = fn: final: prev: let
+    # flakes need to be handled
+    unpack = flake: flake.packages."${final.system}";
+  in {
+    mine = fn {inherit final prev unpack;};
+  };
+in {
   unstable-pkgs = allowUnfree: final: _prev: {
     unstable = import nixpkgs-unstable {
       system = final.system;
@@ -11,13 +18,24 @@
     };
   };
 
-  # packages available under nixpkgs.mine
-  mine-pkgs = final: prev: let
-    # flakes need to be handled
-    unpack = flake: flake.packages."${final.system}";
-  in {
-    mine = {
-      inherit (unpack bartbie-nvim) bartbie-nvim;
+  ## packages available under nixpkgs.mine
+
+  bartbie-nvim = mkOverlay ({
+    final,
+    prev,
+    unpack,
+    ...
+  }: {
+    inherit (unpack bartbie-nvim) bartbie-nvim;
+  });
+
+  scripts = mkOverlay ({
+    final,
+    prev,
+    unpack,
+    ...
+  }: {
+    scripts = {
       rebuild = final.writeShellApplication {
         name = "rebuild";
         text = builtins.readFile ../scripts/rebuild.sh;
@@ -35,9 +53,15 @@
         ];
       };
     };
-  };
+  });
 
-  # custom-hypr = final: prev: let
-  #   unpack = flake: flake.packages."${final.system}";
-  # in {};
+
+  hypr = mkOverlay ({
+    final,
+    prev,
+    ...
+  }: {
+    hypr = {
+    };
+  });
 }

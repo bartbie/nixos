@@ -21,6 +21,8 @@ in {
     ../../common/system/programs/hyprland.nix
   ];
 
+  mine.nvidia.enable = true;
+
   boot.loader = {
     # systemd-boot.enable = true;
     grub = {
