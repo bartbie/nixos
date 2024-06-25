@@ -15,11 +15,15 @@ in {
   };
   config = let
     inherit (cfg) nvidia;
+    inherit (pkgs) unstable;
   in {
     wayland.windowManager.hyprland = {
       enable = true;
-      package = pkgs.hyprland.override {
+      package = unstable.hyprland.override {
         enableNvidiaPatches = nvidia;
+      };
+      settings = {
+        "$mod" = "SUPER";
       };
     };
     home.sessionVariables = {
@@ -28,5 +32,19 @@ in {
       # Hint electron apps to use wayland
       NIXOS_OZONE_WL = "1";
     };
+
+    programs.hyprlock = {
+      enable = true;
+      package = unstable.hyprlock;
+    };
+    services.hypridle = {
+      enable = true;
+      package = unstable.hypridle;
+    };
+    services.hyprpaper = {
+      enable = true;
+      package = unstable.hyprpaper;
+    };
+    services.mako.enable = true;
   };
 }

@@ -36,4 +36,8 @@
       };
     };
   };
+
+  # custom-hypr = final: prev: let
+  #   unpack = flake: flake.packages."${final.system}";
+  # in {};
 }
