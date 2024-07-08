@@ -18,10 +18,11 @@ in {
     ./hardware-configuration.nix
     ../../common/system/programs/fish.nix
     ../../common/system/programs/pipewire.nix
-    ../../common/system/programs/hyprland.nix
+    # ../../common/system/programs/hyprland.nix
+    ../../common/system/programs/plasma5.nix
   ];
 
-  mine.nvidia.enable = true;
+  # mine.nvidia.enable = true;
 
   boot.loader = {
     # systemd-boot.enable = true;
@@ -68,8 +69,8 @@ in {
     gcc
     git
     wget
-    mine.rebuild
-    mine.home-export
+    mine.scripts.rebuild
+    mine.scripts.home-export
     mine.bartbie-nvim
   ];
 

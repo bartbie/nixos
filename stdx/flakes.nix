@@ -24,24 +24,27 @@ in rec {
   creates a set with nixosConfigurations and homeManagerConfiguration.
   variant can be nixos, darwin or null if you only want hm config.
   home-manager can be disabled by setting enable-hm to false.
+  Flake inputs are passed in specialArgs.
   */
   mkConfig = {
     variant,
     host,
     system,
+    overlays ? null,
     modules,
     enable-hm ? true,
     hm-users,
   }: let
     inherit (lib.attrsets) optionalAttrs mapAttrsToList;
     inherit (lib.lists) forEach foldr optional;
-    inherit (builtins) any all isAttrs;
+    inherit (builtins) any all isAttrs isList;
     mapToList = mapAttrsToList (_: v: v);
     notNullEmpty = set: name: set ? "${name}" && set."${name}" != null;
   in
     assert any (x: variant == x) ["nixos" "darwin" null];
     assert variant != null -> modules != null;
     assert enable-hm -> isAttrs hm-users;
+    assert overlays != null -> isList overlays;
     assert all (user: enable-hm -> (notNullEmpty user "home")) (mapToList hm-users);
     assert all (user: enable-hm -> (notNullEmpty user "modules")) (mapToList hm-users);
     #
@@ -67,12 +70,14 @@ in rec {
           modules,
         }: {"${user}" = import home;};
 
-        args = hm-module: {
+        mkArgs = hm-module: {
           inherit system;
+          specialArgs = {inherit inputs;};
           modules =
             modules
-            ++ optional enable-hm hm-module
-            ++ optional enable-hm
+            ++ (optional (overlays != null) (addOverlays overlays))
+            ++ (optional enable-hm hm-module)
+            ++ (optional enable-hm)
             (home {
               useGlobalPkgs = true;
               useUserPackages = true;
@@ -81,10 +86,10 @@ in rec {
         };
       in
         optionalAttrs (variant == "nixos") {
-          nixosConfigurations."${host}" = lib.nixosSystem (args home-manager-nixos);
+          nixosConfigurations."${host}" = lib.nixosSystem (mkArgs home-manager-nixos);
         }
         // optionalAttrs (variant == "darwin") {
-          darwinConfigurations."${host}" = darwin.lib.darwinSystem (args home-manager-darwin);
+          darwinConfigurations."${host}" = darwin.lib.darwinSystem (mkArgs home-manager-darwin);
         }
         // optionalAttrs enable-hm {
           homeConfigurations = mapUsers toStandalone;

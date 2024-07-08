@@ -31,20 +31,20 @@
     modules = import ./common/modules.nix inputs;
     stdx = import ./stdx inputs;
 
-    inherit (stdx.flakes) mkConfig addOverlays shallowMergeList;
-    inherit (nixpkgs.lib.attrsets) optionalAttrs;
+    inherit (stdx.flakes) mkConfig shallowMergeList;
 
     bartbie-nixos = mkConfig {
       variant = "nixos";
       host = "nixos";
       system = "x86_64-linux";
+      overlays = with overlays; [
+        (unstable-pkgs true)
+        mine-pkgs
+      ];
       modules = with modules; [
         ./hosts/nixos
         allowUnfree
-        (addOverlays (with overlays; [
-          (unstable-pkgs true)
-          mine-pkgs
-        ]))
+        hypr-cachix
       ];
       hm-users = {
         bartbie = {
