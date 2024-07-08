@@ -59,7 +59,7 @@ in {
       nnn
       ripgrep
       tldr
-      tree
+      erdtree
       which
       zoxide
 
@@ -127,6 +127,9 @@ in {
 
     home.shellAliases = {
       vim = "nvim";
+    };
+
+    home.sessionVariables = {
       # If your cursor becomes invisible
       WLR_NO_HARDWARE_CURSORS = "1";
       # Hint electron apps to use wayland
