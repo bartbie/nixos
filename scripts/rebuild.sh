@@ -6,7 +6,7 @@ pushd /etc/nixos
 # Edit your config
 $EDITOR .
 
-if git diff --staged --quiet; then
+if not git diff HEAD --quiet; then
     echo "No changes detected, exiting."
     popd
     exit 1
@@ -16,12 +16,12 @@ fi
 alejandra . >/dev/null
 
 # Shows your changes
-git diff -U0 "*.nix"
+git diff HEAD
 
 echo "NixOS Rebuilding..."
 
 # Rebuild, output simplified errors, log trackebacks
-(sudo nixos-rebuild switch) > nixos-switch.log 2>&1 || (rg -N error nixos-switch.log && exit 1)
+(sudo nixos-rebuild switch) > nixos-switch.log 2>&1 || (rg --color=always -N error nixos-switch.log && exit 1)
 
 # Get current generation metadata
 current=$(nixos-rebuild list-generations | rg current)
