@@ -128,7 +128,9 @@ in {
     home.shellAliases = rec {
       vim = "nvim";
       tree = "erd --suppress-size --icons";
-      treeh = "${tree} --hidden --ignore-git --ignore-git-ignore";
+      # show hidden and ignored but ignore .git
+      treeh = "${tree} --hidden --no-git --ignore-ignore";
+      # depth limit 2
       tre = "${tree} -l 2";
       treh = "${treeh} -l 2";
     };
