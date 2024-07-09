@@ -125,12 +125,12 @@ in {
         '';
     };
 
-    home.shellAliases = {
+    home.shellAliases = rec {
       vim = "nvim";
       tree = "erd --suppress-size --icons";
-      treeh = "tree --hidden --ignore-git --ignore-git-ignore";
-      tre = "tree -l 2";
-      treh = "treeh -l 2";
+      treeh = "${tree} --hidden --ignore-git --ignore-git-ignore";
+      tre = "${tree} -l 2";
+      treh = "${treeh} -l 2";
     };
 
     home.sessionVariables = {
