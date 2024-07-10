@@ -129,10 +129,10 @@ in {
       vim = "nvim";
       tree = "erd --suppress-size --icons";
       # show hidden and ignored but ignore .git
-      treeh = "${tree} --hidden --no-git --ignore-ignore";
+      treeh = "${tree} --hidden --no-git --no-ignore";
       # depth limit 2
-      tre = "${tree} -l 2";
-      treh = "${treeh} -l 2";
+      tre = "${tree} -L 2";
+      treh = "${treeh} -L 2";
     };
 
     home.sessionVariables = {
