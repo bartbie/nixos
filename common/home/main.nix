@@ -105,8 +105,6 @@ in {
       # depth limit 2
       tre = "${tree} -L 2";
       treh = "${treeh} -L 2";
-      cd = "z";
-      cdi = "zi";
     };
 
     home.sessionVariables = {
