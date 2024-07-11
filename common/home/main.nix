@@ -61,7 +61,6 @@ in {
       tldr
       erdtree
       which
-      zoxide
 
       # system call
       lsof # list open files
@@ -97,6 +96,50 @@ in {
 
     fonts.fontconfig.enable = true;
 
+    home.shellAliases = rec {
+      vim = "nvim";
+      cat = "bat";
+      tree = "erd --suppress-size --icons --layout inverted";
+      # show hidden and ignored but ignore .git
+      treeh = "${tree} --hidden --no-git --no-ignore";
+      # depth limit 2
+      tre = "${tree} -L 2";
+      treh = "${treeh} -L 2";
+      cd = "z";
+      cdi = "zi";
+    };
+
+    home.sessionVariables = {
+      # If your cursor becomes invisible
+      WLR_NO_HARDWARE_CURSORS = "1";
+      # Hint electron apps to use wayland
+      NIXOS_OZONE_WL = "1";
+    };
+
+    programs.fish = {
+      enable = true;
+      interactiveShellInit =
+        # sh
+        ''
+          set fish_greeting # Disable greeting
+          fish_vi_key_bindings
+        '';
+    };
+
+    programs.direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+
+    programs.lsd = {
+      enable = true;
+      enableAliases = true;
+    };
+
+    programs.zoxide = {
+      enable = true;
+    };
+
     programs.tmux = {
       enable = true;
       extraConfig =
@@ -123,38 +166,6 @@ in {
               font = wezterm.font("JetBrains Mono Nerd Font");
           };
         '';
-    };
-
-    home.shellAliases = rec {
-      vim = "nvim";
-      tree = "erd --suppress-size --icons --layout inverted";
-      # show hidden and ignored but ignore .git
-      treeh = "${tree} --hidden --no-git --no-ignore";
-      # depth limit 2
-      tre = "${tree} -L 2";
-      treh = "${treeh} -L 2";
-    };
-
-    home.sessionVariables = {
-      # If your cursor becomes invisible
-      WLR_NO_HARDWARE_CURSORS = "1";
-      # Hint electron apps to use wayland
-      NIXOS_OZONE_WL = "1";
-    };
-
-    programs.fish = {
-      enable = true;
-      interactiveShellInit =
-        # sh
-        ''
-          set fish_greeting # Disable greeting
-          fish_vi_key_bindings
-        '';
-    };
-
-    programs.direnv = {
-      enable = true;
-      nix-direnv.enable = true;
     };
 
     # This value determines the home Manager release that your
