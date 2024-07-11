@@ -105,6 +105,8 @@ in {
       # depth limit 2
       tre = "${tree} -L 2";
       treh = "${treeh} -L 2";
+      cd = "__zoxide_cd";
+      cdi = "zi";
     };
 
     home.sessionVariables = {
