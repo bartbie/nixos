@@ -16,6 +16,11 @@
       url = "github:bartbie/nvim/dev";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    impermanence.url = "github:nix-community/impermanence";
   };
 
   outputs = {
@@ -25,13 +30,15 @@
     bartbie-nvim,
     home-manager,
     darwin,
+    disko,
+    impermanence,
     ...
   } @ inputs: let
     overlays = import ./common/overlays.nix inputs;
     modules = import ./common/modules.nix inputs;
     stdx = import ./stdx inputs;
 
-    inherit (stdx.flakes) mkConfig shallowMergeList;
+    inherit (stdx.flakes) mkConfig mkWithoutHMConfig mergeList;
 
     bartbie-nixos = mkConfig {
       variant = "nixos";
@@ -56,6 +63,45 @@
       };
     };
 
+    lyndon-no-impermanence-args = {
+      variant = "nixos";
+      host = "lyndon";
+      system = "x86_64-linux";
+      overlays = with overlays; [
+        (unstable-pkgs true)
+        mine-pkgs
+      ];
+      modules = with modules; [
+        disko.nixosModules.default
+        ./hosts/lyndon
+        allowUnfree
+        hypr-cachix
+      ];
+      hm-users = {
+        bartbie = {
+          home = ./hosts/lyndon/home.nix;
+          modules = with modules; [
+            allowUnfree
+          ];
+        };
+      };
+    };
+
+    lyndon-no-impermanence = mkWithoutHMConfig (lyndon-no-impermanence-args // {config-name = "lyndon-no-imperm";});
+
+    lyndon = let
+      args = lyndon-no-impermanence-args;
+    in
+      mkConfig (args
+        // {
+          modules =
+            args.modules
+            ++ [
+              impermanence.nixosModules.impermanence
+              ./impermanence.nix
+            ];
+        });
+
     # TODO
     # roosevelt-darwin = mkConfig {
     #   variant = "darwin";
@@ -77,10 +123,12 @@
 
     configs = [
       bartbie-nixos
+      lyndon
+      lyndon-no-impermanence
       # roosevelt-darwin
     ];
 
     rest = {};
   in
-    shallowMergeList rest configs;
+    mergeList rest configs;
 }

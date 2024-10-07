@@ -15,10 +15,13 @@
 in rec {
   shallowMergeList = lib.lists.foldr (x: y: x // y);
 
+  mergeList = lib.lists.foldr lib.attrsets.recursiveUpdate;
+
   home = opts: {home-manager = opts;};
 
   addOverlays = overlays: {...}: {nixpkgs.overlays = overlays;};
 
+  # TODO: refactor this (out)
   /*
   helper function for creating a flake for system config.
   creates a set with nixosConfigurations and homeManagerConfiguration.
@@ -28,6 +31,7 @@ in rec {
   */
   mkConfig = {
     variant,
+    config-name ? host,
     host,
     system,
     overlays ? null,
@@ -85,11 +89,12 @@ in rec {
             });
         };
       in
-        optionalAttrs (variant == "nixos") {
-          nixosConfigurations."${host}" = lib.nixosSystem (mkArgs home-manager-nixos);
+        optionalAttrs (variant == "nixos")
+        {
+          nixosConfigurations."${config-name}" = lib.nixosSystem (mkArgs home-manager-nixos);
         }
         // optionalAttrs (variant == "darwin") {
-          darwinConfigurations."${host}" = darwin.lib.darwinSystem (mkArgs home-manager-darwin);
+          darwinConfigurations."${config-name}" = darwin.lib.darwinSystem (mkArgs home-manager-darwin);
         }
         // optionalAttrs enable-hm {
           homeConfigurations = mapUsers toStandalone;
