@@ -98,7 +98,7 @@
             args.modules
             ++ [
               impermanence.nixosModules.impermanence
-              ./impermanence.nix
+              ./hosts/lyndon/impermanence.nix
             ];
         });
 
