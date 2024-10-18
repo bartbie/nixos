@@ -15,7 +15,7 @@
 in {
   imports = [
     ./disko.nix
-    # ./impermanence.nix
+    ./nvidia.nix
     ./hardware-configuration.nix
     ../../common/system/programs/fish.nix
     ../../common/system/programs/pipewire.nix
