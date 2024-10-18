@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  home.persistence."/persistent/home/bartbie" = {
+  home.persistence."/persist/home/bartbie" = {
     directories = [
       "Downloads"
       "Music"
