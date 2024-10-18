@@ -58,6 +58,7 @@ in {
   # sound.enable = true;
   # hardware.pulseaudio.enable = true;
 
+  programs.fuse.userAllowOther = true;
   # Don't forget to set a password with ‘passwd’.
   users.users.bartbie = {
     isNormalUser = true;

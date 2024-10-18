@@ -38,6 +38,8 @@
     modules = import ./common/modules.nix inputs;
     stdx = import ./stdx inputs;
 
+    inherit (inputs.nixpkgs) lib;
+    inherit (lib) pipe;
     inherit (stdx.flakes) mkConfig mkWithoutHMConfig mergeList;
 
     bartbie-nixos = mkConfig {
@@ -91,16 +93,32 @@
 
     lyndon = let
       args = lyndon-no-impermanence-args;
-    in
-      mkConfig (args
+      appendModules = list: set:
+        set
         // {
           modules =
-            args.modules
-            ++ [
-              impermanence.nixosModules.impermanence
-              ./hosts/lyndon/impermanence.nix
-            ];
-        });
+            set.modules
+            ++ list;
+        };
+    in
+      pipe args [
+        (appendModules [
+          impermanence.nixosModules.impermanence
+          ./hosts/lyndon/impermanence/system.nix
+        ])
+        (x:
+          lib.attrsets.recursiveUpdate
+          x
+          {
+            hm-users.bartbie =
+              appendModules [
+                impermanence.nixosModules.home-manager.impermanence
+                ./hosts/lyndon/impermanence/home.nix
+              ]
+              x.hm-users.bartbie;
+          })
+        mkConfig
+      ];
 
     # TODO
     # roosevelt-darwin = mkConfig {
