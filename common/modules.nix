@@ -1,5 +1,4 @@
 {home-manager, ...} @ inputs: {
-  allowUnfree = {nixpkgs.config.allowUnfree = true;};
   hypr-cachix = {
     nix.settings = {
       substituters = ["https://hyprland.cachix.org"];
