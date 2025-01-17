@@ -1,23 +1,28 @@
 {
   config,
-  pkgs,
   lib,
+  pkgs,
+  options,
   ...
 }: let
-  cfg = config.mine.hyprland;
+  inherit (lib) mkOption types;
+  cfg = config.user.hypr;
 in {
-  options = with lib; {
-    mine.hyprland.nvidia = mkOption {
+  options.user.hypr = {
+    enable = mkOption {
       type = types.bool;
       default = false;
-      description = "Enable nvidia support.";
+      description = "Whether to enable hypr system configuration.";
+    };
+    nvidia.enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Whether to enable Nvidia support.";
     };
   };
-  config = let
-    inherit (cfg) nvidia;
-  in {
+  config = lib.mkIf cfg.enable {
     hardware.opengl.enable = true;
-    hardware.nvidia.modesetting.enable = nvidia;
+    hardware.nvidia.modesetting.enable = cfg.nvidia.enable;
 
     environment.sessionVariables = {
       # If your cursor becomes invisible

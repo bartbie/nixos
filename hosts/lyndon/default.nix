@@ -6,48 +6,25 @@
   lib,
   pkgs,
   options,
-  ...
-} @ inputs: let
-  is-vm = options ? virtualisation.memorySize;
+  inputs,
+}: let
   shared-aliases = {
     vim = "nvim";
   };
 in {
   imports = [
+    inputs.disko.nixosModules.disko
+    inputs.impermanence.nixosModules
     ./disko.nix
-    ./nvidia.nix
+    ./impermanence.nix
     ./hardware-configuration.nix
-    ../../common/system/programs/fish.nix
-    ../../common/system/programs/pipewire.nix
-    # ../../common/system/programs/hyprland.nix
-    ../../common/system/programs/plasma5.nix
+    ./nvidia.nix
   ];
-
-  # mine.nvidia.enable = true;
 
   boot.loader = {
     systemd-boot.enable = true;
-    # grub = {
-    #   enable = true;
-    #   device = "nodev";
-    #   efiSupport = true;
-    #   useOSProber = true;
-    # };
-    # efi = {
-    #   canTouchEfiVariables = true;
-    # };
   };
 
-  networking.hostName = "lyndon";
-
-  networking.networkmanager.enable = true;
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
-
-  time.timeZone = "Europe/Copenhagen";
-  i18n.defaultLocale = "en_US.UTF-8";
   services.xserver.enable = true;
 
   # Enable CUPS to print documents.
@@ -55,27 +32,15 @@ in {
 
   services.openssh.enable = true;
 
-  # sound.enable = true;
-  # hardware.pulseaudio.enable = true;
-
-  programs.fuse.userAllowOther = true;
-  # Don't forget to set a password with ‘passwd’.
-  users.users.bartbie = {
-    isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
-    initialPassword = "1";
-  };
-
-  nix.settings.experimental-features = "nix-command flakes";
-  environment.systemPackages = with pkgs; [
-    vim
-    gcc
-    git
-    wget
-    mine.scripts.rebuild
-    mine.scripts.home-export
-    mine.bartbie-nvim
-  ];
+  # environment.systemPackages = with pkgs; [
+  #   vim
+  #   gcc
+  #   git
+  #   wget
+  #   mine.scripts.rebuild
+  #   mine.scripts.home-export
+  #   mine.bartbie-nvim
+  # ];
 
   environment = {
     variables = {
@@ -84,13 +49,4 @@ in {
     };
     shellAliases = shared-aliases;
   };
-
-  # Copy the NixOS configuration file and link it from the resulting system (/run/current-system/configuration.nix).
-  # NOTE: flakes can't be pure with this
-  system.copySystemConfiguration = false;
-
-  # first version of NixOS installed.
-  # DO NOT CHANGE.
-  # see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "23.11"; # Did you read the comment?
 }

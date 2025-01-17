@@ -28,7 +28,6 @@
   environment.persistence."/persist/system" = {
     hideMounts = true;
     directories = [
-      "/etc/nixos"
       "/var/log"
       "/var/lib/bluetooth"
       "/var/lib/nixos"
@@ -43,10 +42,26 @@
     ];
     files = [
       "/etc/machine-id"
-      {
-        file = "/var/keys/secret_file";
-        parentDirectory = {mode = "u=rwx,g=,o=";};
-      }
     ];
+    users.bartbie = let
+      withMode = directory: mode: {
+        inherit directory mode;
+      };
+    in {
+      directories = [
+        "Downloads"
+        "Music"
+        "Pictures"
+        "Documents"
+        "Videos"
+        "VirtualBox VMs"
+        (withMode ".gnupg" "0700")
+        (withMode ".ssh" "0700")
+        (withMode ".nixops" "0700")
+        (withMode ".local/share/keyrings" "0700")
+        ".local/share/direnv"
+      ];
+      files = [];
+    };
   };
 }
