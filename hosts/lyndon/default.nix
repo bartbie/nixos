@@ -7,6 +7,7 @@
   pkgs,
   options,
   inputs,
+  ...
 }: let
   shared-aliases = {
     vim = "nvim";
@@ -21,6 +22,8 @@ in {
     ./nvidia.nix
   ];
 
+  user.default.enable = true;
+
   boot.loader = {
     systemd-boot.enable = true;
   };
@@ -31,16 +34,6 @@ in {
   services.printing.enable = false;
 
   services.openssh.enable = true;
-
-  # environment.systemPackages = with pkgs; [
-  #   vim
-  #   gcc
-  #   git
-  #   wget
-  #   mine.scripts.rebuild
-  #   mine.scripts.home-export
-  #   mine.bartbie-nvim
-  # ];
 
   environment = {
     variables = {

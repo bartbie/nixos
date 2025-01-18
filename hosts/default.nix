@@ -2,10 +2,10 @@
   nixpkgs,
   self,
   ...
-} @ inputs: let
+}: let
+  inherit (self) inputs;
   inherit (nixpkgs) lib;
   mkHost = builder: hostname: system:
-  # modules:
     builder {
       inherit system;
       modules = [
@@ -21,11 +21,11 @@
             inputs.bartbie-nvim.overlays.default
           ];
         }
-        # ]
-        # ++ modules
-        # ++ [
-        self.user
         ./${hostname}
+        /*
+        Add our module, which has its "default" options enabled by default
+        */
+        self.nixosModules.user
       ];
       specialArgs = {
         inherit inputs;

@@ -29,9 +29,9 @@ in {
       pulse.enable = true;
       jack.enable = true;
     };
-  };
-  hardware.bluetooth = lib.mkIf cfg.bluetooth.enable {
-    enable = true;
-    powerOnBoot = false;
+    hardware.bluetooth = lib.mkIf cfg.bluetooth.enable {
+      enable = true;
+      powerOnBoot = false;
+    };
   };
 }

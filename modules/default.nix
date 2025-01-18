@@ -12,9 +12,16 @@ in {
     ./core.nix
     ./net.nix
     ./audio.nix
+    ./fonts.nix
+
+    ./packages.nix
+
+    ./programs/cli.nix
+    ./programs/direnv.nix
     ./programs/fish.nix
     ./programs/hypr.nix
     ./programs/plasma5.nix
+    ./programs/tmux.nix
   ];
   options.user = {
     default.enable = mkOption {
@@ -32,7 +39,15 @@ in {
       net.enable = tru;
       audio.enable = tru;
       audio.bluetooth.enable = tru;
+      fonts.enable = tru;
+      packages.enable = tru;
+
       fish.enable = tru;
+      direnv.enable = tru;
+      zoxide.enable = tru;
+      lsd.enable = tru;
+      tmux.enable = tru;
+
       plasma5.enable = tru;
 
       hypr.enable = fal;

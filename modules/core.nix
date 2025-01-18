@@ -5,16 +5,17 @@
   options,
   ...
 }: let
-  inherit (lib) mkDefault mkOption;
+  inherit (lib) mkDefault mkOption types;
+  cfg = config.user.core;
 in {
-  imports = [];
-  options = {
-    user.core.enable = mkOption {
+  options.user.core = {
+    enable = mkOption {
       type = types.bool;
       default = true;
+      description = "Whether to enable core system configuration.";
     };
   };
-  config = {
+  config = lib.mkIf cfg.enable {
     time.timeZone = mkDefault "Europe/Copenhagen";
     i18n.defaultLocale = "en_150.UTF-8";
 
