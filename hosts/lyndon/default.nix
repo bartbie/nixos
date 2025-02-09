@@ -15,7 +15,7 @@
 in {
   imports = [
     inputs.disko.nixosModules.disko
-    inputs.impermanence.nixosModules
+    inputs.impermanence.nixosModules.impermanence
     ./disko.nix
     ./impermanence.nix
     ./hardware-configuration.nix
