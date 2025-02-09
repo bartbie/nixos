@@ -5,17 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user;
-  mkEnable = name:
-    mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable ${name} system configuration.";
-    };
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon;
 in {
-  options.user.zoxide.enable = mkEnable "zoxide";
-  options.user.lsd.enable = mkEnable "lsd";
+  options.nixon.zoxide.enable = mkEnableOption "zoxide";
+  options.nixon.lsd.enable = mkEnableOption "lsd";
   config =
     lib.mkIf cfg.zoxide.enable
     (let

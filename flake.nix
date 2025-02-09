@@ -27,7 +27,7 @@
     inherit (inputs.nixpkgs) lib;
   in {
     nixosModules = {
-      user = import ./modules;
+      nixon = import ./modules;
     };
     nixosConfigurations = import ./hosts inputs;
   };

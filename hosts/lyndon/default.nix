@@ -3,9 +3,9 @@
 # NixOS manual (`nixos-help`).
 {
   config,
+  options,
   lib,
   pkgs,
-  options,
   inputs,
   ...
 }: let
@@ -22,7 +22,7 @@ in {
     ./nvidia.nix
   ];
 
-  user.default.enable = true;
+  # nixon.core.enable = true;
 
   boot.loader = {
     systemd-boot.enable = true;

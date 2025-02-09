@@ -25,7 +25,7 @@
         /*
         Add our module, which has its "default" options enabled by default
         */
-        self.nixosModules.user
+        self.nixosModules.nixon
       ];
       specialArgs = {
         inherit inputs;

@@ -5,15 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.net;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.net;
 in {
-  options.user.net = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable net system configuration.";
-    };
+  options.nixon.net = {
+    enable = mkEnableOption "net";
   };
   config = lib.mkIf cfg.enable {
     networking.networkmanager.enable = true;

@@ -5,15 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.packages;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.packages;
 in {
-  options.user.packages = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable packages system configuration.";
-    };
+  options.nixon.packages = {
+    enable = mkEnableOption "packages";
   };
   config = lib.mkIf cfg.enable {
     environment.systemPackages = builtins.attrValues {

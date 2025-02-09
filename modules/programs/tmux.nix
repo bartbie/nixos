@@ -5,15 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.tmux;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.tmux;
 in {
-  options.user.tmux = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable tmux system configuration.";
-    };
+  options.nixon.tmux = {
+    enable = mkEnableOption "tmux";
   };
   config = lib.mkIf cfg.enable {
     programs.tmux = {

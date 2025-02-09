@@ -5,15 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.fonts;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.fonts;
 in {
-  options.user.fonts = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable fonts system configuration.";
-    };
+  options.nixon.fonts = {
+    enable = mkEnableOption "fonts";
   };
   config = lib.mkIf cfg.enable {
     fonts = {

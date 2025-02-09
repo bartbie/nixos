@@ -5,15 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.plasma5;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.plasma5;
 in {
-  options.user = {
-    plasma5.enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable plasma5 system configuration.";
-    };
+  options.nixon = {
+    plasma5.enable = mkEnableOption "plasma5";
   };
   config = lib.mkIf cfg.enable {
     services.xserver.displayManager.sddm.enable = true;

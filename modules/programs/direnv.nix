@@ -5,15 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.direnv;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.direnv;
 in {
-  options.user.direnv = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable direnv system configuration.";
-    };
+  options.nixon.direnv = {
+    enable = mkEnableOption "direnv";
   };
   config = lib.mkIf cfg.enable {
     programs.direnv = {

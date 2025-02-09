@@ -5,11 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.default;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.core;
 in {
   imports = [
-    ./core.nix
+    ./base.nix
     ./net.nix
     ./audio.nix
     ./fonts.nix
@@ -23,19 +23,14 @@ in {
     ./programs/plasma5.nix
     ./programs/tmux.nix
   ];
-  options.user = {
-    default.enable = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Whether to enable default system configuration.";
-    };
-  };
-  config = lib.mkIf cfg.enable {
-    user = let
-      tru = lib.mkDefault true;
-      fal = lib.mkDefault false;
-    in {
-      core.enable = tru;
+  options.nixon.core.enable = mkEnableOption "core";
+  config.nixon = let
+    tru = lib.mkDefault true;
+    fal = lib.mkDefault false;
+  in
+    lib.mkIf cfg.enable
+    {
+      base.enable = tru;
       net.enable = tru;
       audio.enable = tru;
       audio.bluetooth.enable = tru;
@@ -52,5 +47,4 @@ in {
 
       hypr.enable = fal;
     };
-  };
 }

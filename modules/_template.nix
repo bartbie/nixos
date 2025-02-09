@@ -5,15 +5,11 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user._TEMPLATE;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon._TEMPLATE;
 in {
-  options.user._TEMPLATE = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable _TEMPLATE system configuration.";
-    };
+  options.nixon._TEMPLATE = {
+    enable = mkEnableOption "_TEMPLATE";
   };
   config =
     lib.mkIf cfg.enable {

@@ -5,20 +5,12 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.fish;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.fish;
 in {
-  options.user.fish = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable fish system configuration.";
-    };
-    enable_vi_mode = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Whether to enable vi key bindings.";
-    };
+  options.nixon.fish = {
+    enable = mkEnableOption "fish";
+    enable_vi_mode = mkEnableOption "vi key bindings";
   };
   config = lib.mkIf cfg.enable {
     programs.fish.enable = true;

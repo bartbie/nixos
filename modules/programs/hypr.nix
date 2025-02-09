@@ -5,20 +5,12 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.hypr;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.hypr;
 in {
-  options.user.hypr = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable hypr system configuration.";
-    };
-    nvidia.enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable Nvidia support.";
-    };
+  options.nixon.hypr = {
+    enable = mkEnableOption "hypr";
+    nvidia.enable = mkEnableOption "nvidia";
   };
   config = lib.mkIf cfg.enable {
     hardware.opengl.enable = true;

@@ -5,20 +5,12 @@
   options,
   ...
 }: let
-  inherit (lib) mkOption types;
-  cfg = config.user.audio;
+  inherit (lib) mkEnableOption;
+  cfg = config.nixon.audio;
 in {
-  options.user.audio = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable audio system configuration.";
-    };
-    bluetooth.enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Whether to enable audio system configuration.";
-    };
+  options.nixon.audio = {
+    enable = mkEnableOption "audio";
+    bluetooth.enable = mkEnableOption "bluetooth";
   };
   config = lib.mkIf cfg.enable {
     security.rtkit.enable = true;
