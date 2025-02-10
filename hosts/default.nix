@@ -20,11 +20,10 @@
             })
             inputs.bartbie-nvim.overlays.default
           ];
+          nixon.core.enable = lib.mkDefault true; # enable our default config
         }
         ./${hostname}
-        /*
-        Add our module, which has its "default" options enabled by default
-        */
+        # Add our module
         self.nixosModules.nixon
       ];
       specialArgs = {

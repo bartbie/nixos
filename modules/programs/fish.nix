@@ -13,7 +13,19 @@ in {
     enable_vi_mode = mkEnableOption "vi key bindings";
   };
   config = lib.mkIf cfg.enable {
-    programs.fish.enable = true;
+    programs.fish = {
+      enable = true;
+      interactiveShellInit =
+        # fish
+        ''
+          set fish_greeting # Disable greeting
+        ''
+        + lib.optionalString cfg.enable_vi_mode
+        # fish
+        ''
+          fish_vi_key_bindings
+        '';
+    };
     programs.bash = {
       interactiveShellInit = ''
         if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
@@ -23,15 +35,5 @@ in {
         fi
       '';
     };
-    interactiveShellInit =
-      # fish
-      ''
-        set fish_greeting # Disable greeting
-      ''
-      + lib.optionalString cfg.enable_vi_mode
-      # fish
-      ''
-        fish_vi_key_bindings
-      '';
   };
 }
