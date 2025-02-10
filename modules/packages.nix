@@ -13,16 +13,20 @@ in {
   };
   config = lib.mkIf cfg.enable {
     environment.systemPackages = builtins.attrValues {
-      # FORMAT: yeah alejandra here does it ugly and leaves empty lines
+      inherit
+        (pkgs.unstable)
+        jujutsu
+        ;
       inherit
         (pkgs)
         vim
-        bartbie-nvim-nightly
+        # FIXME(bartbie): fix nvim overlay
+        # bartbie-nvim-nightly
+        bartbie-nvim
         gcc
         wget
         ## gui
         discord
-        firefox-devedition
         spotify
         telegram-desktop
         ## rest

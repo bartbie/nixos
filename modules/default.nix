@@ -7,25 +7,17 @@
 }: let
   inherit (lib) mkEnableOption;
   cfg = config.nixon.core;
+  findImports = ignore: let
+    fs = lib.fileset;
+    filterNonNix = f: (f.hasExt "nix") && !(lib.hasPrefix "_" f.name);
+    ignore' =
+      if lib.isList ignore
+      then ignore
+      else [ignore];
+  in
+    fs.toList (fs.difference (fs.fileFilter filterNonNix ./.) (fs.unions ([./default.nix] ++ ignore')));
 in {
-  imports = [
-    ./base.nix
-    ./net.nix
-    ./audio.nix
-    ./fonts.nix
-    ./nix.nix
-
-    ./packages.nix
-
-    ./programs/cli.nix
-    ./programs/starship.nix
-    ./programs/direnv.nix
-    ./programs/fish.nix
-    ./programs/hypr.nix
-    ./programs/plasma5.nix
-    ./programs/tmux.nix
-    ./programs/git.nix
-  ];
+  imports = findImports [];
   options.nixon.core.enable = mkEnableOption "core";
   config.nixon = let
     tru = lib.mkDefault true;
@@ -48,6 +40,7 @@ in {
       lsd.enable = tru;
       tmux.enable = tru;
       starship.enable = tru;
+      firefox.enable = tru;
 
       plasma5.enable = tru;
 
