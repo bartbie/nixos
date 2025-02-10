@@ -24,6 +24,7 @@ in {
     ./programs/hypr.nix
     ./programs/plasma5.nix
     ./programs/tmux.nix
+    ./programs/git.nix
   ];
   options.nixon.core.enable = mkEnableOption "core";
   config.nixon = let
@@ -40,6 +41,7 @@ in {
       fonts.enable = tru;
       packages.enable = tru;
 
+      git.enable = tru;
       fish.enable = tru;
       direnv.enable = tru;
       zoxide.enable = tru;
