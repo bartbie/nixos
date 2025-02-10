@@ -1,4 +1,9 @@
-{lib, ...}: {
+{lib, ...}: let
+  withMode = directory: mode: {
+    inherit directory mode;
+  };
+  persist-dir = "/persist";
+in {
   boot.initrd.postDeviceCommands = lib.mkAfter ''
     mkdir /btrfs_tmp
     mount /dev/root_vg/root /btrfs_tmp
@@ -24,8 +29,8 @@
     umount /btrfs_tmp
   '';
 
-  fileSystems."/persist".neededForBoot = true;
-  environment.persistence."/persist/system" = {
+  fileSystems.${persist-dir}.neededForBoot = true;
+  environment.persistence.${persist-dir} = {
     hideMounts = true;
     directories = [
       "/var/log"
@@ -33,6 +38,7 @@
       "/var/lib/nixos"
       "/var/lib/systemd/coredump"
       "/etc/NetworkManager/system-connections"
+      "/etc/nixos"
       {
         directory = "/var/lib/colord";
         user = "colord";
@@ -43,23 +49,26 @@
     files = [
       "/etc/machine-id"
     ];
-    users.bartbie = let
-      withMode = directory: mode: {
-        inherit directory mode;
-      };
-    in {
+    users.bartbie = {
       directories = [
         "Downloads"
-        "Music"
-        "Pictures"
-        "Documents"
-        "Videos"
+        "Projects"
+        "Eternal"
+        # we will keep this stuff in Eternal/
+        # "Music"
+        # "Pictures"
+        # "Documents"
+        # "Videos"
         "VirtualBox VMs"
         (withMode ".gnupg" "0700")
         (withMode ".ssh" "0700")
         (withMode ".nixops" "0700")
         (withMode ".local/share/keyrings" "0700")
         ".local/share/direnv"
+        ".mozilla"
+        ".cargo"
+        ".local/share/nvim"
+        ".local/state/nvim"
       ];
       files = [];
     };
