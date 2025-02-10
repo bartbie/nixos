@@ -13,6 +13,7 @@ in {
     ./net.nix
     ./audio.nix
     ./fonts.nix
+    ./nix.nix
 
     ./packages.nix
 
@@ -32,6 +33,7 @@ in {
     {
       base.enable = tru;
       net.enable = tru;
+      nix.enable = tru;
       audio.enable = tru;
       audio.bluetooth.enable = tru;
       fonts.enable = tru;
