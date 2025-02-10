@@ -1,3 +1,5 @@
+# Nixon
+
 ## Architecture
 
 `flake.nix` - obv the entrypoint, but mostly used as a place to declare inputs
