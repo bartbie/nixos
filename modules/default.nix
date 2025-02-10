@@ -18,6 +18,7 @@ in {
     ./packages.nix
 
     ./programs/cli.nix
+    ./programs/starship.nix
     ./programs/direnv.nix
     ./programs/fish.nix
     ./programs/hypr.nix
@@ -44,6 +45,7 @@ in {
       zoxide.enable = tru;
       lsd.enable = tru;
       tmux.enable = tru;
+      starship.enable = tru;
 
       plasma5.enable = tru;
 
