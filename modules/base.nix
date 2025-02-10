@@ -11,7 +11,7 @@ in {
   options.nixon.base.enable = mkEnableOption "base";
   config = lib.mkIf cfg.enable {
     time.timeZone = mkDefault "Europe/Copenhagen";
-    i18n.defaultLocale = "en_150.UTF-8";
+    i18n.defaultLocale = "C.UTF-8";
 
     nix.settings.experimental-features = "nix-command flakes";
 
