@@ -22,7 +22,10 @@ in {
     ./nvidia.nix
   ];
 
-  # nixon.core.enable = true;
+  nixon.hosts.lyndon.nvidia = {
+    enable = true;
+    powerManagement.enable = true;
+  };
 
   boot.loader = {
     systemd-boot.enable = true;
