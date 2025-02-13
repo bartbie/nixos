@@ -28,8 +28,6 @@ in {
     systemd-boot.enable = true;
   };
 
-  services.xserver.enable = true;
-
   # Enable CUPS to print documents.
   services.printing.enable = false;
 
