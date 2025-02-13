@@ -23,12 +23,5 @@ in {
     # DO NOT CHANGE.
     # see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
     system.stateVersion = "23.11"; # Did you read the comment?
-
-    # Don't forget to set a password with ‘passwd’.
-    users.users.bartbie = mkDefault {
-      isNormalUser = true;
-      extraGroups = ["wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
-      initialPassword = "1";
-    };
   };
 }
