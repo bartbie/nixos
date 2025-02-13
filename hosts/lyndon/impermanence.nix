@@ -69,6 +69,8 @@ in {
         ".cargo"
         ".local/share/nvim"
         ".local/state/nvim"
+        ".config/discord"
+        "./tldrc/tldr"
       ];
       files = [];
     };

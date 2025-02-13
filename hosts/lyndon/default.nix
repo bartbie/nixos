@@ -31,9 +31,6 @@ in {
     systemd-boot.enable = true;
   };
 
-  # Enable CUPS to print documents.
-  services.printing.enable = false;
-
   services.openssh.enable = true;
 
   environment = {
