@@ -26,5 +26,6 @@
       nixon = import ./modules;
     };
     nixosConfigurations = import ./hosts inputs;
+    lib = import ./lib {inherit lib;};
   };
 }

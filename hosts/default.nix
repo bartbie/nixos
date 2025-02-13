@@ -4,7 +4,10 @@
   ...
 }: let
   inherit (self) inputs;
-  inherit (nixpkgs) lib;
+  # Add our lib
+  lib = nixpkgs.lib.extend (_: _: {
+    stdx = self.lib;
+  });
   mkHost = builder: hostname: system:
     builder {
       inherit system;
