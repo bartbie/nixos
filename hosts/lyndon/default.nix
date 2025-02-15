@@ -24,7 +24,6 @@ in {
 
   nixon.hosts.lyndon.nvidia = {
     enable = true;
-    powerManagement.enable = true;
   };
 
   boot.loader = {
