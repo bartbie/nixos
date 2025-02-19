@@ -20,9 +20,7 @@ in {
       inherit
         (pkgs)
         vim
-        # FIXME(bartbie): fix nvim overlay
-        # bartbie-nvim-nightly
-        bartbie-nvim
+        bartbie-nvim-nightly
         gcc
         wget
         ## gui
