@@ -20,8 +20,10 @@ in {
       users.enable = tru;
       net.enable = tru;
       nix.enable = tru;
-      audio.enable = tru;
-      audio.bluetooth.enable = tru;
+      audio = {
+        enable = tru;
+        bluetooth.enable = tru;
+      };
       fonts.enable = tru;
       packages.enable = tru;
 
