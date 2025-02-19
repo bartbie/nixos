@@ -17,6 +17,11 @@
       url = "github:bartbie/nvim/rocks";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    wrapper-manager = {
+      url = "github:viperML/wrapper-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    systems.url = "github:nix-systems/default";
   };
 
   outputs = {
@@ -43,5 +48,7 @@
     formatter = eachSystemPkgs (pkgs: pkgs.alejandra);
     nixosConfigurations = import ./hosts inputs;
     nixosModules = mkNixonDefault (import ./modules);
+    packages = eachSystemPkgs (pkgs: import ./packages inputs pkgs);
+    overlays = mkNixonDefault (_: prev: {nixon = self.packages.${prev.system};});
   };
 }
