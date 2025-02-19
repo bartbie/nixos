@@ -19,13 +19,29 @@
     };
   };
 
-  outputs = {...} @ inputs: let
-    inherit (inputs.nixpkgs) lib;
-  in {
-    nixosModules = {
-      nixon = import ./modules;
+  outputs = {
+    self,
+    nixpkgs,
+    systems,
+    ...
+  } @ inputs: let
+    inherit (nixpkgs) lib;
+    stdx = import ./lib {inherit lib;};
+
+    eachSystemPkgs = let
+      eachSystem = lib.genAttrs (import systems);
+      overlays = [(stdx.mkUnstableOverlay inputs)];
+    in
+      f: eachSystem (system: f (import nixpkgs {inherit system overlays;}));
+
+    mkNixonDefault = x: {
+      nixon = x;
+      default = x;
     };
+  in {
+    lib = stdx;
+    formatter = eachSystemPkgs (pkgs: pkgs.alejandra);
     nixosConfigurations = import ./hosts inputs;
-    lib = import ./lib {inherit lib;};
+    nixosModules = mkNixonDefault (import ./modules);
   };
 }

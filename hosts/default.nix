@@ -16,11 +16,7 @@
           networking.hostName = hostname;
           nixpkgs.hostPlatform = system;
           nixpkgs.overlays = [
-            (final: _: {
-              unstable = import inputs.nixpkgs-unstable {
-                inherit (final) system config;
-              };
-            })
+            (lib.stdx.mkUnstableOverlay inputs)
             inputs.bartbie-nvim.overlays.default
           ];
           nixon.core.enable = lib.mkDefault true; # enable our default config
