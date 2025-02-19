@@ -6,22 +6,28 @@
   ...
 }: let
   inherit (lib) mkEnableOption;
-  cfg = config.nixon.tmux;
+  cfg = config.nixon.programs.tmux;
 in {
-  options.nixon.tmux = {
+  options.nixon.programs.tmux = {
     enable = mkEnableOption "tmux";
   };
   config = lib.mkIf cfg.enable {
     programs.tmux = {
       enable = true;
+      keyMode = "vi";
+      newSession = true;
+      escapeTime = 10;
+      baseIndex = 1;
       extraConfig =
         # sh
         ''
           set -g mouse on
           set-option -g focus-events on
-          set-option -sg escape-time 10
           set-option -sa terminal-features ',*:RGB'
         '';
+      plugins = builtins.attrValues {
+        inherit (pkgs.tmuxPlugins);
+      };
     };
   };
 }

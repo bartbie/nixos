@@ -6,10 +6,10 @@
   ...
 }: let
   inherit (lib) mkEnableOption;
-  cfg = config.nixon.plasma5;
+  cfg = config.nixon.programs.plasma5;
 in {
-  options.nixon = {
-    plasma5.enable = mkEnableOption "plasma5";
+  options.nixon.programs.plasma5 = {
+    enable = mkEnableOption "plasma5";
   };
   config = lib.mkIf cfg.enable {
     services.xserver.enable = true;

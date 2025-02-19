@@ -6,9 +6,9 @@
   ...
 }: let
   inherit (lib) mkEnableOption;
-  cfg = config.nixon.fish;
+  cfg = config.nixon.programs.fish;
 in {
-  options.nixon.fish = {
+  options.nixon.programs.fish = {
     enable = mkEnableOption "fish";
     enable_vi_mode = mkEnableOption "vi key bindings";
   };

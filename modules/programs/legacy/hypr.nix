@@ -6,9 +6,9 @@
   ...
 }: let
   inherit (lib) mkEnableOption;
-  cfg = config.nixon.hypr;
+  cfg = config.nixon.programs.hypr;
 in {
-  options.nixon.hypr = {
+  options.nixon.programs.hypr = {
     enable = mkEnableOption "hypr";
     nvidia.enable = mkEnableOption "nvidia";
   };

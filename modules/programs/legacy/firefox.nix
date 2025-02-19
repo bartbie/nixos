@@ -6,7 +6,7 @@
   ...
 }: let
   inherit (lib) mkEnableOption;
-  cfg = config.nixon.firefox;
+  cfg = config.nixon.programs.firefox;
   mkLock = Value: {
     inherit Value;
     Status = "locked";
@@ -15,7 +15,7 @@
   lock-true = mkLock true;
   lock-empty-string = mkLock "";
 in {
-  options.nixon.firefox = {
+  options.nixon.programs.firefox = {
     enable = mkEnableOption "firefox";
     package = lib.mkPackageOption pkgs "firefox" {default = ["firefox-devedition"];};
     policies = lib.mkOption {

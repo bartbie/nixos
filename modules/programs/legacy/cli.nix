@@ -6,10 +6,10 @@
   ...
 }: let
   inherit (lib) mkEnableOption;
-  cfg = config.nixon;
+  cfg = config.nixon.programs;
 in {
-  options.nixon.zoxide.enable = mkEnableOption "zoxide";
-  options.nixon.lsd.enable = mkEnableOption "lsd";
+  options.nixon.programs.zoxide.enable = mkEnableOption "zoxide";
+  options.nixon.programs.lsd.enable = mkEnableOption "lsd";
   config =
     lib.mkIf cfg.zoxide.enable
     (let

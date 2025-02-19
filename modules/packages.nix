@@ -14,6 +14,10 @@ in {
   config = lib.mkIf cfg.enable {
     environment.systemPackages = builtins.attrValues {
       inherit
+        (pkgs.unstable)
+        jujutsu
+        ;
+      inherit
         (pkgs.nixon)
         zellij
         ;

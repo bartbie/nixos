@@ -6,10 +6,13 @@
   ...
 }: let
   inherit (lib) mkEnableOption;
-  cfg = config.nixon.git;
+  cfg = config.nixon.programs.git;
 in {
-  options.nixon.git = {
+  options.nixon.programs.git = {
     enable = mkEnableOption "git";
+    jj = {
+      enable = mkEnableOption "jj";
+    };
   };
   config = lib.mkIf cfg.enable {
     programs.git = {

@@ -26,19 +26,23 @@ in {
       };
       fonts.enable = tru;
       packages.enable = tru;
+      programs = {
+        git.enable = tru;
+        fish.enable = tru;
+        fish.enable_vi_mode = tru;
+        direnv.enable = tru;
+        zoxide.enable = tru;
+        lsd.enable = tru;
 
-      git.enable = tru;
-      fish.enable = tru;
-      fish.enable_vi_mode = tru;
-      direnv.enable = tru;
-      zoxide.enable = tru;
-      lsd.enable = tru;
-      tmux.enable = tru;
-      starship.enable = tru;
-      firefox.enable = tru;
+        tmux.enable = fal;
+        zellij.enable = tru;
 
-      plasma5.enable = tru;
+        starship.enable = tru;
+        firefox.enable = tru;
 
-      hypr.enable = fal;
+        plasma5.enable = tru;
+
+        hypr.enable = fal;
+      };
     };
 }

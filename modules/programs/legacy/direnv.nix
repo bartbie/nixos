@@ -6,9 +6,9 @@
   ...
 }: let
   inherit (lib) mkEnableOption;
-  cfg = config.nixon.direnv;
+  cfg = config.nixon.programs.direnv;
 in {
-  options.nixon.direnv = {
+  options.nixon.programs.direnv = {
     enable = mkEnableOption "direnv";
   };
   config = lib.mkIf cfg.enable {
