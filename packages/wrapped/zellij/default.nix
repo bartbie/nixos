@@ -1,9 +1,6 @@
 {pkgs, ...}: {
   wrappers.zellij = {
     basePackage = pkgs.zellij;
-    flags = [
-      "--config"
-      ./config.kdl
-    ];
+    env.ZELLIJ_CONFIG_FILE.value = ./config.kdl;
   };
 }
