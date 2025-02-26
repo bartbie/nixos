@@ -1,11 +1,12 @@
 {pkgs, ...}: {
   inherit
     (pkgs.unstable)
-    jujutsu
     ;
   inherit
     (pkgs.nixon)
-    zellij
+    wezterm
+    jujutsu
+    git
     ;
   inherit
     (pkgs)

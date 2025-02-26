@@ -28,7 +28,7 @@ in {
       fonts.enable = tru;
       packages.enable = tru;
       programs = {
-        git.enable = tru;
+        # git.enable = tru;
         fish.enable = tru;
         fish.enable_vi_mode = tru;
         direnv.enable = tru;
