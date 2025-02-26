@@ -17,8 +17,7 @@
           nixpkgs.hostPlatform = system;
           nixpkgs.overlays = [
             (lib.stdx.mkUnstableOverlay inputs)
-            inputs.bartbie-nvim.overlays.default
-            self.overlays.nixon
+            self.overlays.all # add our packages
           ];
           nixon.core.enable = lib.mkDefault true; # enable our default config
         }

@@ -31,24 +31,15 @@
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
-    stdx = import ./lib {inherit lib;};
-
-    eachSystemPkgs = let
-      eachSystem = lib.genAttrs (import systems);
-      overlays = [(stdx.mkUnstableOverlay inputs)];
-    in
-      f: eachSystem (system: f (import nixpkgs {inherit system overlays;}));
-
     mkNixonDefault = x: {
       nixon = x;
       default = x;
     };
   in {
-    lib = stdx;
-    formatter = eachSystemPkgs (pkgs: pkgs.alejandra);
+    lib = import ./lib {inherit lib;};
+    formatter = self.lib.eachSystemPkgsFull inputs (pkgs: pkgs.alejandra);
     nixosConfigurations = import ./hosts inputs;
     nixosModules = mkNixonDefault (import ./modules);
-    packages = eachSystemPkgs (pkgs: import ./packages inputs pkgs);
-    overlays = mkNixonDefault (_: prev: {nixon = self.packages.${prev.system};});
+    inherit (import ./packages inputs) packages overlays devShells;
   };
 }
