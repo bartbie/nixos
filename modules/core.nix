@@ -1,14 +1,15 @@
 {
+  flake,
   config,
   lib,
   pkgs,
   options,
   ...
 }: let
-  inherit (lib) mkEnableOption stdx;
+  inherit (lib) mkEnableOption;
   cfg = config.nixon.core;
 in {
-  imports = stdx.findImports ./core.nix [./default.nix];
+  imports = flake.lib.findImports ./core.nix [./default.nix];
   options.nixon.core.enable = mkEnableOption "core";
   config.nixon = let
     tru = lib.mkDefault true;

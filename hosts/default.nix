@@ -4,10 +4,7 @@
   ...
 }: let
   inherit (self) inputs;
-  # Add our lib
-  lib = nixpkgs.lib.extend (_: _: {
-    stdx = self.lib;
-  });
+  inherit (nixpkgs) lib;
   mkHost = builder: hostname: system:
     builder {
       inherit system;
@@ -16,7 +13,7 @@
           networking.hostName = hostname;
           nixpkgs.hostPlatform = system;
           nixpkgs.overlays = [
-            (lib.stdx.mkUnstableOverlay inputs)
+            (self.lib.mkUnstableOverlay inputs)
             self.overlays.all # add our packages
           ];
           nixon.core.enable = lib.mkDefault true; # enable our default config

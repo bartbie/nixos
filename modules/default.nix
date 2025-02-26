@@ -1,3 +1,7 @@
-{lib, ...}: {
-  imports = lib.stdx.findImports ./default.nix [];
+{
+  flake,
+  lib,
+  ...
+}: {
+  imports = flake.lib.findImports ./default.nix [];
 }
