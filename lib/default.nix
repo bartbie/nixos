@@ -33,4 +33,17 @@ in {
     fs.toList (fs.difference (fs.fileFilter filterFnNonNix root) (fs.unions ignored));
 
   eachSystemPkgsFull = inputs: eachSystemPkgs inputs [inputs.self.overlays._dependencies];
+  mkModprobeConfig = let
+    at = lib.attrsets;
+    concat = lib.flip lib.pipe [
+      (lib.concatStringsSep " ")
+      lib.trim
+    ];
+  in
+    lib.flip lib.pipe [
+      (at.mapAttrs (_: concat))
+      (at.filterAttrs (_: v: v != ""))
+      (at.mapAttrsToList (n: v: "options ${n} ${v}"))
+      lib.concatLines
+    ];
 }
