@@ -33,6 +33,11 @@ in {
     fs.toList (fs.difference (fs.fileFilter filterFnNonNix root) (fs.unions ignored));
 
   eachSystemPkgsFull = inputs: eachSystemPkgs inputs [inputs.self.overlays._dependencies];
+  boolToStringFlag = b:
+    if b
+    then "1"
+    else "0";
+
   mkModprobeConfig = let
     at = lib.attrsets;
     concat = lib.flip lib.pipe [

@@ -24,6 +24,7 @@ in {
 
   nixon.hosts.lyndon.nvidia = {
     enable = true;
+    modesetting.enable = true;
     prime = {
       enable = true;
       # settings = {};
