@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   inherit (pkgs.formats.toml {}) generate;
   config = {
     user = {
@@ -8,6 +12,14 @@
     ui = {
       default-command = "status";
       editor = "nvim";
+    };
+    aliases = let
+      split = lib.flip lib.pipe [
+        (builtins.split " ")
+        (builtins.filter (x: x != "" && x != []))
+      ];
+    in {
+      wip = split "commit -m WIP";
     };
   };
 in {
