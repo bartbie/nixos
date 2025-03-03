@@ -24,6 +24,14 @@ in {
 
   nixon.hosts.lyndon.nvidia = {
     enable = true;
+    prime = {
+      enable = true;
+      # settings = {};
+    };
+    # powerManagement = {
+    #   enable = true;
+    #   finegrained = true;
+    # };
   };
 
   boot.loader = {
