@@ -18,6 +18,7 @@ in {
     lib.mkIf cfg.enable
     {
       base.enable = tru;
+      boot.enable = tru;
       users.enable = tru;
       net.enable = tru;
       nix.enable = tru;
