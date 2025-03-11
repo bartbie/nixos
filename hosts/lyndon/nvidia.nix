@@ -57,10 +57,10 @@ in {
 
       open = true;
       package = let
-        d-565-77 = config.boot.kernelPackages.nvidiaPackages.latest;
-        d-570-86 = pkgs.unstable.linuxPackages.nvidiaPackages.beta;
+        d-565-135 = config.boot.kernelPackages.nvidiaPackages.latest;
+        d-570-124 = pkgs.unstable.linuxPackages.nvidiaPackages.latest;
       in
-        d-565-77;
+        d-570-124;
     };
 
     boot = {
