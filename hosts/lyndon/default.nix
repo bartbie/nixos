@@ -26,7 +26,7 @@ in {
     enable = true;
     modesetting.enable = true;
     prime = {
-      enable = true;
+      enable = false;
       # settings = {};
     };
     # powerManagement = {
