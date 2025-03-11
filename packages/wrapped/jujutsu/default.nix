@@ -20,6 +20,10 @@
       ];
     in {
       wip = split "commit -m WIP";
+      anc = split "log -r anc(5)";
+    };
+    revset-aliases = {
+      "anc(x)" = "ancestors(@, x)";
     };
   };
 in {
