@@ -18,10 +18,13 @@
         (builtins.split " ")
         (builtins.filter (x: x != "" && x != []))
       ];
-    in {
-      wip = split "commit -m WIP";
-      anc = split "log -r anc(5)";
-    };
+      mapSplit = lib.attrsets.mapAttrs (_: split);
+    in
+      mapSplit {
+        wip = "commit -m WIP";
+        anc = "log -r anc(5)";
+        slast = "show -r anc(2)~@";
+      };
     revset-aliases = {
       "anc(x)" = "ancestors(@, x)";
     };
