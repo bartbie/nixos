@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    lix-module = {
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.92.0-1.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
