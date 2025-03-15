@@ -72,7 +72,9 @@ in {
         ".config/discord"
         "./tldrc/tldr"
       ];
-      files = [];
+      files = [
+        ".local/share/fish/fish_history"
+      ];
     };
   };
 }
