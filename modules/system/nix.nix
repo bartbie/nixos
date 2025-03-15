@@ -15,6 +15,7 @@ in {
   ];
   options.nixon.nix = {
     enable = mkEnableOption "nix";
+    nh.enable = mkEnableOptionTrue "nh";
     allowUnfree = mkEnableOptionTrue "unfree packages";
     # INFO: lix.enable was added upstream AFTER 2.92, so we don't have access to it yet
     # lix.enable = mkEnableOptionTrue "lix";
@@ -31,6 +32,11 @@ in {
     #   }
     # ];
     # inherit (cfg) lix;
+    programs.nh = {
+      inherit (cfg.nh) enable;
+      clean.enable = false;
+      flake = "/etc/nixos";
+    };
     nix = {
       gc.automatic = false;
       settings = {
