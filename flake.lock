@@ -237,6 +237,21 @@
         "type": "github"
       }
     },
+    "hardware": {
+      "locked": {
+        "lastModified": 1741792691,
+        "narHash": "sha256-f0BVt1/cvA0DQ/q3rB+HY4g4tKksd03ZkzI4xehC2Ew=",
+        "owner": "nixos",
+        "repo": "nixos-hardware",
+        "rev": "e1f12151258b12c567f456d8248e4694e9390613",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixos-hardware",
+        "type": "github"
+      }
+    },
     "hercules-ci-effects": {
       "inputs": {
         "flake-parts": "flake-parts_2",
@@ -403,6 +418,7 @@
         "bartbie-nvim": "bartbie-nvim",
         "darwin": "darwin",
         "disko": "disko",
+        "hardware": "hardware",
         "impermanence": "impermanence",
         "lix-module": "lix-module",
         "nixpkgs": "nixpkgs_2",

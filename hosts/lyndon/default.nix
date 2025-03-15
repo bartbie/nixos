@@ -13,14 +13,26 @@
     vim = "nvim";
   };
 in {
-  imports = [
-    inputs.disko.nixosModules.disko
-    inputs.impermanence.nixosModules.impermanence
-    ./disko.nix
-    ./impermanence.nix
-    ./hardware-configuration.nix
-    ./nvidia.nix
-  ];
+  imports =
+    [
+      inputs.disko.nixosModules.disko
+      inputs.impermanence.nixosModules.impermanence
+      ./disko.nix
+      ./impermanence.nix
+      ./hardware-configuration.nix
+      ./nvidia.nix
+    ]
+    ++ (builtins.attrValues {
+      inherit
+        (inputs.hardware.nixosModules)
+        common-pc-ssd
+        common-hidpi
+        common-cpu-amd
+        common-cpu-amd-pstate
+        common-cpu-amd-zenpower
+        common-cpu-amd-raphael-igpu
+        ;
+    });
 
   nixon.hosts.lyndon.nvidia = {
     enable = true;
