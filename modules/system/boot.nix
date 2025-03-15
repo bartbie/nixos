@@ -12,6 +12,11 @@ in {
     enable = mkEnableOption "boot";
   };
   config = lib.mkIf cfg.enable {
-    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_6_12;
+    boot = {
+      kernelPackages = lib.mkDefault pkgs.linuxPackages_6_12;
+      loader.systemd-boot = {
+        configurationLimit = 10;
+      };
+    };
   };
 }
