@@ -44,7 +44,7 @@
     lib = import ./lib {inherit lib;};
     formatter = self.lib.eachSystemPkgsFull inputs (pkgs: pkgs.alejandra);
     nixosConfigurations = import ./hosts inputs;
-    nixosModules = mkNixonDefault (import ./modules);
+    nixosModules = mkNixonDefault (import ./modules/nixos);
     inherit (import ./packages inputs) packages overlays devShells;
   };
 }
