@@ -1,9 +1,4 @@
 {lib}: let
-  wrapInList = x:
-    if lib.isList x
-    then x
-    else [x];
-
   filterFnNonNix = f: (f.hasExt "nix") && !(lib.hasPrefix "_" f.name);
 
   mkUnstableOverlay = inputs: (final: _: {
@@ -20,7 +15,6 @@
 in {
   inherit
     eachSystemPkgs
-    wrapInList
     filterFnNonNix
     mkUnstableOverlay
     ;
@@ -28,7 +22,7 @@ in {
   findImports = this: ignore: let
     fs = lib.fileset;
     root = builtins.dirOf this;
-    ignored = [this] ++ (wrapInList ignore);
+    ignored = [this] ++ (lib.flatten ignore);
   in
     fs.toList (fs.difference (fs.fileFilter filterFnNonNix root) (fs.unions ignored));
 
