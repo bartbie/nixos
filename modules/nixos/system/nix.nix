@@ -46,7 +46,7 @@ in {
         warn-dirty = false;
         flake-registry = "/etc/nix/registry.json";
         commit-lockfile-summary = "chore: Update flake.lock";
-        extra-experimental-features = ["flakes" "nix-command" "recursive-nix" "ca-derivations"];
+        extra-experimental-features = ["flakes" "nix-command" "recursive-nix" "ca-derivations" "pipe-operator"];
       };
       registry = {
         nixpkgs.flake = inputs.nixpkgs;
