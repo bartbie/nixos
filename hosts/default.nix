@@ -9,7 +9,7 @@
     builder {
       inherit system;
       modules = [
-        {
+        ({config, ...}: {
           networking.hostName = hostname;
           nixpkgs.hostPlatform = system;
           nixpkgs.overlays = [
@@ -17,10 +17,14 @@
             self.overlays.all # add our packages
           ];
           nixon.core.enable = lib.mkDefault true; # enable our default config
-        }
+          disko.enableConfig = lib.mkDefault (config.disko.devices != {});
+        })
         ./${hostname}
         # Add our module
         self.nixosModules.nixon
+        # Add modules that will are or will get disabled by default
+        inputs.disko.nixosModules.disko
+        inputs.impermanence.nixosModules.impermanence
       ];
       specialArgs = {
         inherit inputs;

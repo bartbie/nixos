@@ -1,24 +1,13 @@
-# configuration.nix(5) man page
-# https://search.nixos.org/options
-# NixOS manual (`nixos-help`).
 {
   config,
-  options,
   lib,
   pkgs,
   inputs,
   ...
-}: let
-  shared-aliases = {
-    vim = "nvim";
-  };
-in {
+}: {
   imports =
     [
-      inputs.disko.nixosModules.disko
-      inputs.impermanence.nixosModules.impermanence
       ./disko.nix
-      ./impermanence.nix
       ./hardware-configuration.nix
       ./nvidia.nix
     ]
@@ -35,6 +24,8 @@ in {
         ;
     });
 
+  nixon.impermanence.enable = true;
+
   hardware.nvidia.modesetting.enable = true;
   nixon.hosts.lyndon.nvidia = {
     enable = true;
@@ -45,6 +36,8 @@ in {
       # it's installed globally so make it global too
       EDITOR = "nvim";
     };
-    shellAliases = shared-aliases;
+    shellAliases = {
+      vim = "nvim";
+    };
   };
 }
