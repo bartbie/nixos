@@ -11,47 +11,26 @@
 in {
   options.nixon.hosts.lyndon.nvidia = {
     enable = mkEnableOption "nvidia";
-    modesetting.enable = mkEnableOption "modesetting";
     enableGpuFirmware = mkEnableOption "enableGpuFirmware" // {default = true;};
-    powerManagement = {
-      enable = (mkEnableOption "nvidia power management") // {default = cfg.prime.enable;};
-      finegrained = (mkEnableOption "nvidia finegrained power management") // {default = cfg.prime.enable;};
-    };
-    prime = {
-      enable = mkEnableOption "nvidia prime";
-      settings = lib.mkOption {
-        description = "extra settings for prime";
-        type = lib.types.attrs;
-        default = {};
-      };
-    };
   };
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = cfg.prime.enable -> cfg.powerManagement.enable;
-        message = "powerManagement needs to be enabled when enabling prime";
-      }
-      {
-        assertion = cfg.prime.enable -> cfg.powerManagement.finegrained;
-        message = "powerManagement.finegrained needs to be enabled when enabling prime";
-      }
-    ];
-
     hardware.graphics = {
       enable = true;
     };
 
     hardware.nvidia = {
-      inherit (cfg) powerManagement modesetting;
+      powerManagement = let
+        inherit (config.hardware.nvidia) prime;
+        enable = prime.offload.enable;
+      in {
+        enable = lib.mkDefault enable;
+        finegrained = lib.mkDefault enable;
+      };
 
-      prime =
-        lib.mkIf cfg.prime.enable {
-          offload.enable = cfg.powerManagement.finegrained;
-          intelBusId = "PCI:15:0:0";
-          nvidiaBusId = "PCI:01:0:0";
-        }
-        // cfg.prime.settings;
+      prime = {
+        amdgpuBusId = "PCI:15:0:0";
+        nvidiaBusId = "PCI:01:0:0";
+      };
 
       nvidiaSettings = true;
 

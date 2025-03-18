@@ -31,20 +31,13 @@ in {
         common-cpu-amd-pstate
         common-cpu-amd-zenpower
         common-cpu-amd-raphael-igpu
+        common-gpu-nvidia-sync
         ;
     });
 
+  hardware.nvidia.modesetting.enable = true;
   nixon.hosts.lyndon.nvidia = {
     enable = true;
-    modesetting.enable = true;
-    prime = {
-      enable = false;
-      # settings = {};
-    };
-    # powerManagement = {
-    #   enable = true;
-    #   finegrained = true;
-    # };
   };
 
   boot.loader = {
