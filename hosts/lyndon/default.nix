@@ -40,12 +40,6 @@ in {
     enable = true;
   };
 
-  boot.loader = {
-    systemd-boot.enable = true;
-  };
-
-  services.openssh.enable = true;
-
   environment = {
     variables = {
       # it's installed globally so make it global too

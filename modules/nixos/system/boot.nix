@@ -13,10 +13,14 @@ in {
   };
   config = lib.mkIf cfg.enable {
     boot = {
-      kernelPackages = lib.mkDefault pkgs.linuxPackages_6_12;
-      loader.systemd-boot = {
-        configurationLimit = 10;
+      loader = {
+        systemd-boot = {
+          enable = lib.mkDefault true;
+          configurationLimit = 10;
+        };
       };
+
+      kernelPackages = lib.mkDefault pkgs.linuxPackages_6_12;
     };
   };
 }
