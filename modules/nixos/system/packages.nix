@@ -12,6 +12,6 @@ in {
     enable = mkEnableOption "packages";
   };
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = builtins.attrValues pkgs.systemPackages;
+    environment.systemPackages = builtins.attrValues pkgs.nixon.systemPackages;
   };
 }

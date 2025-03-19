@@ -2,12 +2,12 @@
   inherit
     (pkgs.unstable)
     ;
-  inherit
-    (pkgs.nixon)
-    wezterm
-    jujutsu
-    git
-    ;
+  # inherit
+  #   (pkgs.nixon)
+  #   wezterm
+  #   jujutsu
+  #   git
+  #   ;
   inherit
     (pkgs)
     vim

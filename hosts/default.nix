@@ -14,7 +14,7 @@
           nixpkgs.hostPlatform = system;
           nixpkgs.overlays = [
             (self.lib.mkUnstableOverlay inputs)
-            self.overlays.all # add our packages
+            self.overlays.all
           ];
           nixon.core.enable = lib.mkDefault true; # enable our default config
           disko.enableConfig = lib.mkDefault (config.disko.devices != {});
