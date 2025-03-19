@@ -46,5 +46,6 @@
     nixosConfigurations = import ./hosts inputs;
     nixosModules = mkNixonDefault (import ./modules/nixos);
     inherit (import ./packages inputs) packages overlays devShells;
+    wrapperManagerModules = mkNixonDefault (import ./modules/wrapper-manager);
   };
 }
