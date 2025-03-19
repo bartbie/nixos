@@ -12,6 +12,7 @@
     ui = {
       default-command = "status";
       editor = "nvim";
+      pager = ":builtin";
     };
     aliases = let
       split = lib.flip lib.pipe [
