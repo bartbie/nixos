@@ -19,20 +19,38 @@ in {
     mkUnstableOverlay
     ;
 
+  findImportDirs = root: ignored: let
+    fs = lib.fileset;
+  in
+    lib.pipe root [
+      builtins.readDir
+      (lib.attrsets.filterAttrs (n: v: v == "directory" && !(lib.hasPrefix "_" n)))
+      builtins.attrNames
+      (builtins.map (d: root + /${d}/default.nix))
+      fs.unions
+      (fs.intersection (fs.fileFilter filterFnNonNix root))
+      (x: fs.difference x (fs.unions ignored))
+      fs.toList
+    ];
+
   findImports = this: ignore: let
     fs = lib.fileset;
     root = builtins.dirOf this;
     ignored = [this] ++ (lib.flatten ignore);
   in
-    fs.toList (fs.difference (fs.fileFilter filterFnNonNix root) (fs.unions ignored));
+    lib.pipe root [
+      (fs.fileFilter filterFnNonNix)
+      (x: fs.difference x (fs.unions ignored))
+      fs.toList
+    ];
 
-  eachSystemPkgsFull = inputs: eachSystemPkgs inputs [inputs.self.overlays._dependencies];
   boolToStringFlag = b:
     if b
     then "1"
     else "0";
 
   mkModprobeConfig = let
+    # TODO: this only adds `options`, either rename or expand
     at = lib.attrsets;
     concat = lib.flip lib.pipe [
       (lib.concatStringsSep " ")
