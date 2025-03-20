@@ -22,10 +22,7 @@
       url = "github:bartbie/nvim/rocks";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    wrapper-manager = {
-      url = "github:viperML/wrapper-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    wrapper-manager.url = "github:foo-dogsquared/nix-module-wrapper-manager-fds";
     systems.url = "github:nix-systems/default";
   };
 
