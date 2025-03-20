@@ -43,6 +43,12 @@
     nixosConfigurations = import ./hosts inputs;
     nixosModules = mkNixonDefault (import ./modules/nixos);
     inherit (import ./packages inputs) packages overlays devShells;
+    #
+    nixonLib = self.lib;
     wrapperManagerModules = mkNixonDefault (import ./modules/wrapper-manager);
+    _repl = {
+      inherit lib;
+      lib-unstable = inputs.nixpkgs-unstable.lib;
+    };
   };
 }
