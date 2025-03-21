@@ -1,6 +1,10 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   wrappers._TEMPLATE = {
-    basePackage = pkgs._TEMPLATE;
-    flags = [];
+    arg0 = lib.getExe' pkgs._TEMPLATE "_TEMPLATE";
+    prependArgs = [];
   };
 }

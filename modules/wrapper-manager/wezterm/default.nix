@@ -1,6 +1,10 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   wrappers.wezterm = {
-    basePackage = pkgs.unstable.wezterm;
+    arg0 = lib.getExe' pkgs.unstable.wezterm "wezterm";
     env.WEZTERM_CONFIG_FILE.value = "${./wezterm.lua}";
   };
 }

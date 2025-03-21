@@ -31,7 +31,8 @@
   };
 in {
   wrappers.jujutsu = {
-    basePackage = pkgs.unstable.jujutsu;
+    executableName = "jj";
+    arg0 = lib.getExe' pkgs.jujutsu "jj";
     env.JJ_CONFIG.value = "${generate "jujutsu-config.toml" config}";
   };
 }

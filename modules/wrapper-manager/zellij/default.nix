@@ -1,6 +1,10 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   wrappers.zellij = {
-    basePackage = pkgs.zellij;
+    arg0 = lib.getExe' pkgs.zellij "zellij";
     env.ZELLIJ_CONFIG_FILE.value = ./config.kdl;
   };
 }

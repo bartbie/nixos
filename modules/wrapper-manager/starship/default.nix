@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   inherit (pkgs.formats.toml {}) generate;
   withCount = s: "${s}\${count}";
   settings = {
@@ -108,7 +112,7 @@
   };
 in {
   wrappers.starship = {
-    basePackage = pkgs.starship;
+    arg0 = lib.getExe' pkgs.starship "starship";
     env.STARSHIP_CONFIG.value = "${generate "starship.toml" settings}";
   };
 }

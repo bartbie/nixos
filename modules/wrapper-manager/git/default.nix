@@ -13,7 +13,7 @@
   config-file = pkgs.writeText "gitconfig" (lib.generators.toGitINI config);
 in {
   wrappers.git = {
-    basePackage = pkgs.git;
+    arg0 = lib.getExe' pkgs.git "git";
     env.GIT_CONFIG_GLOBAL.value = config-file;
   };
 }
