@@ -25,6 +25,7 @@
         # Add modules that will are or will get disabled by default
         inputs.disko.nixosModules.disko
         inputs.impermanence.nixosModules.impermanence
+        inputs.wrapper-manager.nixosModules.wrapper-manager
       ];
       specialArgs = {
         inherit inputs;
