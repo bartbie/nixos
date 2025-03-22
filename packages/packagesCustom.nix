@@ -29,7 +29,7 @@
               mainProgram = cfg.wrappers.${name}.executableName;
             };
         });
-    modules = import ../modules/wrapper-manager/list.nix inputs;
+    modules = import (self.lib.modulesPath + /wrapper-manager/list.nix) inputs;
   in
     builtins.mapAttrs build modules;
 

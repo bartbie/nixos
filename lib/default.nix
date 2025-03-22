@@ -63,4 +63,6 @@ in {
       (at.mapAttrsToList (n: v: "options ${n} ${v}"))
       lib.concatLines
     ];
+
+  modulesPath = ../modules;
 }
