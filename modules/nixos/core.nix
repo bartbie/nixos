@@ -39,9 +39,10 @@ in {
       lsd.enable = tru;
 
       tmux.enable = tru;
-      zellij.enable = fal;
 
-      starship.enable = tru;
+      # zellij.enable = fal;
+      # starship.enable = tru;
+
       firefox.enable = tru;
 
       plasma5.enable = tru;
