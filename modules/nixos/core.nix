@@ -38,7 +38,7 @@ in {
       zoxide.enable = tru;
       lsd.enable = tru;
 
-      tmux.enable = tru;
+      # tmux.enable = tru;
 
       # zellij.enable = fal;
       # starship.enable = tru;
