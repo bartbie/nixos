@@ -30,7 +30,11 @@
       });
   };
 in {
-  packages = eachCallPackage ./packagesCustom.nix common-deps;
+  packages = eachCallPackage ./packagesCustom.nix (common-deps
+    ++ [
+      # this way wrappers can use each other
+      self.overlays.nixon
+    ]);
 
   overlays = {
     default = self.overlays.nixon;

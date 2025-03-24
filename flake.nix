@@ -47,7 +47,7 @@
     nixonLib = self.lib;
     wrapperManagerModules = mkNixonDefault (import ./modules/wrapper-manager);
     _repl = {
-      inherit lib;
+      inherit lib self;
       lib-unstable = inputs.nixpkgs-unstable.lib;
     };
   };
