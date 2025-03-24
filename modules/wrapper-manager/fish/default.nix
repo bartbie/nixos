@@ -26,16 +26,23 @@
     source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
   '';
 
+  kanagawa = pkgs.writeText "kanagawa.fish" (import ./kanagawa.nix inputs);
+
   config =
     writeVendorConf "bartbie_config.fish"
     # fish
     ''
+      source ${./load_plugin.fish}
       ${mapPlugins plugins}
 
       fenv source /etc/profile
 
       if status is-interactive
+          source ${./pushd_mod.fish}
+
           ${builtins.readFile ./interactive.fish}
+
+          source ${kanagawa}
 
           set -gx STARSHIP_CONFIG ${starship-config}
           ${lib.getExe pkgs.starship} init fish | source
@@ -48,10 +55,6 @@
 in {
   wrappers.fish = {
     arg0 = lib.getExe' pkgs.fish "fish";
-    xdg.dataDirs = wrapperManagerLib.getXdgDataDirs [
-      (writeVendorConf "load_plugin.fish" (builtins.readFile ./load_plugin.fish))
-      (writeVendorConf "kanagawa.fish" (builtins.readFile ./kanagawa.fish))
-      config
-    ];
+    xdg.dataDirs = wrapperManagerLib.getXdgDataDirs [config];
   };
 }
