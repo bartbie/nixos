@@ -2,12 +2,6 @@
   inherit
     (pkgs.unstable)
     ;
-  # inherit
-  #   (pkgs.nixon)
-  #   wezterm
-  #   jujutsu
-  #   git
-  #   ;
   inherit
     (pkgs)
     vim
@@ -38,11 +32,13 @@
     gnutar
     jq
     lazygit
+    lsd
     nnn
     ripgrep
     tldr
     erdtree
     which
+    zoxide
     # system call
     lsof # list open files
     ltrace # library call monitoring

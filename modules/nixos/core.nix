@@ -29,19 +29,11 @@ in {
     packages.enable = tru;
 
     programs = {
-      # git.enable = tru;
       fish = {
         enable = tru;
-        enable_vi_mode = tru;
       };
-      direnv.enable = tru;
-      zoxide.enable = tru;
-      lsd.enable = tru;
-
-      # tmux.enable = tru;
 
       # zellij.enable = fal;
-      # starship.enable = tru;
 
       firefox.enable = tru;
 
