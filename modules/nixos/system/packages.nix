@@ -24,7 +24,10 @@ in {
     environment.systemPackages = lib.optionals (cfg.system.enable) (builtins.attrValues pkgs.nixon.systemPackages);
     wrapper-manager = {
       packages.nixon = flake.wrapperManagerModules.default;
-      extraSpecialArgs = {inherit flake;};
+      extraSpecialArgs = {
+        inherit flake;
+        inherit (flake.lib) theme;
+      };
       enableInstall = cfg.wrapped.enable;
     };
   };

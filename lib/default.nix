@@ -1,4 +1,4 @@
-{lib}: let
+{lib} @ lib-inputs: let
   filterFnNonNix = f: (f.hasExt "nix") && !(lib.hasPrefix "_" f.name);
 
   mkUnstableOverlay = inputs: (final: _: {
@@ -65,4 +65,7 @@ in {
     ];
 
   modulesPath = ../modules;
+  libPath = ./.;
+
+  theme = import ./theme.nix lib-inputs;
 }

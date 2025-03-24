@@ -5,6 +5,7 @@
   self,
   ...
 } @ inputs: let
+  flake = self;
   wrapped = let
     # wrapper around wrapper-manager.lib.build that sets meta.mainProgram correctly
     build = name: mod: let
@@ -12,7 +13,10 @@
         (wrapper-manager.lib.eval {
           inherit pkgs;
           modules = lib.flatten mod;
-          specialArgs = {flake = self;};
+          specialArgs = {
+            inherit flake;
+            inherit (flake.lib) theme;
+          };
         })
         .config;
     in
