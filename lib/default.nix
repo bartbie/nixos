@@ -67,5 +67,5 @@ in {
   modulesPath = ../modules;
   libPath = ./.;
 
-  theme = import ./theme.nix lib-inputs;
+  theme = import ./theme lib-inputs;
 }
