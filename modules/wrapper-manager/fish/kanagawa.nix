@@ -4,25 +4,27 @@
   theme,
   ...
 }: let
+  inherit (theme.termcolors) simple;
   removeHash = lib.flip lib.pipe [
     (lib.splitString "#")
     lib.reverseList
     builtins.head
   ];
-  c = lib.mapAttrs (_: removeHash) theme.colors.by-name-flat;
+
+  c = lib.mapAttrsRecursive (_: removeHash) simple;
 in
   # fish
   ''
-    set -l foreground ${c."Bright White"}
-    set -l selection ${c."Blue"}
-    set -l comment ${c."Bright Black"}
-    set -l red ${c."Red"}
-    set -l orange ${c."Orange"}
-    set -l yellow ${c."Yellow"}
-    set -l green ${c."Green"}
-    set -l purple ${c."Magenta"}
-    set -l cyan ${c."Bright Cyan"}
-    set -l pink ${c."Pink"}
+    set -l foreground ${c.area.primary.fg}
+    set -l selection ${c.area.selection.bg}
+    set -l comment ${c.area.comment}
+    set -l red ${c.ansi.red}
+    set -l yellow ${c.ansi.yellow}
+    set -l green ${c.ansi.green}
+    set -l purple ${c.ansi.magenta}
+    set -l cyan ${c.brights.cyan}
+    set -l pink ${c.rest."Pink"}
+    set -l orange ${c.rest."Orange"}
 
     # Syntax Highlighting Colors
     set -gx fish_color_normal $foreground

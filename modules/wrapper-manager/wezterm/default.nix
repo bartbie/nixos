@@ -4,35 +4,36 @@
   theme,
   ...
 }: let
-  c = theme.colors.by-name-flat;
+  colors = let
+    inherit (theme.termcolors.simple) area lists indexed;
+    concat-indexed = lib.pipe indexed [
+      (builtins.mapAttrs (_: lib.strings.escapeNixString))
+      (pkgs.unstable.lib.concatMapAttrsStringSep ", " (n: v: "[${n}] = ${v}"))
+    ];
+  in
+    lib.generators.toLua {} {
+      foreground = area.primary.fg;
+      background = area.primary.bg;
 
-  concatCols = lib.flip lib.pipe [
-    (builtins.map lib.strings.escapeNixString)
-    (builtins.concatStringsSep ", ")
-  ];
+      cursor_bg = area.cursor.bg;
+      cursor_fg = area.cursor.fg;
+      cursor_border = area.cursor.border;
+
+      selection_bg = area.selection.bg;
+
+      split = area.split;
+      scrollbar_thumb = area.scrollbar.thumb;
+
+      ansi = lists.ansi;
+      brights = lists.brights;
+      indexed = lib.generators.mkLuaInline "{${concat-indexed}}";
+    };
 
   config =
     pkgs.writeText "wezterm.lua"
     #lua
     ''
-      local colors = {
-         foreground = "${c.foreground}",
-         background = "${c.background}",
-
-         cursor_bg = "${c.White}",
-         cursor_fg = "${c.White}",
-         cursor_border = "${c.White}",
-
-         selection_fg = "${c.White}",
-         selection_bg = "${c."selection background"}",
-
-         scrollbar_thumb = "${c.split}",
-         split = "${c.split}",
-
-         ansi = { ${concatCols theme.colors.list.ansi} },
-         brights = { ${concatCols theme.colors.list.brights} },
-         indexed = { [16] = "${c.Orange}", [17] = "${c."Peach Red"}" },
-      };
+      local colors = ${colors}
 
       local wezterm = require("wezterm");
       return {

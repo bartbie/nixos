@@ -1,4 +1,8 @@
-{lib, ...} @ inputs: let
+{
+  lib,
+  final,
+  ...
+} @ inputs: let
   /*
   color_01: '#090618'    # Black (Host)
   color_02: '#C34043'    # Red (Syntax string)
@@ -28,17 +32,66 @@
   colorWithId = hex: id: {inherit hex id;};
   color = hex: {inherit hex;};
 
+  # mapColors = fn:
+  #   lib.attrsets.mapAttrs (_: lib.attrsets.mapAttrs fn);
+  mapColors' = fn:
+    lib.attrsets.mapAttrs (_: lib.attrsets.mapAttrs' fn);
+
+  # flattenColors = lib.flip lib.pipe [
+  #   builtins.attrValues
+  #   (builtins.foldl' (acc: elem: acc // elem) {})
+  # ];
+
+  joinAB = as: as.ansi // as.brights;
+  pickAB = as: {inherit (as) ansi brights;};
+
+  # name -> "#hex"
+  mapHex = let
+    mapA = lib.flip lib.pipe [
+      (final.filterMapAttrsRecursive
+        (as: as ? "hex" -> (builtins.isAttrs as.hex))
+        (_: v: (v ? "hex"))
+        (_: v: v.hex))
+    ];
+  in
+    x:
+      if builtins.isAttrs x
+      then (mapA {inherit x;}).x or {}
+      else builtins.map mapHex x;
+
+  mapHex' = let
+    mapA = lib.flip lib.pipe [
+      (final.filterMapAttrsRecursive
+        (as: as ? "hex" -> (builtins.isAttrs as.hex))
+        (_: _: true)
+        (_: v:
+          if (v ? "hex")
+          then v.hex
+          else v))
+    ];
+  in
+    x:
+      if builtins.isAttrs x
+      then (mapA {inherit x;}).x or {}
+      else builtins.map mapHex x;
+
   colorsToList = lib.flip lib.pipe [
-    lib.attrsToList
-    (builtins.map (x: {
-      inherit (x) value;
-      name = lib.toInt x.name;
-    }))
-    (builtins.sort (x: y: x.name < y.name))
-    (builtins.map (x: x.value))
+    builtins.attrValues
+    (builtins.sort (x: y: x.id < y.id))
+    mapHex
   ];
 
-  _all = {
+  mapFGBG = {
+    fg ? null,
+    bg ? null,
+    ...
+  }:
+    lib.mergeAttrsList [
+      (lib.optionalAttrs (fg != null) {foreground = fg;})
+      (lib.optionalAttrs (bg != null) {background = bg;})
+    ];
+
+  raw = {
     ansi = {
       Black = colorWithId "#090618" 1;
       Red = colorWithId palette.autumnRed 2;
@@ -59,43 +112,66 @@
       "Bright Cyan" = colorWithId palette.waveAqua2 15;
       "Bright White" = colorWithId palette.fujiWhite 16;
     };
-    # stuff that idk if should have id used by terminals etc
+    indexed = {
+      "16" = raw.rest.Orange;
+      "17" = raw.rest."Peach Red";
+    };
+    area = {
+      primary = {
+        bg = color palette.sumiInk3;
+        fg = raw.brights."Bright White";
+      };
+      selection = {
+        bg = color palette.waveBlue1;
+      };
+      cursor = {
+        bg = raw.ansi.White;
+        fg = raw.ansi.White;
+        border = raw.ansi.White;
+      };
+      comment = raw.brights."Bright Black";
+      split = color palette.sumiInk0;
+      scrollbar = {
+        thumb = raw.area.split;
+      };
+    };
     rest = {
       "Orange" = color palette.surimiOrange;
       "Pink" = color palette.sakuraPink;
       "Peach Red" = color palette.peachRed;
-      "selection background" = color palette.waveBlue1;
-      "split" = color palette.sumiInk0;
-      background = color palette.sumiInk3;
-      foreground = _all.brights."Bright White";
     };
   };
-  mapColors = fn:
-    lib.attrsets.mapAttrs (_: lib.attrsets.mapAttrs fn);
-  mapColors' = fn:
-    lib.attrsets.mapAttrs (_: lib.attrsets.mapAttrs' fn);
 
-  flattenColors = lib.flip lib.pipe [
-    builtins.attrValues
-    (builtins.foldl' (acc: elem: acc // elem) {})
-  ];
-
-  colors = {
-    inherit _all;
-    _without-rest = _all.ansi // _all.brights;
-
-    by-name = mapColors (_: v: v.hex) _all;
-    by-index = mapColors' (n: v: lib.nameValuePair (builtins.toString v.id) v.hex) {inherit (_all) ansi brights;};
-    by-name-flat = flattenColors colors.by-name;
-    by-index-flat = flattenColors colors.by-index;
-    list = lib.attrsets.mapAttrs (_: colorsToList) colors.by-index;
+  termcolors = {
+    inherit raw;
+    simple = lib.mergeAttrsList [
+      termcolors.hex
+      {inherit (termcolors.ab) lists;}
+      (mapHex' termcolors.ab.renamed)
+    ];
+    hex = mapHex' termcolors.raw;
+    ab = {
+      joined = joinAB termcolors.raw;
+      by-index = mapColors' (name: v: lib.nameValuePair (builtins.toString v.id) (v // {inherit name;})) (pickAB termcolors.raw);
+      lists = lib.attrsets.mapAttrs (_: colorsToList) (pickAB termcolors.raw);
+      renamed = let
+        rename = lib.flip lib.pipe [
+          (lib.strings.splitString " ")
+          final.last
+          lib.toLower
+        ];
+      in
+        mapColors' (n: v: lib.nameValuePair (rename n) v) (pickAB termcolors.raw);
+    };
   };
 in {
   inherit
-    mapColors
+    mapFGBG
+    joinAB
+    pickAB
+    mapHex
     mapColors'
-    flattenColors
-    colors
+    termcolors
     palette
     ;
 }
