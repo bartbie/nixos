@@ -9,7 +9,7 @@
     gcc
     wget
     ## gui
-    discord
+    discord-canary
     spotify
     telegram-desktop
     ## rest
