@@ -28,6 +28,28 @@
 
   kanagawa = pkgs.writeText "kanagawa.fish" (import ./kanagawa.nix inputs);
 
+  zellij-hook = let
+    zel = lib.getExe' pkgs.nixon.zellij "zellij";
+  in
+    #fish
+    ''
+      if not set -q TMUX
+        set ZJ_SESSIONS (${zel} list-sessions)
+        set NO_SESSIONS (echo "$ZJ_SESSIONS" | wc -l)
+        if not set -q ZELLIJ
+          if test $NO_SESSIONS -ge 2
+            ${zel} attach (echo "$ZJ_SESSIONS" | ${lib.getExe' pkgs.skim "skim"})
+          else
+            ${zel} attach -c
+          end
+
+          if test "$ZELLIJ_AUTO_EXIT" = "true"
+            kill $fish_pid
+          end
+        end
+      end
+    '';
+
   config =
     writeVendorConf "bartbie_config.fish"
     # fish
@@ -50,6 +72,8 @@
           set -gx DIRENV_LOG_FORMAT "" # disables direnv logging
           set -gx direnv_config_dir ${direnv-config}
           ${lib.getExe pkgs.direnv} hook fish | source
+
+          ${zellij-hook}
       end
     '';
 in {
