@@ -174,4 +174,5 @@ in {
     termcolors
     palette
     ;
+  tm-theme = import ./tmtheme.nix inputs;
 }
