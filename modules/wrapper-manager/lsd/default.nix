@@ -9,6 +9,7 @@
   };
 in {
   wrappers = {
+    lsd = mkLsd [];
     ls = mkLsd [];
     lsa = mkLsd ["-a"];
     ll = mkLsd ["-l"];

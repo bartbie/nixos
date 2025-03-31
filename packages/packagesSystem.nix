@@ -22,7 +22,6 @@
     alejandra
     nix-output-monitor
     # utils
-    bat
     fastfetch
     file
     fzf
@@ -32,11 +31,9 @@
     gnutar
     jq
     lazygit
-    lsd
     nnn
     ripgrep
     tldr
-    erdtree
     which
     zoxide
     # system call

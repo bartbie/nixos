@@ -3,11 +3,11 @@
   lib,
   ...
 }: let
-  mkErd = prependArgs: {
+  mkErdNoDef = prependArgs: {
     arg0 = lib.getExe' pkgs.erdtree "erd";
     inherit prependArgs;
   };
-  mkErd' = args: mkErd (lib.flatten [default args]);
+  mkErd = args: mkErdNoDef (lib.flatten [default args]);
 
   default = [
     "--suppress-size"
@@ -25,9 +25,10 @@
   depth-2 = ["-L" "2"];
 in {
   wrappers = {
-    tree = mkErd default;
-    treeh = mkErd' [show-hidden];
-    tre = mkErd' [depth-2];
-    treh = mkErd' [show-hidden depth-2];
+    erd = mkErdNoDef [];
+    tree = mkErdNoDef default;
+    treeh = mkErd [show-hidden];
+    tre = mkErd [depth-2];
+    treh = mkErd [show-hidden depth-2];
   };
 }
