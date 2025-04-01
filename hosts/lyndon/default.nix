@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  inputs,
+  flake,
   ...
 }: {
   imports =
@@ -13,7 +13,7 @@
     ]
     ++ (builtins.attrValues {
       inherit
-        (inputs.hardware.nixosModules)
+        (flake.inputs.hardware.nixosModules)
         common-pc-ssd
         common-hidpi
         common-cpu-amd

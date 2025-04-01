@@ -3,9 +3,10 @@
   lib,
   pkgs,
   options,
-  inputs,
+  flake,
   ...
 }: let
+  inherit (flake) inputs;
   inherit (lib) mkEnableOption mkPackageOption mkOption;
   cfg = config.nixon.nix;
   mkEnableOptionTrue = x: (mkEnableOption x) // {default = true;};

@@ -28,7 +28,6 @@
         inputs.wrapper-manager.nixosModules.wrapper-manager
       ];
       specialArgs = {
-        inherit inputs;
         flake = self;
       };
     };
