@@ -2,27 +2,41 @@
 
 ## Architecture
 
-`flake.nix` - obv the entrypoint, but mostly used as a place to declare inputs
+`flake.nix` - obv the entrypoint, but mostly used as a place to declare inputs.
 
-`hosts/` - host-specific configs
+`lib/` - flake's library, independent of `pkgs`.
 
-`modules/` - reusable host-agnostic modules
+`hosts/` - host-specific configs.
 
-`packages/` - reusable host-agnostic repackaged wrappers
+`modules/` - reusable host-agnostic modules split based on respective environments.
 
-### Avoid overlays
-They add eval perf cost, we can import them via module system or flake exports if needed.
-<!-- ### No overlays except unstable -->
-<!-- All packages are re-exported using nixosModules, so no point using overlay. -->
-<!---->
-<!-- The only exception is nixpkgs-unstable. -->
+`packages/` - `outputs.{packages, overlays, devShells}`
+
+`scripts/` - custom programs and scripts.
+
+
+### Wrapped packages
+Virtually all package configurations are defined as standalone wrappers via [wrapper-manager-fds](https://github.com/foo-dogsquared/nix-module-wrapper-manager-fds).
+
+Those are then loaded by `nixos` modules, flake's `packages`, `overlays` and `devShells`.
+
 
 ### Modules Optionality
-All modules are imported for each host - optional modules need to be declared disabled by default.
+Each hosts imports `outputs.nixosModules.nixon` and enables `nixon.core` by default.
 
-This arch makes it easy to enable new stuff for specific host, just modify it's file.
+Besides that, almost all modules are declared disabled by default.
+
 
 ### Special args
-Inputs are passed to each host.
+The flake itself (`self`) is also passed as `flake` to make code reuse easier.
 
-The flake itself is also passed as `self` to make module importing easier.
+Nixon's lib also provides its own `modulesPath` if needed;
+
+`wrapper-manager` environment gets passed `lib.theme` as `theme` to make color-scheme configuring shorter;
+
+
+## Disko & Impermanence
+
+By default Impermanence is disabled; this can be configured via `nixon.impermanence`.
+
+Disko will get enabled for a host if any devices are defined under its environment.
