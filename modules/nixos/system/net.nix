@@ -22,5 +22,6 @@ in {
     };
     # slows down boot time
     systemd.services.NetworkManager-wait-online.enable = false;
+    programs.ssh.startAgent = lib.mkDefault true;
   };
 }
