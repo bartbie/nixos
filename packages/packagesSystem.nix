@@ -4,9 +4,9 @@
     ;
   inherit
     (pkgs)
-    vim
     bartbie-nvim-nightly
     gcc
+    vim
     wget
     ## gui
     discord-canary
@@ -34,6 +34,7 @@
     nnn
     ripgrep
     tldr
+    tokei
     which
     zoxide
     # system call
