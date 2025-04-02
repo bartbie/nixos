@@ -75,31 +75,41 @@ in {
       files = [
         "/etc/machine-id"
       ];
-      users.bartbie = {
+      users.bartbie = let
+        state = x: ".local/state/${x}";
+        share = x: ".local/share/${x}";
+        cache = x: ".cache/${x}";
+        conf = x: ".config/${x}";
+      in {
         directories = [
           "Downloads"
           "Projects"
+          /*
+          we will keep this stuff in Eternal/
+          "Music"
+          "Pictures"
+          "Documents"
+          "Videos"
+          */
           "Eternal"
-          # we will keep this stuff in Eternal/
-          # "Music"
-          # "Pictures"
-          # "Documents"
-          # "Videos"
-          "VirtualBox VMs"
+
+          # "VirtualBox VMs"
+          ".mozilla"
+          ".cargo"
+          "./tldrc/tldr"
           (withMode ".gnupg" "0700")
           (withMode ".ssh" "0700")
           (withMode ".nixops" "0700")
-          (withMode ".local/share/keyrings" "0700")
-          ".local/share/direnv"
-          ".mozilla"
-          ".cargo"
-          ".local/share/nvim"
-          ".local/state/nvim"
-          ".config/discord"
-          "./tldrc/tldr"
+          # look ma, it's lisp
+          (withMode (share "keyrings") "0700")
+          (share "direnv")
+          (share "nvim")
+          (state "nvim")
+          (conf "discord")
+          (cache "bat")
         ];
         files = [
-          ".local/share/fish/fish_history"
+          (share "fish/fish_history")
         ];
       };
     };
