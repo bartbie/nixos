@@ -24,7 +24,7 @@
   };
 in {
   wrappers.alacritty = {
-    arg0 = lib.getExe' pkgs.alacritty "alacritty";
+    arg0 = lib.getExe' pkgs.unstable.alacritty "alacritty"; # FIX: alacritty 0.15 fixes https://github.com/alacritty/alacritty/issues/8385
     prependArgs = [
       "--config-file"
       ((pkgs.formats.toml {}).generate "alacritty.toml" config)
