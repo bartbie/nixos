@@ -1,96 +1,43 @@
-# configuration.nix(5) man page
-# https://search.nixos.org/options
-# NixOS manual (`nixos-help`).
 {
   config,
   lib,
   pkgs,
-  options,
+  flake,
   ...
-} @ inputs: let
-  is-vm = options ? virtualisation.memorySize;
-  shared-aliases = {
-    vim = "nvim";
-  };
-in {
-  imports = [
-    ./disko.nix
-    ./nvidia.nix
-    ./hardware-configuration.nix
-    ../../common/system/programs/fish.nix
-    ../../common/system/programs/pipewire.nix
-    # ../../common/system/programs/hyprland.nix
-    ../../common/system/programs/plasma5.nix
-  ];
+}: {
+  imports =
+    [
+      ./disko.nix
+      ./hardware-configuration.nix
+      ./nvidia.nix
+    ]
+    ++ (builtins.attrValues {
+      inherit
+        (flake.inputs.hardware.nixosModules)
+        common-pc-ssd
+        common-hidpi
+        common-cpu-amd
+        common-cpu-amd-pstate
+        common-cpu-amd-zenpower
+        common-cpu-amd-raphael-igpu
+        common-gpu-nvidia-sync
+        ;
+    });
 
-  # mine.nvidia.enable = true;
+  nixon.impermanence.enable = true;
 
-  boot.loader = {
-    systemd-boot.enable = true;
-    # grub = {
-    #   enable = true;
-    #   device = "nodev";
-    #   efiSupport = true;
-    #   useOSProber = true;
-    # };
-    # efi = {
-    #   canTouchEfiVariables = true;
-    # };
-  };
-
-  networking.hostName = "lyndon";
-
-  networking.networkmanager.enable = true;
-  hardware.bluetooth = {
+  hardware.nvidia.modesetting.enable = true;
+  nixon.hosts.lyndon.nvidia = {
     enable = true;
-    powerOnBoot = true;
   };
-
-  time.timeZone = "Europe/Copenhagen";
-  i18n.defaultLocale = "en_US.UTF-8";
-  services.xserver.enable = true;
-
-  # Enable CUPS to print documents.
-  services.printing.enable = false;
-
-  services.openssh.enable = true;
-
-  # sound.enable = true;
-  # hardware.pulseaudio.enable = true;
-
-  programs.fuse.userAllowOther = true;
-  # Don't forget to set a password with ‘passwd’.
-  users.users.bartbie = {
-    isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager"]; # Enable ‘sudo’ for the user.
-    initialPassword = "1";
-  };
-
-  nix.settings.experimental-features = "nix-command flakes";
-  environment.systemPackages = with pkgs; [
-    vim
-    gcc
-    git
-    wget
-    mine.scripts.rebuild
-    mine.scripts.home-export
-    mine.bartbie-nvim
-  ];
 
   environment = {
     variables = {
       # it's installed globally so make it global too
       EDITOR = "nvim";
     };
-    shellAliases = shared-aliases;
+    shellAliases = {
+      vim = "nvim";
+    };
   };
-
-  # Copy the NixOS configuration file and link it from the resulting system (/run/current-system/configuration.nix).
-  # NOTE: flakes can't be pure with this
-  system.copySystemConfiguration = false;
-
-  # first version of NixOS installed.
-  # DO NOT CHANGE.
-  # see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "23.11"; # Did you read the comment?
 }

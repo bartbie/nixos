@@ -58,6 +58,7 @@
     };
   };
 in {
+  disko.enableConfig = true;
   disko.devices = {
     disk.disk0 = {
       device = lib.mkDefault "/dev/nvme0n1";
