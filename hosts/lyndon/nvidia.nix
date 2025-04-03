@@ -65,7 +65,7 @@ in {
     };
 
     # Set environment variables related to NVIDIA graphics
-    environment.variables = {
+    environment.sessionVariables = {
       # Required to run the correct GBM backend for nvidia GPUs on wayland
       GBM_BACKEND = "nvidia-drm";
       # Apparently, without this nouveau may attempt to be used instead
