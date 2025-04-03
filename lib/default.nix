@@ -118,6 +118,23 @@
         (lib.mkIf cond x)
         (lib.mkIf (!cond) y)
       ];
+
+    nullOr = val: def:
+      if val != null
+      then val
+      else def;
+
+    ifLet = pat: v:
+      final.nullish (lib.attrsets.matchAttrs pat v) v;
+
+    match = v: l: let
+      second = x: builtins.elemAt x 1;
+      matches = pair: lib.attrsets.matchAttrs (builtins.head pair) (second pair);
+    in
+      lib.pipe l [
+        (lib.lists.findFirst matches null)
+        (lib.mapNullable second)
+      ];
   };
 in
   final
