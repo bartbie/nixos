@@ -32,8 +32,8 @@ in {
     programs = {
       fish.enable = tru;
       firefox.enable = tru;
-      plasma5.enable = tru;
-      hypr.enable = fal;
+      plasma5.enable = fal;
+      hypr.enable = tru;
     };
   };
 }
