@@ -6,6 +6,7 @@
   ...
 }: let
   manual = {
+    hypr = ./hypr;
   };
 in
   {

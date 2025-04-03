@@ -12,6 +12,10 @@ in {
     enable = mkEnableOption "hypr";
   };
   config = lib.mkIf cfg.enable {
-    programs.hyprland.enable = true;
+    programs.hyprland = {
+      enable = true;
+      package = pkgs.nixon.Hyprland;
+      withUWSM = true;
+    };
   };
 }
