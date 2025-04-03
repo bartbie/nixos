@@ -1,3 +1,4 @@
+# TODO: split lib into smaller files
 {lib}: let
   lib-inputs = {inherit lib final;};
 
@@ -69,6 +70,7 @@
 
     modulesPath = ../modules;
     libPath = ./.;
+    scriptsPath = ../scripts;
 
     theme = import ./theme lib-inputs;
 
@@ -109,6 +111,12 @@
           ))
         )
         (lib.filterAttrsRecursive (n: v: !(marked v)))
+      ];
+
+    mkIfElse = cond: x: y:
+      lib.mkMerge [
+        (lib.mkIf cond x)
+        (lib.mkIf (!cond) y)
       ];
   };
 in
