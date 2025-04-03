@@ -24,7 +24,7 @@ in {
         bartbie = lib.mkIf cfg.bartbie.enable {
           hashedPasswordFile = lib.mkIf cfg.bartbie.useHashedPasswordFile "/persist/secrets/bartbie";
           isNormalUser = true;
-          initialPassword = "1";
+          initialPassword = lib.mkIf (!cfg.bartbie.useHashedPasswordFile) "1";
           uid = 1000;
           extraGroups = [
             "wheel"
@@ -37,6 +37,20 @@ in {
           ];
         };
       };
+    };
+    security = let
+      mapCmds = options:
+        builtins.map (cmd: {
+          inherit options;
+          command = "/run/current-system/sw/bin/${cmd}";
+        });
+    in {
+      sudo.extraRules = [
+        {
+          commands = mapCmds ["NOPASSWD"] ["poweroff" "reboot"];
+          groups = ["wheel"];
+        }
+      ];
     };
   };
 }
