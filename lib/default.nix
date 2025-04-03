@@ -68,12 +68,6 @@
         lib.concatLines
       ];
 
-    modulesPath = ../modules;
-    libPath = ./.;
-    scriptsPath = ../scripts;
-
-    theme = import ./theme lib-inputs;
-
     nullish = cond: x:
       if cond
       then x
@@ -135,6 +129,13 @@
         (lib.lists.findFirst matches null)
         (lib.mapNullable second)
       ];
+
+    modulesPath = ../modules;
+    libPath = ./.;
+    scriptsPath = ../scripts;
+
+    theme = import ./theme lib-inputs;
+    systemd = import ./systemd.nix lib-inputs;
   };
 in
   final
