@@ -70,6 +70,7 @@ in {
       packages.enable = tru;
 
       programs = {
+        kanata.enable = mk true {};
         fish.enable = mk true {};
         firefox.enable = mk true {};
         hypr.enable = mk true {disableDarwin = true;};

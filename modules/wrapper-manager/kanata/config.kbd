@@ -1,0 +1,29 @@
+;; vim: set ft=racket:
+;; it's not racket but i just need hl and comments
+
+(defcfg process-unmapped-keys yes)
+
+(defsrc
+  ;; fn + esc = grv
+  ;; fn + num = F<num>
+  esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc del
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \    pgup
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret       pgdn
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft      up   ;;fn
+  lctl lmet lalt           spc            ralt rctl           lft  down rght)
+
+
+(deflayer base
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _         _
+  _    _    _    _    _    _    _    _    _    _    _    _         _
+  _    _    _              _              _    _              _    _    _)
+
+
+;; (deflayer empty
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _         _
+;;   _    _    _    _    _    _    _    _    _    _    _    _         _
+;;   _    _    _              _              _    _              _    _    _)
