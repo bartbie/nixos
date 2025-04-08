@@ -14,6 +14,7 @@
       set-option -sa terminal-features ',*:RGB'
       set -g status-keys vi
       set -g mode-keys vi
+      # start new session if trying to attaching while none
       new-session
       set -s escape-time 10
       setw -g clock-mode-style 24
@@ -21,6 +22,7 @@
       setw -g pane-base-index 1
       set-option -g renumber-windows on
       set -s set-clipboard on
+      set -g default-command "''${SHELL}"
     '';
   mapPlugins = lib.flip lib.pipe [
     (map (plugin: "run-shell ${plugin.rtp}"))
