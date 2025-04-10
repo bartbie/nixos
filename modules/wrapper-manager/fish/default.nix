@@ -31,14 +31,15 @@
   zellij-hook = let
     zel = lib.getExe' pkgs.nixon.zellij "zellij";
   in
-    #fish
+    # fish
     ''
       if not set -q TMUX
         set ZJ_SESSIONS (${zel} list-sessions)
         set NO_SESSIONS (echo "$ZJ_SESSIONS" | wc -l)
-        if not set -q ZELLIJ
+        # ignore when no GUI
+        if not set -q ZELLIJ; and set -q DISPLAY
           if test $NO_SESSIONS -ge 2
-            ${zel} attach (echo "$ZJ_SESSIONS" | ${lib.getExe' pkgs.skim "skim"})
+            ${zel} attach $(echo "$ZJ_SESSIONS" | ${lib.getExe' pkgs.skim "skim"})
           else
             ${zel} attach -c
           end
@@ -46,6 +47,23 @@
           if test "$ZELLIJ_AUTO_EXIT" = "true"
             kill $fish_pid
           end
+        end
+      end
+    '';
+
+  tmux-hook = let
+    tmux = lib.getExe' pkgs.nixon.tmux "tmux";
+  in
+    # fish
+    ''
+      set TMUX_SESSIONS (${tmux} list-sessions)
+      set NO_SESSIONS (echo "$TMUX_SESSIONS" | wc -l)
+      # ignore when no GUI
+      if not set -q TMUX; and set -q DISPLAY
+        if test $NO_SESSIONS -ge 2
+          ${tmux} attach $(echo "$TMUX_SESSIONS" | ${lib.getExe' pkgs.skim "skim"})
+        else
+          ${tmux} new -A
         end
       end
     '';
@@ -73,7 +91,7 @@
           set -gx direnv_config_dir ${direnv-config}
           ${lib.getExe pkgs.direnv} hook fish | source
 
-          ${zellij-hook}
+          ${tmux-hook}
       end
     '';
 in {
