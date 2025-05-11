@@ -12,11 +12,29 @@
   lsft z    x    c    v    b    n    m    ,    .    /    rsft      up   ;;fn
   lctl lmet lalt           spc            ralt rctl           lft  down rght)
 
+(deftemplate smart-shift-tap-hold (tt ht sh tap hold)
+    (switch
+        ;; shift hold before = $sh
+        ((or lsft rsft)) $sh break
+
+        ;; tap = $tap
+        ;; hold + <key> = $hold + <key>
+        ;; hold after timeout = $tap
+        () (tap-hold-press-timeout $tt $ht $tap $hold $tap) break))
+
+(defvar
+    hyper lmet
+    timeout 300)
+
+
+(defalias
+  HPR (t! smart-shift-tap-hold $timeout $timeout caps esc $hyper))
+  ;; HPR hyper)
 
 (deflayer base
   _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _         _
+  @HPR _    _    _    _    _    _    _    _    _    _    _    _         _
   _    _    _    _    _    _    _    _    _    _    _    _         _
   _    _    _              _              _    _              _    _    _)
 
@@ -26,4 +44,4 @@
 ;;   _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
 ;;   _    _    _    _    _    _    _    _    _    _    _    _    _         _
 ;;   _    _    _    _    _    _    _    _    _    _    _    _         _
-;;   _    _    _              _              _    _              _    _    _)
+;;   _    _    _              _              _    _              _    _   )
