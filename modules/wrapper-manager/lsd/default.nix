@@ -15,4 +15,5 @@ in {
     ll = mkLsd ["-l"];
     la = mkLsd ["-la"];
   };
+  nixon.standalonePackages = ["lsd" "ls"];
 }

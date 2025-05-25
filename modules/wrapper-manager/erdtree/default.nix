@@ -23,12 +23,16 @@
   ];
   # depth limit 2
   depth-2 = ["-L" "2"];
+
+  erd = mkErdNoDef [];
 in {
   wrappers = {
-    erd = mkErdNoDef [];
+    inherit erd;
+    erdtree = erd;
     tree = mkErdNoDef default;
     treeh = mkErd [show-hidden];
     tre = mkErd [depth-2];
     treh = mkErd [show-hidden depth-2];
   };
+  nixon.standalonePackages = ["erdtree" "tree"];
 }
