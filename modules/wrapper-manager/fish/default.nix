@@ -22,10 +22,6 @@
 
   starship-config = (pkgs.formats.toml {}).generate "starship.toml" (import ./starship.nix inputs);
 
-  direnv-config = pkgs.writeTextDir "direnvrc" ''
-    source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
-  '';
-
   kanagawa = pkgs.writeText "kanagawa.fish" (import ./kanagawa.nix inputs);
 
   zellij-hook = let
@@ -87,9 +83,7 @@
           set -gx STARSHIP_CONFIG ${starship-config}
           ${lib.getExe pkgs.starship} init fish | source
 
-          set -gx DIRENV_LOG_FORMAT "" # disables direnv logging
-          set -gx direnv_config_dir ${direnv-config}
-          ${lib.getExe pkgs.direnv} hook fish | source
+          ${lib.getExe pkgs.nixon.direnv} hook fish | source
 
           ${tmux-hook}
       end

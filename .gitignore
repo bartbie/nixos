@@ -2,3 +2,4 @@
 nixos-switch.log
 result*
 home-files
+.direnv
