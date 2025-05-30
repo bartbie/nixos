@@ -89,8 +89,13 @@
       end
     '';
 in {
-  wrappers.fish = {
-    arg0 = lib.getExe' pkgs.fish "fish";
+  wrappers.fish = let
+    # TODO: remove after fixed upstream
+    pkg = pkgs.unstable.fish.overrideAttrs (old: {
+        patches = old.patches ++ [./4f46d369c4e9d7ea2f76290c6cb3a0882014eb4a.patch];
+    });
+  in {
+    arg0 = lib.getExe' pkg "fish";
     xdg.dataDirs = wrapperManagerLib.getXdgDataDirs [config];
   };
 }
