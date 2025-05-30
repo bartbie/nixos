@@ -496,11 +496,11 @@
     },
     "wrapper-manager": {
       "locked": {
-        "lastModified": 1742274317,
-        "narHash": "sha256-AJhEE9IQGy+e+2M0sgcXkUyK6jzgzb9gfNXTpr08rUA=",
+        "lastModified": 1749790041,
+        "narHash": "sha256-bVy0CsQgulYr/s3E+ZDugb7ITAKvCJ9EYhCldhaZRDc=",
         "owner": "foo-dogsquared",
         "repo": "nix-module-wrapper-manager-fds",
-        "rev": "f8bbdc93a239f0f28d8cbe73ce03810952fdad04",
+        "rev": "220337d8c5409826e1f995ab8db81912f205f42f",
         "type": "github"
       },
       "original": {

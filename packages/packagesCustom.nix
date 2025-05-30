@@ -8,76 +8,97 @@
   flake = self;
   wrapped = let
     modules = flake.wrapperManagerModules;
-    # stage 1 - we eval modules and add filenames
 
-    # wrapper around eval that extracts needed data
-    eval = mod: let
-      cfg =
-        (wrapper-manager.lib.eval {
-          inherit pkgs;
-          modules = lib.flatten [mod modules.options];
-          specialArgs = {
-            inherit flake;
-            inherit (flake.lib) theme;
-          };
-        })
-        .config;
-    in {
-      inherit (cfg) wrappers;
-      inherit (cfg.build) toplevel;
-      extraWrappersNames = cfg.nixon.standalonePackages;
-    };
+    # mod -> wrapper
+    buildBaseWrapper = mod:
+      lib.makeOverridable (
+        overrideArgs: let
+          cfg =
+            (wrapper-manager.lib.eval {
+              inherit pkgs;
+              specialArgs = {
+                inherit flake;
+                inherit (flake.lib) theme;
+                overrideArgs = builtins.removeAttrs overrideArgs ["wrapperArgs"];
+                wrapperArgs = overrideArgs.wrapperArgs or {};
+              };
+              modules = lib.flatten [mod modules.options];
+            })
+            .config;
+        in
+          (cfg
+            .build
+            .toplevel
+            .overrideAttrs
+            cfg.nixon.overrideAttrs)
+          .overrideAttrs (prev: {
+            passthru =
+              prev.passthru
+              // {
+                nixon = {
+                  inherit (cfg) wrappers;
+                  extraWrappersNames = cfg.nixon.standalonePackages;
+                };
+              };
+          })
+      ) {};
 
-    evalAttrsToList = lib.flip lib.pipe [
-      (builtins.mapAttrs (filename: mod: {inherit filename;} // (eval mod)))
-      builtins.attrValues
-    ];
-
-    # stage 2 - we add extra wrappers by converting a wrapper to a list with extras
-
-    assertName = name: wrappers: lib.assertMsg (builtins.elem name (builtins.attrNames wrappers)) "name is not in wrappers!";
-
-    # sets correct meta.mainProgram and names
-    overrideName = name: {
-      wrappers,
-      toplevel,
-      ...
+    # picks subwrapper by its pname and sets correct metadata, including meta.mainProgram
+    # {wrapper, subwrapper} -> drv
+    pickSubwrapper = {
+      base,
+      subwrapper,
     }:
-      assert assertName name wrappers;
-        toplevel
-        .overrideAttrs (final: prev: {
-          pname = name;
+      base
+      .overrideAttrs (final: prev:
+        {
+          pname = subwrapper.pname;
+          executableName = subwrapper.executableName;
+        }
+        // (flake.lib.optionalAttr "version" subwrapper)
+        // {
+          name =
+            if final ? version
+            then "${final.pname}-${final.version}"
+            else final.pname;
+          passthru = lib.recursiveUpdate (prev.passthru or {}) {nixon.baseWrapper = base;};
           meta =
             lib.recursiveUpdate (prev.meta or {})
             {
               name = final.pname;
-              mainProgram = wrappers.${name}.executableName;
+              mainProgram = final.executableName;
             };
         });
 
-    convertWrapperToList = {
-      filename,
-      extraWrappersNames,
-      ...
-    } @ args: let
+    # given name, evals wm module to a list of wrappers
+    # name -> mod -> [drv]
+    buildWrappers = name: mod: let
+      assertNameInWrappers = name: wrappers: lib.assertMsg (builtins.elem name (builtins.attrNames wrappers)) "name is not in wrappers!\nname:${name}\nwrappers:${builtins.toString (builtins.attrNames wrappers)}";
+
+      base-wrapper = buildBaseWrapper mod;
+      inherit (base-wrapper.passthru.nixon) wrappers extraWrappersNames;
+
       # if it's null (default), use filename, otherwise use list
-      names = flake.lib.nullOr extraWrappersNames [filename];
+      names = flake.lib.nullOr extraWrappersNames [name];
     in
-      builtins.map (name: {
-        inherit name;
-        value = overrideName name args;
-      })
-      names;
+      lib.forEach names (name:
+        assert assertNameInWrappers name wrappers;
+          pickSubwrapper {
+            base = base-wrapper;
+            subwrapper = wrappers.${name} // {pname = name;};
+          });
 
-    # stage 3 - flatten and convert everything to a attrs for consumption
-
-    flattenToAttrs = list: builtins.listToAttrs (lib.flatten list);
+    # evals attrsOf wm modules
+    # {modname -> modules} -> {pname -> drv}
+    evalWrapperImports = attr:
+      lib.pipe attr [
+        (lib.mapAttrsToList buildWrappers)
+        lib.flatten
+        (builtins.map (x: lib.nameValuePair x.pname x))
+        builtins.listToAttrs
+      ];
   in
-    lib.pipe modules.list-flat [
-      evalAttrsToList
-      (builtins.map convertWrapperToList)
-      flattenToAttrs
-    ];
+    evalWrapperImports modules.list-flat;
 
   scripts = {};
 in

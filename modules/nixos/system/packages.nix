@@ -23,7 +23,7 @@ in {
     ];
     environment.systemPackages = lib.optionals (cfg.system.enable) (builtins.attrValues pkgs.nixon.systemPackages);
     wrapper-manager = {
-      packages = flake.wrapperManagerModules.list-flat;
+      packages = flake.wrapperManagerModules.list.base;
       sharedModules = [flake.wrapperManagerModules.options];
       extraSpecialArgs = {
         inherit flake;
