@@ -3,6 +3,7 @@
   lib,
   pkgs,
   options,
+  flake,
   ...
 }: let
   inherit (lib) mkEnableOption;
@@ -13,6 +14,10 @@ in {
     enable = mkEnableOption "fish";
   };
   config = lib.mkIf cfg.enable {
+    environment.systemPackages = [
+      pkgs.nix-index
+    ];
+
     programs.bash = {
       interactiveShellInit = let
         fish-cmd = lib.getExe' package "fish";

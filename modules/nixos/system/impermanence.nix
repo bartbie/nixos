@@ -109,6 +109,7 @@ in {
           (cache "bat")
           (share "Steam")
           ".steam"
+          (cache "nix-index")
         ];
         files = [
           (share "fish/fish_history")

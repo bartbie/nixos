@@ -64,6 +64,21 @@
       end
     '';
 
+  # TODO: maybe add override so standalone installs without this by default
+  command-not-found-hook = let
+    wrapper = pkgs.writeScript "command-not-found" ''
+      #!${pkgs.bash}/bin/bash
+      source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
+      command_not_found_handle "$@"
+    '';
+  in
+    # fish
+    ''
+      function __fish_command_not_found_handler --on-event fish_command_not_found
+        ${wrapper} $argv
+      end
+    '';
+
   config =
     writeVendorConf "bartbie_config.fish"
     # fish
@@ -86,6 +101,8 @@
           ${lib.getExe pkgs.nixon.direnv} hook fish | source
 
           ${tmux-hook}
+
+          ${command-not-found-hook}
       end
     '';
 in {
