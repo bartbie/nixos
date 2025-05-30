@@ -5,7 +5,7 @@
   ...
 }: let
   exes = flake.lib.pkgh.getExeAttrsFlat pkgs {
-    dolphin = "dolphin";
+    kdePackages.dolphin = "dolphin";
     swaynotificationcenter = "swaync";
     wofi = "wofi";
     nixon = {

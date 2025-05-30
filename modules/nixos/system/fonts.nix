@@ -13,18 +13,22 @@ in {
   };
   config = lib.mkIf cfg.enable {
     fonts = {
-      packages =
-        lib.attrValues {
-          inherit
-            (pkgs)
-            noto-fonts
-            noto-fonts-cjk-sans
-            noto-fonts-emoji
-            ;
-        }
-        ++ [
-          (pkgs.nerdfonts.override {fonts = ["JetBrainsMono" "Terminus"];})
-        ];
+      packages = builtins.attrValues {
+        inherit
+          (pkgs)
+          noto-fonts
+          noto-fonts-cjk-sans
+          noto-fonts-emoji
+          ;
+        inherit
+          (pkgs.nerd-fonts)
+          jetbrains-mono
+          terminess-ttf
+          ;
+      };
+      # ++ [
+      #   (.override {fonts = ["JetBrainsMono" "Terminus"];})
+      # ];
       fontconfig = {
         defaultFonts = {
           monospace = [

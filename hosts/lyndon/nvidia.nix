@@ -42,8 +42,8 @@ in {
           result = (mm supposed) == (mm version);
         in
           assert lib.assertMsg result "Nvidia driver version mismatch. ${supposed} vs actual ${version}"; package;
-        stable = validateVer "565.145" config.boot.kernelPackages.nvidiaPackages.latest;
-        unstable = validateVer "570.124" pkgs.unstable.linuxPackages.nvidiaPackages.latest;
+        stable = validateVer "570.153" config.boot.kernelPackages.nvidiaPackages.latest;
+        unstable = validateVer "575.57" pkgs.unstable.linuxPackages.nvidiaPackages.latest;
       in
         unstable;
     };
