@@ -75,6 +75,7 @@ in {
         firefox.enable = mk true {};
         hypr.enable = mk true {disableDarwin = true;};
         plasma5.enable = mk false {disableDarwin = true;};
+        steam.enable = mk true {disableDarwin = true;};
       };
     };
   };

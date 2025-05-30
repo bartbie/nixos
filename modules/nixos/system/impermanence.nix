@@ -107,6 +107,8 @@ in {
           (state "nvim")
           (conf "discord")
           (cache "bat")
+          (share "Steam")
+          ".steam"
         ];
         files = [
           (share "fish/fish_history")

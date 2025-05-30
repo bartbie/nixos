@@ -35,6 +35,7 @@ in {
 
   env = [
     "XCURSOR_SIZE,24"
+    "GDK_SCALE,2"
     "HYPRCURSOR_SIZE,24"
   ];
 
@@ -60,6 +61,10 @@ in {
   misc = {
     disable_autoreload = true;
     force_default_wallpaper = 0;
+  };
+
+  xwayland = {
+    force_zero_scaling = true;
   };
 
   monitor = [

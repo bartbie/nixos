@@ -83,6 +83,8 @@ in {
       NIXOS_OZONE_WL = "1";
       __GL_THREADED_OPTIMIZATION = "1";
       __GL_SHADER_CACHE = "1";
+      # Controls if Adaptive Sync should be used. Recommended to set as “0” to avoid having problems on some games.
+      __GL_VRR_ALLOWED = "0";
     };
   };
 }
