@@ -27,6 +27,6 @@ lib.fix (
     // (callLibs ./trivial)
     // {
       inherit findImports;
-      inherit (final.attrsets) flattenAttrs;
+      inherit (final.attrsets) flattenAttrs optionalAttr;
     }
 )

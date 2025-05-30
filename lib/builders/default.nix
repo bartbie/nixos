@@ -31,6 +31,7 @@ in {
     pkgs.runCommand "${drv.name}-overridden" ({
         inherit outputs;
         inherit (drv) meta;
+        pname = drv.pname or drv.name;
         passthru = (drv.passthru or {}) // {unwrapped = drv;};
       }
       // (lib.optionalAttrs (drv ? version) {inherit (drv) version;}))

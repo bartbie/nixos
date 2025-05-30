@@ -30,7 +30,10 @@ in {
       (builtins.map mapNVP)
       builtins.listToAttrs
     ];
+
   flattenAttrs = self.flatten;
+  optionalAttr = name: at:
+    lib.optionalAttrs (attr.hasAttr name at) {${name} = at.${name};};
 
   bypath = {
     mapToList = fn: at: let
