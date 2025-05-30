@@ -8,9 +8,9 @@
     kdePackages.dolphin = "dolphin";
     swaynotificationcenter = "swaync";
     wofi = "wofi";
+    clipse = "clipse";
     nixon = {
       alacritty = "alacritty";
-      clipse = "clipse";
       waybar = "waybar";
     };
   };

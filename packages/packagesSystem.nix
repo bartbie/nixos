@@ -37,6 +37,9 @@
     tokei
     which
     zoxide
+    # clipboard
+    wl-clipboard
+    clipse
     # system call
     lsof # list open files
     ltrace # library call monitoring
