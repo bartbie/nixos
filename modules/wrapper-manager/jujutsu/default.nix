@@ -25,9 +25,12 @@
         wip = "commit -m WIP";
         anc = "log -r anc(5)";
         slast = "show -r anc(2)~@";
+        rdown = "rebase -r @ --before anc(2)~@";
+        rup = "rebase -r @ --after desc(2)~@";
       };
     revset-aliases = {
       "anc(x)" = "ancestors(@, x)";
+      "desc(x)" = "descendants(@, x)";
     };
   };
 in {
