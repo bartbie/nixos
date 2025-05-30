@@ -24,6 +24,7 @@
     # utils
     fastfetch
     file
+    fd
     fzf
     gawk
     glow
