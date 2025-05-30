@@ -2,11 +2,12 @@
   description = "Nixon: bartbie's NixOS config";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     hardware.url = "github:nixos/nixos-hardware";
+    systems.url = "github:nix-systems/default";
     lix-module = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.92.0-1.tar.gz";
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.93.0.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
@@ -18,12 +19,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     impermanence.url = "github:nix-community/impermanence";
+    wrapper-manager.url = "github:foo-dogsquared/nix-module-wrapper-manager-fds";
     bartbie-nvim = {
       url = "github:bartbie/nvim/rocks";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    wrapper-manager.url = "github:foo-dogsquared/nix-module-wrapper-manager-fds";
-    systems.url = "github:nix-systems/default";
   };
 
   outputs = {
