@@ -5,22 +5,16 @@
   flake,
   ...
 }: let
-  modulesToAttr = modules: let
-    getName = lib.flip lib.pipe [
-      lib.path.splitRoot
-      (x: x.subpath)
-      lib.path.subpath.components
-      lib.reverseList
-      (x: builtins.elemAt x 1)
-    ];
-  in
-    lib.pipe modules [
-      (builtins.map (x: lib.nameValuePair (getName x) x))
-      lib.attrsets.listToAttrs
-    ];
-  withIgnored = lib.flip lib.pipe [
-    (flake.lib.findImportDirs ./.)
-    modulesToAttr
-  ];
+  manual = {
+  };
 in
-  withIgnored []
+  {
+    base = flake.lib.import.importsToAttrs (
+      flake.lib.findImports {
+        from = ./default.nix;
+        defaultOnly = true;
+        ignored = builtins.attrValues manual;
+      }
+    );
+  }
+  // manual
