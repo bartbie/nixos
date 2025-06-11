@@ -110,7 +110,7 @@
     mapAttrsByPathToList = fn: at: let
       marker = "_bartbie_marker";
       convertToPaths = lib.attrsets.mapAttrsRecursive (p: v: {
-        path = builtins.concatStringsSep "." p;
+        path = p;
         value = fn p v;
         # mark that this is in fact a leaf attrset made by us
         ${marker} = true;
@@ -127,12 +127,22 @@
         (builtins.map (lib.flip builtins.removeAttrs [marker]))
       ];
 
+    flattenAttrsByPathToList = final.mapAttrsByPathToList (_: v: v);
+
     collectAttrsPaths = lib.flip lib.pipe [
-      (final.mapAttrsByPathToList (_: v: v))
+      final.flattenAttrsByPathToList
       (builtins.map (x: x.path))
     ];
+    # for [string], map by lib.attrsets.showAttrPath
 
-    flattenAttrsByPathToList = final.mapAttrsByPathToList (_: v: v);
+    flattenAttrs = at: let
+      mapNVP = x: lib.nameValuePair (final.last x.path) x.value;
+    in
+      lib.pipe at [
+        final.flattenAttrsByPathToList
+        (builtins.map mapNVP)
+        builtins.listToAttrs
+      ];
 
     mkIfElse = cond: x: y:
       lib.mkMerge [
@@ -162,15 +172,10 @@
     in
       lib.mapAttrsRecursive (p: v: lib.getExe' (getPkg p) v) at;
 
-    getExeAttrsFlat = pkgs: at: let
-      getPkg = p: lib.getAttrFromPath p pkgs;
-      mapToNamePackage = p: v:
-        lib.nameValuePair (final.last p) (lib.getExe' (getPkg p) v);
-    in
+    getExeAttrsFlat = pkgs: at:
       lib.pipe at [
-        (final.mapAttrsByPathToList mapToNamePackage)
-        (builtins.map (v: v.value))
-        builtins.listToAttrs
+        final.getExeAttrs
+        final.flattenAttrs
       ];
 
     modulesPath = ../modules;
