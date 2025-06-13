@@ -1,6 +1,7 @@
 {
   lib,
   final,
+  self,
   ...
 }: {
 }

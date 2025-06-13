@@ -2,7 +2,10 @@
   lib,
   final,
   ...
-}: {
+}: let
+  # TODO: remove this polyfill
+  takeEnd = n: xs: lib.drop (lib.max 0 (builtins.length xs - n)) xs;
+in {
   boolToStringFlag = b:
     if b
     then "1"
@@ -13,9 +16,26 @@
     then x
     else null;
 
+  orId = cond: x:
+    if cond
+    then x
+    else lib.Id;
+
+  or = cond: x: y:
+    if cond
+    then x
+    else y;
+
+  condApply = cond: fn: x:
+    if cond
+    then fn x
+    else x;
+
   headOrNull = x: final.nullish (x != []) (builtins.head x);
 
-  last = x: builtins.head (lib.reverseList x);
+  last = x:
+    assert lib.assertMsg (x != []) "No elements in list!";
+      builtins.head (takeEnd 1 x);
 
   lastOrNull = x: final.nullish (x != []) (final.last x);
 
