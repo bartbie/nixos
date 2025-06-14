@@ -8,38 +8,65 @@ so lib.fs and lib.import can re-export them
   listRecursive = {
     depth ? -1,
     filter ? (_: true),
-  }: dir: let
-    _listRecursive = filter: let
-      list = dep: dir:
-        lib.pipe dir [
-          builtins.readDir
-          (
-            lib.mapAttrsToList (
-              name: type: let
-                pathname = dir + "/${name}";
-                check = filter {
-                  inherit name type;
-                  parent = dir;
-                  hasExt = ext: lib.hasSuffix ".${ext}" name;
+    groupBy ? false,
+    throwIfFile ? false,
+  }: directory: let
+    toPaths = builtins.map (x:
+      if builtins.isAttrs x
+      then x.path
+      else x);
+    passed = x: !builtins.isAttrs x;
+    list = dep: dir:
+      lib.pipe dir [
+        builtins.readDir
+        (
+          lib.mapAttrsToList (
+            name: type: let
+              pathname = dir + "/${name}";
+              check = filter {
+                inherit name type;
+                parent = dir;
+                hasExt = ext: lib.hasSuffix ".${ext}" name;
+              };
+              prep = cond: x: y:
+                if cond
+                then x
+                else {
+                  path = y;
                 };
-                checkOrNull = x:
-                  if check
-                  then x
-                  else null;
-              in
-                # PERF: check may be more exp than this cond so we do it in branches
+            in
+              prep check (
                 if type == "directory" && dep != 0
-                then checkOrNull (list (dep - 1) pathname)
-                else checkOrNull pathname
-            )
+                then (list (dep - 1) pathname)
+                else pathname
+              )
+              pathname
           )
-          lib.flatten
-          (lib.filter (x: x != null))
-        ];
-    in
-      list;
+        )
+        lib.flatten
+      ];
+    res =
+      if lib.pathIsDirectory directory
+      then list depth directory
+      else if throwIfFile
+      then throw "path is a file: ${builtins.toString directory}"
+      else [directory];
   in
-    _listRecursive filter depth dir;
+    lib.pipe res [
+      (builtins.groupBy (x: lib.boolToString (passed x)))
+      (
+        x: {
+          true = x.true or [];
+          false = x.false or [];
+        }
+      )
+      (builtins.mapAttrs (_: toPaths))
+      (
+        if groupBy
+        then lib.id
+        else (x: x.true)
+      )
+    ];
 
   ffintersection = fn: path: (fs.intersection (fs.fileFilter fn path));
 
@@ -68,6 +95,11 @@ in {
       then builtins.dirOf from
       else from;
 
+    normalise = x:
+      if lib.pathIsDirectory x
+      then fs.maybeMissing (x + /default.nix)
+      else x;
+
     ffi = lib.flip ffintersection root;
   in
     lib.pipe root [
@@ -75,14 +107,36 @@ in {
         inherit depth;
         filter = x: !lib.hasPrefix "_" x.name;
       })
+      (builtins.map normalise)
       fs.unions
-      (ffi ffilters.isNix)
       (
-        if defaultOnly
-        then (ffi ffilters.isDefaultNix)
-        else lib.id
+        ffi (
+          if defaultOnly
+          then ffilters.isDefaultNix
+          else ffilters.isImportable
+        )
       )
       (x: fs.difference x (fs.unions ignore))
       fs.toList
+    ];
+
+  importsToAttrs = let
+    # TODO: remove this polyfill
+    takeEnd = n: xs: lib.drop (lib.max 0 (builtins.length xs - n)) xs;
+  in
+    lib.flip lib.pipe
+    [
+      (builtins.map (x: let
+        name = lib.pipe x [
+          (x: assert lib.assertMsg (builtins.isPath x) "${x} must be a path!"; x)
+          (y: "./${builtins.toString y}")
+          lib.path.subpath.components
+          (takeEnd 2)
+          builtins.head
+          (lib.removeSuffix ".nix")
+        ];
+      in
+        lib.nameValuePair name x))
+      builtins.listToAttrs
     ];
 }
