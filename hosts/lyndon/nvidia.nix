@@ -36,10 +36,16 @@ in {
 
       open = true;
       package = let
-        d-565-135 = config.boot.kernelPackages.nvidiaPackages.latest;
-        d-570-124 = pkgs.unstable.linuxPackages.nvidiaPackages.latest;
+        # keep the code doc fresh ~
+        validateVer = supposed: {version, ...} @ package: let
+          mm = v: lib.take 2 (builtins.splitVersion v);
+          result = (mm supposed) == (mm version);
+        in
+          assert lib.assertMsg result "Nvidia driver version mismatch. ${supposed} vs actual ${version}"; package;
+        stable = validateVer "565.145" config.boot.kernelPackages.nvidiaPackages.latest;
+        unstable = validateVer "570.124" pkgs.unstable.linuxPackages.nvidiaPackages.latest;
       in
-        d-570-124;
+        unstable;
     };
 
     boot = {
