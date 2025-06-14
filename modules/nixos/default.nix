@@ -3,5 +3,9 @@
   lib,
   ...
 }: {
-  imports = flake.lib.findImports ./default.nix [];
+  imports = flake.lib.findImports {
+    from = ./default.nix;
+    depth = 1;
+    defaultOnly = false;
+  };
 }

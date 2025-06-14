@@ -45,7 +45,7 @@ in {
     boot = {
       blacklistedKernelModules = ["nouveau"];
 
-      extraModprobeConfig = flake.lib.mkModprobeConfig {
+      extraModprobeConfig = flake.lib.generators.mkModprobeConfig {
         nvidia = [
           # already enabled but let's make sure
           "NVreg_UsePageAttributeTable=1"
@@ -53,7 +53,7 @@ in {
           "NVreg_PreserveVideoMemoryAllocations=1"
         ];
         nvidia_drm = [
-          "NVreg_EnableGpuFirmware=${flake.lib.boolToStringFlag cfg.enableGpuFirmware}"
+          "NVreg_EnableGpuFirmware=${flake.lib.boolToString cfg.enableGpuFirmware}"
         ];
       };
     };

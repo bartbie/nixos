@@ -9,9 +9,9 @@
   eachCallPackage = x: overlays: let
     call = pkgs: (import x ({inherit pkgs lib;} // inputs));
   in
-    self.lib.eachSystemPkgs inputs overlays call;
+    self.lib.pkgh.eachSystemPkgs inputs overlays call;
 
-  unstable-overlay = self.lib.mkUnstableOverlay inputs;
+  unstable-overlay = self.lib.pkgh.mkUnstableOverlay inputs;
 
   common-deps = [
     unstable-overlay

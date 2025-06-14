@@ -34,7 +34,12 @@
       [{} (mkFlag b)]
     ];
 in {
-  imports = flake.lib.findImports ./core.nix [./default.nix];
+  imports = flake.lib.findImports {
+    from = ./default.nix;
+    ignored = [./core.nix];
+    depth = 1;
+    defaultOnly = false;
+  };
   options.nixon.core.enable = mkEnableOption "core";
   config = {
     assertions = [

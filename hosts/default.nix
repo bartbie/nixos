@@ -13,7 +13,7 @@
           networking.hostName = hostname;
           nixpkgs.hostPlatform = system;
           nixpkgs.overlays = [
-            (self.lib.mkUnstableOverlay inputs)
+            (self.lib.pkgh.mkUnstableOverlay inputs)
             self.overlays.all
           ];
           nixon.core.enable = lib.mkDefault true; # enable our default config
