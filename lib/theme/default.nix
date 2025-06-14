@@ -48,7 +48,7 @@
   # name -> "#hex"
   mapHex = let
     mapA = lib.flip lib.pipe [
-      (final.filterMapAttrsRecursive
+      (final.attrsets.filterMapRec
         (as: as ? "hex" -> (builtins.isAttrs as.hex))
         (_: v: (v ? "hex"))
         (_: v: v.hex))
@@ -61,7 +61,7 @@
 
   mapHex' = let
     mapA = lib.flip lib.pipe [
-      (final.filterMapAttrsRecursive
+      (final.attrsets.filterMapRec
         (as: as ? "hex" -> (builtins.isAttrs as.hex))
         (_: _: true)
         (_: v:

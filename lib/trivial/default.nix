@@ -1,12 +1,13 @@
 {
   lib,
   final,
+  self,
   ...
 }: let
   # TODO: remove this polyfill
   takeEnd = n: xs: lib.drop (lib.max 0 (builtins.length xs - n)) xs;
 in {
-  boolToStringFlag = b:
+  boolToString = b:
     if b
     then "1"
     else "0";
@@ -31,13 +32,13 @@ in {
     then fn x
     else x;
 
-  headOrNull = x: final.nullish (x != []) (builtins.head x);
+  headOrNull = x: self.nullish (x != []) (builtins.head x);
 
   last = x:
     assert lib.assertMsg (x != []) "No elements in list!";
       builtins.head (takeEnd 1 x);
 
-  lastOrNull = x: final.nullish (x != []) (final.last x);
+  lastOrNull = x: self.nullish (x != []) (self.last x);
 
   mapCond = cond-fn: map-fn:
     builtins.map (v:
@@ -63,7 +64,7 @@ in {
     else def;
 
   ifLet = pat: v:
-    final.nullish (lib.attrsets.matchAttrs pat v) v;
+    self.nullish (lib.attrsets.matchAttrs pat v) v;
 
   match = v: l: let
     second = x: builtins.elemAt x 1;

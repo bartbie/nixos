@@ -1,6 +1,7 @@
 {
   lib,
   final,
+  self,
   ...
 }: {
   getExeAttrs = pkgs: at: let
@@ -10,7 +11,7 @@
 
   getExeAttrsFlat = pkgs: at:
     lib.pipe at [
-      (final.getExeAttrs pkgs)
+      (self.getExeAttrs pkgs)
       final.flattenAttrs
     ];
 
