@@ -7,21 +7,33 @@
   mkShell = name: pkgset:
     pkgs.mkShell {
       inherit name;
-      buildInputs = builtins.attrValues pkgset;
+      buildInputs = pkgset;
     };
-
-  dev-pkgs = {
-    inherit
-      (pkgs)
-      nil
-      ;
-    inherit
-      (pkgs.nixon)
-      git
-      jujutsu
-      zellij
-      ;
-    fmt = self.formatter.${pkgs.system};
+  flatten = lib.flip lib.pipe [
+    (self.lib.attrsets.bypath.flattenToListCond (x: !(lib.isDerivation x)))
+    (builtins.map (x: x.value))
+  ];
+  dev-pkgs = flatten {
+    common = {
+      inherit
+        (pkgs.nixon)
+        git
+        jujutsu
+        ;
+    };
+    nix = {
+      inherit
+        (pkgs)
+        nil
+        ;
+      fmt = self.formatter.${pkgs.system};
+    };
+    nushell = {
+      inherit
+        (pkgs)
+        nushell
+        ;
+    };
   };
 in {
   default = self.devShells.${pkgs.system}.dev;
