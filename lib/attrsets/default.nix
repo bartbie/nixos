@@ -36,9 +36,11 @@ in {
     lib.optionalAttrs (attr.hasAttr name at) {${name} = at.${name};};
 
   bypath = {
-    mapToList = fn: at: let
+    mapToList = self.bypath.mapToListCond (_: true);
+
+    mapToListCond = cond: fn: at: let
       marker = "_bartbie_marker";
-      convertToPaths = attr.mapAttrsRecursive (p: v: {
+      convertToPaths = attr.mapAttrsRecursiveCond cond (p: v: {
         path = p;
         value = fn p v;
         # mark that this is in fact a leaf attrset made by us
@@ -57,6 +59,7 @@ in {
       ];
 
     flattenToList = self.bypath.mapToList (_: v: v);
+    flattenToListCond = cond: self.bypath.mapToListCond cond (_: v: v);
 
     collectPaths = lib.flip lib.pipe [
       self.bypath.flattenToList
