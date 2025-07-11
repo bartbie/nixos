@@ -3,6 +3,7 @@
   lib,
   pkgs,
   options,
+  flake,
   ...
 }: let
   inherit (lib) mkEnableOption;
@@ -55,6 +56,56 @@ in {
       umount /btrfs_tmp
     '';
 
+    # Systemd service to create baseline snapshot
+    systemd.services.create-baseline-snapshot = {
+      description = "Create baseline snapshot for tracking new files";
+      after = ["local-fs.target" "remote-fs.target"];
+      wantedBy = ["multi-user.target"];
+      unitConfig = {
+        RequiresMountsFor = "/";
+      };
+      serviceConfig = flake.lib.systemd.hardenServiceConfig {
+        Type = "oneshot";
+        ExecStart = let
+          btrfs = lib.getExe' pkgs.btrfs-progs "btrfs";
+          script =
+            pkgs.writeShellScript "create-baseline-snapshot"
+            #sh
+            ''
+              set -euxo pipefail
+              echo "Current working directory: $(pwd)"
+              # echo "Filesystem info:"
+              # findmnt /
+              echo "Checking if / is a btrfs subvolume:"
+              ${btrfs} subvolume show / || { echo "Not a subvolume"; exit 1; }
+              FILENAME="/.btrfs-snapshot-$(date +%Y%m%d-%H%M%S)"
+              echo "Creating snapshot $FILENAME"
+              ${btrfs} subvolume snapshot -r / "$FILENAME"
+            '';
+        in "${script}";
+        # run as root
+        User = "root";
+        Group = "root";
+
+        # allow subvolume operations
+        CapabilityBoundingSet = ["CAP_SYS_ADMIN" "CAP_DAC_OVERRIDE"];
+        # allow seeing block devices
+        PrivateDevices = false;
+        # allow access to block devices
+        DevicePolicy = "auto";
+        # allow access filesystem structures
+        PrivateUsers = false;
+        # allow access to filesystem proc entries
+        ProcSubset = "all";
+        # allow touching kernel tunables
+        ProtectKernelTunables = false;
+        # allow privileged syscalls for filesystem operations
+        SystemCallFilter = ["@system-service" "@privileged"];
+        # may allow namespace operations for subvolumes
+        RestrictNamespaces = false;
+      };
+    };
+
     fileSystems.${cfg.storagePath}.neededForBoot = true;
     environment.persistence.${cfg.storagePath} = {
       hideMounts = true;
@@ -96,7 +147,7 @@ in {
           # "VirtualBox VMs"
           ".mozilla"
           ".cargo"
-          "./tldrc/tldr"
+          "tldrc/tldr"
           (withMode ".gnupg" "0700")
           (withMode ".ssh" "0700")
           (withMode ".nixops" "0700")
@@ -105,11 +156,15 @@ in {
           (share "direnv")
           (share "nvim")
           (state "nvim")
-          (conf "discord")
           (cache "bat")
+          (cache "nix-index")
           (share "Steam")
           ".steam"
-          (cache "nix-index")
+          (conf "discord")
+          (conf "discordcanary")
+          (conf "spotify")
+          (cache "spotify")
+          (share "TelegramDesktop")
         ];
         files = [
           (share "fish/fish_history")
