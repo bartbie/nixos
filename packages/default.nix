@@ -6,17 +6,31 @@
   inputs = inputs' // {flake = self;};
   inherit (nixpkgs) lib;
 
+  unstable-overlay = self.lib.pkgh.mkUnstableOverlay inputs;
+  rust-overlay = self.inputs.rust-overlay.overlays.default;
+
+  common-overlays = [
+    unstable-overlay
+    self.inputs.bartbie-nvim.overlays.default
+  ];
+
+  packages-overlays = [
+    # this way wrappers can use each other
+    self.overlays.nixon
+    rust-overlay
+  ];
+
+  shell-overlays = [
+    self.overlays.all
+    rust-overlay
+  ];
+
+  ###
+
   eachCallPackage = x: overlays: let
     call = pkgs: (import x ({inherit pkgs lib;} // inputs));
   in
     self.lib.pkgh.eachSystemPkgs inputs overlays call;
-
-  unstable-overlay = self.lib.pkgh.mkUnstableOverlay inputs;
-
-  common-deps = [
-    unstable-overlay
-    self.inputs.bartbie-nvim.overlays.default
-  ];
 
   mkOverlay = {
     add-custom ? false,
@@ -26,15 +40,11 @@
       (lib.optionalAttrs add-custom self.packages.${prev.system})
       // (lib.optionalAttrs add-system {
         systemPackages =
-          import ./packagesSystem.nix (prev.extend (lib.composeManyExtensions common-deps));
+          import ./packagesSystem.nix (prev.extend (lib.composeManyExtensions common-overlays));
       });
   };
 in {
-  packages = eachCallPackage ./packagesCustom.nix (common-deps
-    ++ [
-      # this way wrappers can use each other
-      self.overlays.nixon
-    ]);
+  packages = eachCallPackage ./packagesCustom.nix (common-overlays ++ packages-overlays);
 
   overlays = {
     default = self.overlays.nixon;
@@ -52,5 +62,5 @@ in {
     };
   };
 
-  devShells = eachCallPackage ./shell.nix (common-deps ++ [self.overlays.all]);
+  devShells = eachCallPackage ./shell.nix (common-overlays ++ shell-overlays);
 }

@@ -34,6 +34,17 @@
         nushell
         ;
     };
+    rust = let
+      toolchain = channel: ver: pkgs.rust-bin.${channel}.${ver}.default;
+    in {
+      inherit
+        (pkgs.unstable)
+        rust-analyzer
+        ;
+      rs = (toolchain "stable" "latest").override (p: {
+        extensions = p.extensions ++ ["rust-src"];
+      });
+    };
   };
 in {
   default = self.devShells.${pkgs.system}.dev;

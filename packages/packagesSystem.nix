@@ -68,5 +68,7 @@
 
     # misc
     cowsay
+    # langs
+    rustup
     ;
 }
