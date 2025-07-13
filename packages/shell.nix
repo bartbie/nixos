@@ -47,12 +47,18 @@
     };
   };
 in {
-  default = self.devShells.${pkgs.system}.dev;
+  default = self.devShells.${pkgs.system}.devWithLix;
   wrapped = mkShell "nixon-wrapped-shell" pkgs.nixon;
   all = mkShell "nixon-all-shell" (pkgs.nixon // pkgs.systemPackages);
   dev = mkShell "nixon-dev-shell" dev-pkgs;
-  devWithNvim = mkShell "nixon-dev-shell" (dev-pkgs
-    // {
+  devWithLix = mkShell "nixon-dev-lix-shell" (dev-pkgs
+    ++ [
+      self.inputs.lix-module.packages.${pkgs.system}.default
+      pkgs.nh
+      pkgs.nixos-rebuild
+    ]);
+  devWithNvim = mkShell "nixon-dev-nvim-shell" (dev-pkgs
+    ++ builtins.attrValues {
       inherit
         (pkgs)
         bartbie-nvim-nightly
