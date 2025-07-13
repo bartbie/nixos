@@ -25,4 +25,5 @@ in {
     inherit bat;
     cat = bat;
   };
+  nixon.standalonePackages = ["cat" "bat"];
 }

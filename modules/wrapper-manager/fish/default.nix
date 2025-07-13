@@ -90,7 +90,6 @@
 
       if status is-interactive
           source ${./pushd_mod.fish}
-
           ${builtins.readFile ./interactive.fish}
 
           source ${kanagawa}
@@ -98,6 +97,7 @@
           set -gx STARSHIP_CONFIG ${starship-config}
           ${lib.getExe pkgs.starship} init fish | source
 
+          set -gx DIRENV_LOG_FORMAT = ""
           ${lib.getExe pkgs.nixon.direnv} hook fish | source
 
           ${tmux-hook}
@@ -109,7 +109,7 @@ in {
   wrappers.fish = let
     # TODO: remove after fixed upstream
     pkg = pkgs.unstable.fish.overrideAttrs (old: {
-        patches = old.patches ++ [./4f46d369c4e9d7ea2f76290c6cb3a0882014eb4a.patch];
+      patches = old.patches ++ [./4f46d369c4e9d7ea2f76290c6cb3a0882014eb4a.patch];
     });
   in {
     arg0 = lib.getExe' pkg "fish";
