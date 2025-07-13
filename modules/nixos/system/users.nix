@@ -53,6 +53,6 @@ in {
         }
       ];
     };
+    services.getty.autologinUser = lib.mkIf cfg.bartbie.autologin "bartbie";
   };
-  services.getty.autologinUser = lib.mkIf cfg.bartbie.autologin "bartbie";
 }
