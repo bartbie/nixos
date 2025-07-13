@@ -20,7 +20,7 @@ in {
         };
       };
 
-      kernelPackages = lib.mkDefault pkgs.linuxPackages_6_12;
+      kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
     };
   };
 }
