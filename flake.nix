@@ -7,7 +7,7 @@
     hardware.url = "github:nixos/nixos-hardware";
     systems.url = "github:nix-systems/default";
     lix-module = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.93.0.tar.gz";
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.93.2-1.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
