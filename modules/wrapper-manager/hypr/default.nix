@@ -5,8 +5,9 @@
   overrideArgs,
   ...
 } @ args: let
+  hypr = import ./hyprland-config.nix args;
   config = pkgs.writeText "Hyprland-nixon.conf" (
-    flake.lib.generators.toHyprconf {attrs = import ./hyprland-config.nix args;}
+    flake.lib.generators.toHyprconf {attrs = builtins.removeAttrs hypr ["nixon-extraPackages"];}
   );
 
   package = pkgs.unstable.hyprland.override overrideArgs;
@@ -20,6 +21,7 @@ in {
       ];
     };
   };
+  basePackages = hypr.nixon-extraPackages;
   nixon.standalonePackages = ["Hyprland"];
   nixon.overrideAttrs = {inherit (package) version;};
 }

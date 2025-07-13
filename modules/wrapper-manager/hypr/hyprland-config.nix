@@ -7,23 +7,39 @@
   exes = flake.lib.pkgh.getExeAttrsFlat pkgs {
     kdePackages.dolphin = "dolphin";
     swaynotificationcenter = "swaync";
-    wofi = "wofi";
+    rofi-wayland = "rofi";
     clipse = "clipse";
     nixon = {
       alacritty = "alacritty";
       waybar = "waybar";
     };
   };
+  # extra bins to package with in env
+  nixon-extraPackages = builtins.attrValues {
+    inherit
+      (pkgs.kdePackages)
+      dolphin
+      ;
+    inherit
+      (pkgs)
+      rofi-wayland
+      clipse
+      swaynotificationcenter
+      ;
+  };
 
   fileManager = exes.dolphin;
   notifs = exes.swaynotificationcenter;
-  menu = "${exes.wofi} --show drun";
+  menu = "${exes.rofi-wayland} -show combi -combi-modes drun,window,power_menu";
   terminal = exes.alacritty;
   clipboard = exes.clipse;
   statusbar = exes.waybar;
+  browser = "xdg-open 'http://'";
 
   mainMod = "SUPER";
 in {
+  # awesome, completely not hacky magic attribute removed later done because im too sleepy to do it properly
+  inherit nixon-extraPackages;
   exec-once = [
     "${clipboard} -listen"
     notifs
@@ -61,6 +77,7 @@ in {
   misc = {
     disable_autoreload = true;
     force_default_wallpaper = 0;
+    new_window_takes_over_fullscreen = 2;
   };
 
   xwayland = {
@@ -98,8 +115,17 @@ in {
     no_donation_nag = true;
   };
 
-  binds = [
+  binds = {
+    allow_workspace_cycles = true;
+  };
+
+  binde = [
+    "${mainMod} CTRL, h, resizeactive, -10 0"
+    "${mainMod} CTRL, l, resizeactive, 10 0"
+    "${mainMod} CTRL, k, resizeactive, 0 -10"
+    "${mainMod} CTRL, j, resizeactive, 0 10"
   ];
+
   bind = [
     "${mainMod}, h, movefocus, l"
     "${mainMod}, l, movefocus, r"
@@ -111,29 +137,34 @@ in {
     "${mainMod} ALT, k, movewindow, u"
     "${mainMod} ALT, j, movewindow, d"
 
-    "${mainMod} CTRL, h, resizeactive, -10 0"
-    "${mainMod} CTRL, l, resizeactive, 10 0"
-    "${mainMod} CTRL, k, resizeactive, 0 -10"
-    "${mainMod} CTRL, j, resizeactive, 0 10"
-
     "${mainMod}, F, fullscreen, 1"
     "${mainMod} ALT, F, fullscreen, 0"
 
     "${mainMod}, bracketleft, workspace, e-1"
     "${mainMod}, bracketright, workspace, e+1"
 
-    "${mainMod} ALT, Q, exec, ${terminal}"
+    # what more do you need
+    "${mainMod}, Q, exec, ${terminal}"
+    "${mainMod}, W, exec, ${browser}"
+    "${mainMod}, E, exec, ${fileManager}"
 
-    "${mainMod} ALT, BACKSPACE, killactive,"
+    "${mainMod} ALT, Q, killactive,"
+    "${mainMod} BACKSPACE, forcekillactive,"
 
+    # TODO: replace with script that handles uwsm
     "${mainMod} ALT, M, exit,"
 
     "${mainMod}, T, togglefloating,"
-    "${mainMod}, P, pseudo,"
+
     "${mainMod}, I, togglesplit," # dwindle
+
+    "${mainMod}, TAB, workspace, previous"
 
     # Open clipboard manager
     "${mainMod}, V, exec, ${terminal} --class clipse -e ${clipboard}"
+
+    # menu
+    "${mainMod}, SPACE, exec, ${menu}"
 
     # Switch workspaces with mainMod + [0-9]
     "${mainMod}, 1, workspace, 1"
@@ -158,6 +189,9 @@ in {
     "${mainMod} ALT, 8, movetoworkspacesilent, 8"
     "${mainMod} ALT, 9, movetoworkspacesilent, 9"
     "${mainMod} ALT, 0, movetoworkspacesilent, 10"
+
+    # game workspace
+    "${mainMod}, G, workspace, name:game"
 
     # Example special workspace (scratchpad)
     "${mainMod}, S, togglespecialworkspace, magic"
@@ -188,12 +222,17 @@ in {
     ", XF86AudioPlay, exec, playerctl play-pause"
     ", XF86AudioPrev, exec, playerctl previous"
   ];
+  workspace = [
+    "100, defaultName:game"
+  ];
   windowrule = [
     # Ignore maximize requests from apps. You'll probably like this.
     "suppressevent maximize, class:.*"
-
     # Fix some dragging issues with XWayland
     "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
+    # send games to their workspace and maximize them
+    "workspace name:game, class:^(steam_app.*)$"
+    "fullscreen, class:^(steam_app.*)$"
   ];
   windowrulev2 = [
     "float, class:(clipse)"
@@ -211,7 +250,7 @@ in {
       range = 4;
       render_power = 3;
       # TODO set colors here
-      color = "rgba(1a1a1aee)";
+      color = "rgba(1a1aaee)";
     };
 
     blur = {
