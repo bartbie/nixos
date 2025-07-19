@@ -12,6 +12,7 @@
     discord-canary
     spotify
     telegram-desktop
+    qimgv
     ## rest
     # archives
     p7zip
