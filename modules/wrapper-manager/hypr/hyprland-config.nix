@@ -13,6 +13,9 @@
       alacritty = "alacritty";
       waybar = "waybar";
     };
+    unstable.swww = [
+      "swww-daemon"
+    ];
   };
   # extra bins to package with in env
   nixon-extraPackages = builtins.attrValues {
@@ -26,17 +29,51 @@
       clipse
       swaynotificationcenter
       ;
+    inherit
+      (pkgs.unstable)
+      swww
+      ;
+    inherit rand-wp;
   };
 
-  fileManager = exes.dolphin;
   notifs = exes.swaynotificationcenter;
-  menu = "${exes.rofi-wayland} -show combi -combi-modes drun,window,power_menu";
-  terminal = exes.alacritty;
-  clipboard = exes.clipse;
   statusbar = exes.waybar;
+  wallpaper = exes.swww-daemon;
+  #
+  menu = "${exes.rofi-wayland} -show combi -combi-modes drun,window,power_menu";
+  clipboard = exes.clipse;
+  terminal = exes.alacritty;
+  fileManager = exes.dolphin;
   browser = "xdg-open 'http://'";
 
   mainMod = "SUPER";
+
+  rand-wp =
+    pkgs.writeShellScriptBin "rand-wp"
+    # sh
+    ''
+      set -euo pipefail
+      WALLPAPER_DIR="$HOME/Eternal/Pictures/wallpapers/random/"
+
+      # find them all
+      WALLPAPERS=$(fd . "$WALLPAPER_DIR" --type symlink --type file)
+      case "$(echo $WALLPAPERS | wc -l)" in
+        0)
+            # noop
+            ;;
+        1)
+            swww img $WALLPAPERS
+            ;;
+        *)
+            CURRENT_WALL=$(swww query | sed "s/.*image: //")
+            # Get a random wallpaper that is not the current one
+            WALLPAPER=$(fd . "$WALLPAPER_DIR" --type symlink --type file --exclude "$(basename "$CURRENT_WALL")" | shuf -n 1)
+
+            # Apply the selected wallpaper
+            swww img $WALLPAPER
+            ;;
+      esac
+    '';
 in {
   # awesome, completely not hacky magic attribute removed later done because im too sleepy to do it properly
   inherit nixon-extraPackages;
@@ -45,8 +82,7 @@ in {
     notifs
     terminal
     statusbar
-    #   "nm-applet &"
-    #   "waybar & hyprpaper & firefox"
+    "${wallpaper} & ${rand-wp}/bin/rand-wp"
   ];
 
   env = [

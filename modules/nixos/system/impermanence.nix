@@ -165,6 +165,7 @@ in {
           (conf "spotify")
           (cache "spotify")
           (share "TelegramDesktop")
+          (cache "swww")
         ];
         files = [
           (share "fish/fish_history")

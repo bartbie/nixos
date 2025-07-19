@@ -6,8 +6,17 @@
 }: {
   getExeAttrs = pkgs: at: let
     getPkg = p: lib.getAttrFromPath p pkgs;
+    getExe = p: v: lib.getExe' (getPkg p) v;
+    mapNode = p: v:
+      if builtins.isList v
+      then lib.genAttrs v (getExe p)
+      else if builtins.isString v
+      then getExe p v
+      else throw "Argument must be string or list!";
   in
-    lib.mapAttrsRecursive (p: v: lib.getExe' (getPkg p) v) at;
+    # TODO: remove nesting when passing lists
+    # low priority as i mostly use Flat
+    lib.mapAttrsRecursive mapNode at;
 
   getExeAttrsFlat = pkgs: at:
     lib.pipe at [
