@@ -23,6 +23,7 @@ in {
       xdgOpenUsePortal = true;
       config = {
         common.default = ["gtk"];
+        hyprland.default = ["hyprland" "gtk"];
       };
     };
   };
