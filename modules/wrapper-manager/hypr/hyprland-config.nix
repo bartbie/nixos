@@ -28,6 +28,7 @@
       rofi-wayland
       clipse
       swaynotificationcenter
+      hyprpolkitagent
       ;
     inherit
       (pkgs.unstable)
@@ -83,6 +84,7 @@ in {
     terminal
     statusbar
     "${wallpaper} & ${rand-wp}/bin/rand-wp"
+    "systemctl --user start hyprpolkitagent"
   ];
 
   env = [
