@@ -20,8 +20,12 @@ in {
         "${config}"
       ];
     };
+    # lol
+    hyprctl = {
+      arg0 = lib.getExe' package "hyprctl";
+    };
   };
   basePackages = hypr.nixon-extraPackages;
-  nixon.standalonePackages = ["Hyprland"];
+  nixon.standalonePackages = ["Hyprland" "hyprctl"];
   nixon.overrideAttrs = {inherit (package) version;};
 }
