@@ -27,6 +27,7 @@
     file
     fd
     fzf
+    ffmpeg
     gawk
     glow
     gnused
