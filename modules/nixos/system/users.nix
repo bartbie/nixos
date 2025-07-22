@@ -14,7 +14,7 @@ in {
     bartbie = {
       enable = (mkEnableOption "bartbie user") // {default = true;};
       useHashedPasswordFile = (mkEnableOption "hashed password") // {default = true;};
-      autologin = (mkEnableOption "hashed password") // {default = true;};
+      # autologin = (mkEnableOption "hashed password") // {default = true;};
     };
   };
   config = lib.mkIf cfg.enable {
@@ -53,6 +53,6 @@ in {
         }
       ];
     };
-    services.getty.autologinUser = lib.mkIf cfg.bartbie.autologin "bartbie";
+    # services.getty.autologinUser = lib.mkIf cfg.bartbie.autologin "bartbie";
   };
 }
