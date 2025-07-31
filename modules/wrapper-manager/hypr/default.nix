@@ -28,4 +28,5 @@ in {
   basePackages = hypr.nixon-extraPackages;
   nixon.standalonePackages = ["Hyprland" "hyprctl"];
   nixon.overrideAttrs = {inherit (package) version;};
+  nixon.enable = !pkgs.stdenv.isDarwin;
 }

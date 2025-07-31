@@ -1,9 +1,21 @@
 # we need to have a way of marking which wrappers should be added to nixon's overlay and packages
 # we will hack this by adding our own option and reading the output config in packagesCustom
-{lib, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) types;
 in {
+  config.locale.enable = lib.mkForce (!pkgs.stdenv.isDarwin);
   options.nixon = {
+    enable = lib.mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Whether to enable this module.
+      '';
+    };
     standalonePackages = lib.mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;

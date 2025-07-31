@@ -13,34 +13,45 @@
     buildBaseWrapper = mod:
       lib.makeOverridable (
         overrideArgs: let
+          mods = [
+            mod
+            modules.options
+          ];
+          specialArgs = {
+            inherit flake;
+            inherit (flake.lib) theme;
+            overrideArgs = builtins.removeAttrs overrideArgs ["wrapperArgs"];
+            wrapperArgs = overrideArgs.wrapperArgs or {};
+          };
+          cfg-nixon =
+            (lib.evalModules {
+              specialArgs =
+                specialArgs
+                // {
+                  inherit pkgs;
+                };
+              modules = mods ++ [{_module.check = false;}];
+            }).config.nixon;
           cfg =
             (wrapper-manager.lib.eval {
-              inherit pkgs;
-              specialArgs = {
-                inherit flake;
-                inherit (flake.lib) theme;
-                overrideArgs = builtins.removeAttrs overrideArgs ["wrapperArgs"];
-                wrapperArgs = overrideArgs.wrapperArgs or {};
-              };
-              modules = lib.flatten [mod modules.options];
-            })
-            .config;
+              inherit specialArgs pkgs;
+              modules = mods;
+            }).config;
         in
-          (cfg
-            .build
-            .toplevel
-            .overrideAttrs
-            cfg.nixon.overrideAttrs)
-          .overrideAttrs (prev: {
-            passthru =
-              prev.passthru
-              // {
-                nixon = {
-                  inherit (cfg) wrappers;
-                  extraWrappersNames = cfg.nixon.standalonePackages;
+          if !cfg-nixon.enable
+          then {passthru.nixon.enable = cfg-nixon.enable;}
+          else
+            (cfg.build.toplevel.overrideAttrs cfg.nixon.overrideAttrs).overrideAttrs (prev: {
+              passthru =
+                prev.passthru
+                // {
+                  nixon = {
+                    inherit (cfg) wrappers;
+                    inherit (cfg.nixon) enable;
+                    extraWrappersNames = cfg.nixon.standalonePackages;
+                  };
                 };
-              };
-          })
+            })
       ) {};
 
     # picks subwrapper by its pname and sets correct metadata, including meta.mainProgram
@@ -49,44 +60,52 @@
       base,
       subwrapper,
     }:
-      base
-      .overrideAttrs (final: prev:
-        {
-          pname = subwrapper.pname;
-          executableName = subwrapper.executableName;
-        }
-        // (flake.lib.optionalAttr "version" subwrapper)
-        // {
-          name =
-            if final ? version
-            then "${final.pname}-${final.version}"
-            else final.pname;
-          passthru = lib.recursiveUpdate (prev.passthru or {}) {nixon.baseWrapper = base;};
-          meta =
-            lib.recursiveUpdate (prev.meta or {})
-            {
+      base.overrideAttrs (
+        final: prev:
+          {
+            pname = subwrapper.pname;
+            executableName = subwrapper.executableName;
+          }
+          // (flake.lib.optionalAttr "version" subwrapper)
+          // {
+            name =
+              if final ? version
+              then "${final.pname}-${final.version}"
+              else final.pname;
+            passthru = lib.recursiveUpdate (prev.passthru or {}) {nixon.baseWrapper = base;};
+            meta = lib.recursiveUpdate (prev.meta or {}) {
               name = final.pname;
               mainProgram = final.executableName;
             };
-        });
+          }
+      );
 
     # given name, evals wm module to a list of wrappers
-    # name -> mod -> [drv]
+    # name -> mod -> [drv] | []
     buildWrappers = name: mod: let
-      assertNameInWrappers = name: wrappers: lib.assertMsg (builtins.elem name (builtins.attrNames wrappers)) "name is not in wrappers!\nname:${name}\nwrappers:${builtins.toString (builtins.attrNames wrappers)}";
+      assertNameInWrappers = name: wrappers:
+        lib.assertMsg (builtins.elem name (builtins.attrNames wrappers)) "name is not in wrappers!\nname:${name}\nwrappers:${builtins.toString (builtins.attrNames wrappers)}";
 
       base-wrapper = buildBaseWrapper mod;
-      inherit (base-wrapper.passthru.nixon) wrappers extraWrappersNames;
+      inherit (base-wrapper.passthru.nixon) enable wrappers extraWrappersNames;
 
       # if it's null (default), use filename, otherwise use list
       names = flake.lib.nullOr extraWrappersNames [name];
     in
-      lib.forEach names (name:
-        assert assertNameInWrappers name wrappers;
-          pickSubwrapper {
-            base = base-wrapper;
-            subwrapper = wrappers.${name} // {pname = name;};
-          });
+      lib.optionals enable (
+        lib.forEach names (
+          name:
+            assert assertNameInWrappers name wrappers;
+              pickSubwrapper {
+                base = base-wrapper;
+                subwrapper =
+                  wrappers.${name}
+                  // {
+                    pname = name;
+                  };
+              }
+        )
+      );
 
     # evals attrsOf wm modules
     # {modname -> modules} -> {pname -> drv}
