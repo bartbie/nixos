@@ -10,7 +10,9 @@
 
 `modules/` - reusable host-agnostic modules split based on respective environments.
 
-`packages/` - `outputs.{packages, overlays, devShells}`
+`packages/` - `outputs.{packages, overlays}`, `systemPackages`
+
+`devShells/` - `outputs.devShells`
 
 `scripts/` - custom programs and scripts.
 
@@ -32,11 +34,15 @@ The flake itself (`self`) is also passed as `flake` to make code reuse easier.
 
 Nixon's lib also provides its own `modulesPath` if needed;
 
-`wrapper-manager` environment gets passed `lib.theme` as `theme` to make color-scheme configuring shorter;
+`wrapper-manager` environment gets passed:
+
+- `lib.theme` as `theme` to make color-scheme configuring shorter;
+- `overrideArgs` to get args passed by consumers via `.override` to pass to base package
+- `wrapperArgs` to get args passed by consumers via `.override {wrapperArgs = {...};}` for its own usage
 
 
 ## Disko & Impermanence
 
-By default Impermanence is disabled; this can be configured via `nixon.impermanence`.
+To add their dependency modules add `"disko"` and/or `"impermanence"` tags to a host.
 
-Disko will get enabled for a host if any devices are defined under its environment.
+By default Impermanence is disabled; this can be configured via `nixon.impermanence`.
