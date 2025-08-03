@@ -30,9 +30,22 @@
     };
   });
 
-  eachSystemPkgs = inputs: overlays: f: let
-    eachSystem = lib.genAttrs (import inputs.systems);
-    mkPkgs = system: (import inputs.nixpkgs {inherit system overlays;});
+  forSystems = systems: self: fn:
+    lib.genAttrs systems (system: let
+      preselect = v:
+        {
+          packages = v.packages.${system} or {};
+          devShells = v.devShells.${system} or {};
+        }
+        // v;
+      self' = preselect self;
+      inputs' = builtins.attrValues (_: preselect) self.inputs;
+    in
+      fn {inherit system self' inputs';});
+
+  eachSystemPkgs = systems: nixpkgs: overlays: f: let
+    eachSystem = lib.genAttrs systems;
+    mkPkgs = system: (import nixpkgs {inherit system overlays;});
   in
     eachSystem (system: f (mkPkgs system));
 }

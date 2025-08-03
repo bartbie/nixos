@@ -17,7 +17,6 @@ in
         self.nixosModules.nixon
         {
           nixpkgs.overlays = [
-            (self.lib.pkgh.mkUnstableOverlay inputs)
             self.overlays.all
           ];
           nixon.core.enable = lib.mkDefault true; # enable our default config
