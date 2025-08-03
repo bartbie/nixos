@@ -7,4 +7,5 @@
     arg0 = lib.getExe' pkgs.waybar "waybar";
     prependArgs = [];
   };
+  nixon.enable = !pkgs.stdenv.isDarwin;
 }
