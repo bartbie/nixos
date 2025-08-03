@@ -1,9 +1,9 @@
 {
   pkgs,
-  lib,
   self,
   ...
 }: let
+  inherit (self) lib;
   rust-toolchain = let
     toolchain = channel: ver: pkgs.rust-bin.${channel}.${ver}.default;
   in

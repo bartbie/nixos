@@ -6,9 +6,11 @@
   inputs = inputs' // {flake = self;};
   inherit (nixpkgs) lib;
 
+  composeOls = l: lib.composeManyExtensions (lib.flatten l);
+
   ###
 
-  dependencies = let
+  dependencies-for = let
     unstable = self.lib.pkgh.mkUnstableOverlay inputs;
     rust = self.inputs.rust-overlay.overlays.default;
 
@@ -17,58 +19,49 @@
       self.inputs.bartbie-nvim.overlays.default
     ];
 
-    this = {
-      nixon =
-        common
-        ++ [
-          # this way wrappers can use each other
-          self.overlays.nixon
-        ];
+    deps-for = {
+      nixon = common;
 
       nixonSystemPackages = common;
 
-      forDevShells =
-        this.nixon
-        ++ [
-          rust
-        ];
+      all = deps-for.nixon;
 
-      all = this.nixon;
+      forOutputs = deps-for.nixon ++ [rust self.overlays.nixon];
     };
   in
-    this;
+    deps-for;
 
   # our overlays
   overlays = {
     # packages defined by this flake
     nixon = let
-      mkPackages = pkgs: import ./packagesCustom.nix ({inherit pkgs;} // inputs);
+      mkPackages = pkgs: import ./packagesCustom.nix ({inherit pkgs lib;} // inputs);
     in
-      _: prev: mkPackages prev;
+      _: prev:
+        lib.fix (self: {
+          # we don't want to use final in case downstream overlays overwrite it by mistake
+          nixon = mkPackages (prev // self);
+        });
 
     # list of packages installed by nixon.packages
     nixonSystemPackages = _: prev: {
       nixon = lib.recursiveUpdate prev.nixon {
-        systemPackages =
-          import ./packagesSystem.nix prev;
+        systemPackages = import ./packagesSystem.nix prev;
       };
     };
 
     # nixon + systemPackages
-    all = lib.composeManyExtensions [self.overlays.nixon self.overlays.nixonSystemPackages];
+    all = composeOls [self.overlays.nixon self.overlays.nixonSystemPackages];
   };
-in {
-  overlays = let
-    # same but with overlay dependencies composed in
-    with-deps = lib.mapAttrs' (n: v: lib.nameValuePair "${n}" (lib.composeManyExtensions [v dependencies.${n}])) overlays;
+  # same but with overlay dependencies composed in
+  with-deps = lib.mapAttrs' (n: v: lib.nameValuePair "${n}" (composeOls [dependencies-for.${n} v])) overlays;
 
-    # overlays but renamed
-    raw = lib.mapAttrs' (n: v: lib.nameValuePair "${n}Raw") overlays;
-  in
-    raw
-    // with-deps
-    // {
-      default = self.overlays.nixon;
-      inherit (dependencies) forDevShells;
-    };
-}
+  # overlays but renamed
+  raw = lib.mapAttrs' (n: v: lib.nameValuePair "${n}Raw" v) overlays;
+in
+  raw
+  // with-deps
+  // {
+    default = self.overlays.nixon;
+    forOutputs = composeOls dependencies-for.forOutputs;
+  }

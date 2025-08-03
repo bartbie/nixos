@@ -37,17 +37,18 @@
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
+    nixonLib = import ./lib {inherit lib;};
     mkNixonDefault = x: {
       nixon = x;
       default = x;
     };
     host-configs = import ./hosts inputs;
-    forSystems = self.lib.pkgh.forSystems (import inputs.systems) self;
+    forSystems = nixonLib.pkgh.forSystems (import inputs.systems) self;
   in
     host-configs
     // {
-      lib = import ./lib {inherit lib;};
-      nixonLib = self.lib;
+      inherit nixonLib;
+      lib = nixonLib;
       nixosModules = mkNixonDefault (import ./modules/nixos);
       overlays = import ./packages inputs;
       #
@@ -58,18 +59,17 @@
       };
     }
     // (forSystems ({
-        system,
         self',
         inputs',
         ...
       } @ args: let
         pkgs = import nixpkgs {
           config.allowUnfree = true;
-          overlays = [self.overlays.nixon self.overlays.forDevShells];
+          overlays = [self.overlays.forOutputs];
         };
       in {
-        formatter = inputs'.nixpkgs.legacyPackages.alejandra;
-        devShells = import ./devShells args;
-        packages = let this = self.overlays.nixon this pkgs; in this;
+        formatter = pkgs.alejandra;
+        packages = pkgs.nixon;
+        devShells = import ./devShells (args // inputs // {inherit pkgs;});
       }));
 }
