@@ -2,6 +2,9 @@
 
 ## Architecture
 
+> [!IMPORTANT]
+> This is in process of getting refactored to flake-parts and dendritic pattern
+
 `flake.nix` - obv the entrypoint, but mostly used as a place to declare inputs.
 
 `lib/` - flake's library, independent of `pkgs`.
