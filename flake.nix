@@ -41,18 +41,20 @@
       nixon = x;
       default = x;
     };
-  in {
-    lib = import ./lib {inherit lib;};
-    formatter = self.lib.pkgh.eachSystemPkgs inputs [] (pkgs: pkgs.alejandra);
-    nixosConfigurations = import ./hosts inputs;
-    nixosModules = mkNixonDefault (import ./modules/nixos);
-    inherit (import ./packages inputs) packages overlays devShells;
-    #
-    nixonLib = self.lib;
-    wrapperManagerModules = import ./modules/wrapper-manager inputs;
-    _repl = {
-      inherit lib self;
-      lib-unstable = inputs.nixpkgs-unstable.lib;
-    };
-  };
+    configs = import ./hosts inputs;
+  in
+    {
+      lib = import ./lib {inherit lib;};
+      formatter = self.lib.pkgh.eachSystemPkgs inputs [] (pkgs: pkgs.alejandra);
+      nixosModules = mkNixonDefault (import ./modules/nixos);
+      inherit (import ./packages inputs) packages overlays devShells;
+      #
+      nixonLib = self.lib;
+      wrapperManagerModules = import ./modules/wrapper-manager inputs;
+      _repl = {
+        inherit lib self;
+        lib-unstable = inputs.nixpkgs-unstable.lib;
+      };
+    }
+    // configs;
 }

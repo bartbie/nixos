@@ -2,36 +2,50 @@
   nixpkgs,
   self,
   ...
-}: let
+} @ args: let
   inherit (self) inputs;
   inherit (nixpkgs) lib;
-  mkHost = builder: hostname: system:
-    builder {
-      inherit system;
+  flake = self;
+  create = import ./createHosts.nix args;
+  switch = default: tag: attrs: attrs.${tag} or default;
+in
+  create {
+    shared = {
+      specialArgs = {inherit flake;};
       modules = [
-        ({config, ...}: {
-          networking.hostName = hostname;
-          nixpkgs.hostPlatform = system;
+        inputs.wrapper-manager.nixosModules.wrapper-manager
+        self.nixosModules.nixon
+        {
           nixpkgs.overlays = [
             (self.lib.pkgh.mkUnstableOverlay inputs)
             self.overlays.all
           ];
           nixon.core.enable = lib.mkDefault true; # enable our default config
-          disko.enableConfig = lib.mkDefault (config.disko.devices != {});
-        })
-        ./${hostname}
-        # Add our module
-        self.nixosModules.nixon
-        # Add modules that will are or will get disabled by default
-        inputs.disko.nixosModules.disko
-        inputs.impermanence.nixosModules.impermanence
-        inputs.wrapper-manager.nixosModules.wrapper-manager
+        }
       ];
-      specialArgs = {
-        flake = self;
+    };
+    perTag = tag: {
+      modules = switch [] tag {
+        "disko" = [
+          inputs.disko.nixosModules.disko
+        ];
+        "impermanence" = [
+          inputs.impermanence.nixosModules.impermanence
+        ];
       };
     };
-  mkHostArgs = mkHost lib.id;
-in {
-  lyndon = mkHost lib.nixosSystem "lyndon" "x86_64-linux";
-}
+    additionalClasses = {
+      wsl = "nixos";
+    };
+    hosts = {
+      lyndon = {
+        arch = "x86_64";
+        class = "nixos";
+        tags = ["disko" "impermanence"];
+      };
+      roosevelt = {
+        arch = "aarch64";
+        class = "darwin";
+      };
+    };
+  }
