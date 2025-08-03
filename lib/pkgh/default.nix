@@ -31,7 +31,7 @@
   });
 
   forSystems = systems: self: fn: let
-    each-sys = lib.genAttrs systems (system: let
+    wrapper = system: let
       preselect = v:
         {
           packages = v.packages.${system} or {};
@@ -41,27 +41,13 @@
       self' = preselect self;
       inputs' = builtins.attrValues (_: preselect) self.inputs;
     in
-      fn {inherit system self' inputs';});
+      fn {inherit system self' inputs';};
+
+    addSystem = sys: (builtins.mapAttrs (_: outp: {${sys} = outp;}));
   in
-    lib.pipe each-sys [
-      # {
-      #     linux = {pkgs = X;};
-      #     darwin = {pkgs = Y;};
-      # }
-      (builtins.mapAttrs (sys: builtins.mapAttrs (_: v: {${sys} = v;})))
-      # {
-      #     linux = {pkgs = {linux = X;};};
-      #     darwin = {pkgs = {darwin = Y;};};
-      # }
-      builtins.attrValues
-      # [
-      #     {pkgs = {linux = X;};}
-      #     {pkgs = {darwin = Y;};}
-      # ]
+    lib.pipe systems [
+      (builtins.map (sys: addSystem sys (wrapper sys)))
       (builtins.foldl' lib.recursiveUpdate {})
-      # {
-      #     pkgs = {linux = X; darwin = Y;};
-      # }
     ];
 
   eachSystemPkgs = systems: nixpkgs: overlays: f: let
