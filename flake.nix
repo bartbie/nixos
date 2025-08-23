@@ -58,12 +58,15 @@
         lib-unstable = inputs.nixpkgs-unstable.lib;
       };
     }
-    // (forSystems ({
+    // (forSystems (
+      {
         self',
         inputs',
+        system,
         ...
       } @ args: let
         pkgs = import nixpkgs {
+          inherit system;
           config.allowUnfree = true;
           overlays = [self.overlays.forOutputs];
         };
@@ -71,5 +74,6 @@
         formatter = pkgs.alejandra;
         packages = pkgs.nixon;
         devShells = import ./devShells (args // inputs // {inherit pkgs;});
-      }));
+      }
+    ));
 }

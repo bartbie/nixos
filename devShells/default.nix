@@ -3,7 +3,7 @@
   self,
   ...
 }: let
-  inherit (self) lib;
+  inherit (pkgs) lib;
   rust-toolchain = let
     toolchain = channel: ver: pkgs.rust-bin.${channel}.${ver}.default;
   in
@@ -51,50 +51,45 @@
       };
     };
 
-  mkDevShell = args:
-    (pkgs.mkShell {
-      buildInputs = dev-pkgs;
-      nativeBuildInputs = builtins.attrValues {
+  mkDevShell = {
+    name,
+    extraPackages ? [],
+  }: (pkgs.mkShell {
+    inherit name;
+    packages =
+      dev-pkgs
+      ++ extraPackages
+      ++ (builtins.attrValues {
         inherit
           (pkgs)
           pkg-config
           ;
-      };
-      RUST_SRC_PATH = "${rust-toolchain}/lib/rustlib/src/rust/library";
-    })
-    // args;
+      });
+    RUST_SRC_PATH = "${rust-toolchain}/lib/rustlib/src/rust/library";
+  });
 in {
   default = self.devShells.${pkgs.system}.devWithLix;
   wrapped = pkgs.mkShell {
     name = "nixon-wrapped-shell";
-    buildInputs = builtins.attrValues pkgs.nixon;
+    packages = builtins.attrValues pkgs.nixon;
   };
   all = pkgs.mkShell {
     name = "nixon-all-shell";
-    buildInputs = builtins.attrValues (pkgs.nixon // pkgs.systemPackages);
+    packages = builtins.attrValues (pkgs.nixon // pkgs.systemPackages);
   };
   dev = mkDevShell {
     name = "nixon-dev-shell";
   };
   devWithLix = mkDevShell {
     name = "nixon-dev-lix-shell";
-    buildInputs =
-      dev-pkgs
-      ++ [
-        self.inputs.lix-module.packages.${pkgs.system}.default
-        pkgs.nh
-        pkgs.nixos-rebuild
-      ];
+    extraPackages = [
+      self.inputs.lix-module.packages.${pkgs.system}.default
+      pkgs.nh
+      pkgs.nixos-rebuild
+    ];
   };
   devWithNvim = mkDevShell {
     name = "nixon-dev-nvim-shell";
-    buildInputs =
-      dev-pkgs
-      ++ builtins.attrValues {
-        inherit
-          (pkgs)
-          bartbie-nvim-nightly
-          ;
-      };
+    extraPackages = [pkgs.bartbie-nvim-nightly];
   };
 }
