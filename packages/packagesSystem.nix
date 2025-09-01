@@ -4,7 +4,7 @@
     ;
   inherit
     (pkgs)
-    bartbie-nvim-nightly
+    nvim
     gcc
     vim
     wget

@@ -90,6 +90,6 @@ in {
   };
   devWithNvim = mkDevShell {
     name = "nixon-dev-nvim-shell";
-    extraPackages = [pkgs.bartbie-nvim-nightly];
+    extraPackages = [pkgs.nvim];
   };
 }

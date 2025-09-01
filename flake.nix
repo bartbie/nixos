@@ -21,7 +21,7 @@
     impermanence.url = "github:nix-community/impermanence";
     wrapper-manager.url = "github:foo-dogsquared/nix-module-wrapper-manager-fds";
     bartbie-nvim = {
-      url = "github:bartbie/nvim/rocks";
+      url = "github:bartbie/nvim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     rust-overlay = {
