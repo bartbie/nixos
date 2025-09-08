@@ -16,7 +16,15 @@
 
     common = [
       unstable
-      self.inputs.bartbie-nvim.overlays.default
+      (
+        # HACK: wrap the nvim overlay with one passing it unstable packages
+        # this way i don't need to do inputs.bartbie-nvim.packages...
+        # and still have it use nixpkgs-unstable
+        final: prev: let
+          ol = self.inputs.bartbie-nvim.overlays.default;
+        in
+          ol final prev.unstable
+      )
     ];
 
     deps-for = {
