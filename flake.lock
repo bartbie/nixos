@@ -11,11 +11,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1757278621,
-        "narHash": "sha256-HnlBmncNizBQoBXRpcwa19Wczre68nBHfGjT+1jlrqM=",
+        "lastModified": 1757351079,
+        "narHash": "sha256-f+d319WQPFuHarxBJ66FbIz9ikgDMZ4gZDjbPTpFpVc=",
         "owner": "bartbie",
         "repo": "nvim",
-        "rev": "ee2a2af08137d0ac89d91ffa359f8bc6b7685b18",
+        "rev": "6d53a161dd5fe893057442b8042b6aa706e2688f",
         "type": "github"
       },
       "original": {
