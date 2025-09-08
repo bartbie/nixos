@@ -3,7 +3,11 @@
   nixpkgs,
   ...
 } @ inputs': let
-  inputs = inputs' // {flake = self;};
+  inputs =
+    inputs'
+    // {
+      flake = self;
+    };
   inherit (nixpkgs) lib;
 
   composeOls = l: lib.composeManyExtensions (lib.flatten l);
@@ -34,7 +38,12 @@
 
       all = deps-for.nixon;
 
-      forOutputs = deps-for.nixon ++ [rust self.overlays.nixon];
+      forOutputs =
+        deps-for.nixon
+        ++ [
+          rust
+          self.overlays.nixon
+        ];
     };
   in
     deps-for;
@@ -59,10 +68,21 @@
     };
 
     # nixon + systemPackages
-    all = composeOls [self.overlays.nixon self.overlays.nixonSystemPackages];
+    all = composeOls [
+      self.overlays.nixon
+      self.overlays.nixonSystemPackages
+    ];
   };
   # same but with overlay dependencies composed in
-  with-deps = lib.mapAttrs' (n: v: lib.nameValuePair "${n}" (composeOls [dependencies-for.${n} v])) overlays;
+  with-deps =
+    lib.mapAttrs' (
+      n: v:
+        lib.nameValuePair "${n}" (composeOls [
+          dependencies-for.${n}
+          v
+        ])
+    )
+    overlays;
 
   # overlays but renamed
   raw = lib.mapAttrs' (n: v: lib.nameValuePair "${n}Raw" v) overlays;
