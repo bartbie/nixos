@@ -42,7 +42,7 @@ in
         class = "nixos";
         tags = ["disko" "impermanence"];
       };
-      roosevelt = {
+      Roosevelt = {
         arch = "aarch64";
         class = "darwin";
       };
