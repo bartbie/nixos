@@ -1,9 +1,14 @@
 {
   lib,
   self,
+  inputs,
   ...
 }: {
-  perSystem = {pkgs, ...}: {
+  perSystem = {
+    self',
+    pkgs,
+    ...
+  }: {
     devShells = let
       rust-toolchain = let
         toolchain = channel: ver: pkgs.rust-bin.${channel}.${ver}.default;
@@ -11,7 +16,6 @@
         (toolchain "stable" "latest").override (p: {
           extensions = p.extensions ++ ["rust-src"];
         });
-
       dev-pkgs = let
         flatten = lib.flip lib.pipe [
           (self.lib.attrsets.bypath.flattenToListCond (x: !(lib.isDerivation x)))
@@ -21,7 +25,7 @@
         flatten {
           common = {
             inherit
-              (pkgs.nixon)
+              (self'.packages)
               git
               jujutsu
               ;
@@ -68,11 +72,7 @@
       default = self.devShells.${pkgs.system}.devWithLix;
       wrapped = pkgs.mkShell {
         name = "nixon-wrapped-shell";
-        buildInputs = builtins.attrValues pkgs.nixon;
-      };
-      all = pkgs.mkShell {
-        name = "nixon-all-shell";
-        buildInputs = builtins.attrValues (pkgs.nixon // pkgs.systemPackages);
+        buildInputs = builtins.attrValues self'.packages;
       };
       dev = mkDevShell {
         name = "nixon-dev-shell";
@@ -82,21 +82,10 @@
         buildInputs =
           dev-pkgs
           ++ [
-            self.inputs.lix-module.packages.${pkgs.system}.default
+            inputs.lix-module.packages.${pkgs.system}.default
             pkgs.nh
             pkgs.nixos-rebuild
           ];
-      };
-      devWithNvim = mkDevShell {
-        name = "nixon-dev-nvim-shell";
-        buildInputs =
-          dev-pkgs
-          ++ builtins.attrValues {
-            inherit
-              (pkgs)
-              bartbie-nvim-nightly
-              ;
-          };
       };
     };
   };

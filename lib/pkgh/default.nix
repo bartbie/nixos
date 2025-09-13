@@ -55,4 +55,8 @@
     mkPkgs = system: (import nixpkgs {inherit system overlays;});
   in
     eachSystem (system: f (mkPkgs system));
+
+  mapArg0 = pkg: exe: attrs:
+    attrs
+    |> builtins.mapAttrs (_: opts: {arg0 = lib.getExe' pkg exe;} // opts);
 }
