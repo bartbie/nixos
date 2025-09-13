@@ -1,7 +1,7 @@
 {
   pkgs,
   lib,
-  wrapperManagerLib,
+  self',
   ...
 } @ inputs: let
   writeVendor = type: x: pkgs.writeTextDir "share/fish/vendor_${type}.d/${x}";
@@ -20,12 +20,12 @@
     (lib.concatStringsSep "\n")
   ];
 
-  starship-config = (pkgs.formats.toml {}).generate "starship.toml" (import ./starship.nix inputs);
+  starship-config = (pkgs.formats.toml {}).generate "starship.toml" (import ./_starship.nix inputs);
 
-  kanagawa = pkgs.writeText "kanagawa.fish" (import ./kanagawa.nix inputs);
+  kanagawa = pkgs.writeText "kanagawa.fish" (import ./_kanagawa.nix inputs);
 
   zellij-hook = let
-    zel = lib.getExe' pkgs.nixon.zellij "zellij";
+    zel = lib.getExe' self'.packages.zellij "zellij";
   in
     # fish
     ''
@@ -48,7 +48,7 @@
     '';
 
   tmux-hook = let
-    tmux = lib.getExe' pkgs.nixon.tmux "tmux";
+    tmux = lib.getExe' self'.packages.tmux "tmux";
   in
     # fish
     ''
@@ -78,41 +78,29 @@
         ${wrapper} $argv
       end
     '';
+in
+  writeVendorConf "bartbie_config.fish"
+  # fish
+  ''
+    source ${./files/load_plugin.fish}
+    ${mapPlugins plugins}
 
-  config =
-    writeVendorConf "bartbie_config.fish"
-    # fish
-    ''
-      source ${./load_plugin.fish}
-      ${mapPlugins plugins}
+    fenv source /etc/profile
 
-      fenv source /etc/profile
+    if status is-interactive
+        source ${./files/pushd_mod.fish}
+        ${builtins.readFile ./files/interactive.fish}
 
-      if status is-interactive
-          source ${./pushd_mod.fish}
-          ${builtins.readFile ./interactive.fish}
+        source ${kanagawa}
 
-          source ${kanagawa}
+        set -gx STARSHIP_CONFIG ${starship-config}
+        ${lib.getExe pkgs.starship} init fish | source
 
-          set -gx STARSHIP_CONFIG ${starship-config}
-          ${lib.getExe pkgs.starship} init fish | source
+        set -gx DIRENV_LOG_FORMAT = ""
+        ${lib.getExe self'.packages.direnv} hook fish | source
 
-          set -gx DIRENV_LOG_FORMAT = ""
-          ${lib.getExe pkgs.nixon.direnv} hook fish | source
+        ${tmux-hook}
 
-          ${tmux-hook}
-
-          ${command-not-found-hook}
-      end
-    '';
-in {
-  wrappers.fish = let
-    # TODO: remove after fixed upstream
-    pkg = pkgs.unstable.fish.overrideAttrs (old: {
-      patches = old.patches ++ [./4f46d369c4e9d7ea2f76290c6cb3a0882014eb4a.patch];
-    });
-  in {
-    arg0 = lib.getExe' pkg "fish";
-    xdg.dataDirs = wrapperManagerLib.getXdgDataDirs [config];
-  };
-}
+        ${command-not-found-hook}
+    end
+  ''

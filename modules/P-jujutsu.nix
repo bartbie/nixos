@@ -1,13 +1,11 @@
 {
-  pkgs,
   lib,
+  config,
   ...
 }: let
-  inherit (pkgs.formats.toml {}) generate;
-  config = {
+  jj-config = {
     user = {
-      name = "bartbie";
-      email = "bartbie37@gmail.com";
+      inherit (config.meta.defaultOwner.git) name email;
     };
     ui = {
       default-command = "status";
@@ -34,9 +32,19 @@
     };
   };
 in {
-  wrappers.jujutsu = {
-    executableName = "jj";
-    arg0 = lib.getExe' pkgs.jujutsu "jj";
-    env.JJ_CONFIG.value = "${generate "jujutsu-config.toml" config}";
+  wrapped.jujutsu = {
+    tags = null;
+    module = {
+      pkgs,
+      pkgs-unstable,
+      ...
+    }: {
+      single = {
+        package = pkgs-unstable.jujutsu;
+        wrapper = {
+          env.JJ_CONFIG.value = (pkgs.formats.toml {}).generate "jujutsu-config.toml" jj-config;
+        };
+      };
+    };
   };
 }
