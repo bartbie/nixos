@@ -6,12 +6,7 @@
   };
 
   outputs = inputs:
-    inputs.flake-parts.lib.mkFlake {
-      inherit inputs;
-      specialArgs = {
-        flake = inputs.self;
-      };
-    } (inputs.import-tree ./modules);
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";

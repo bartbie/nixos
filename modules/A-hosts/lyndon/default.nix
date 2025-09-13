@@ -6,8 +6,9 @@
 }: let
   enableGpuFirmware = true;
 in {
-  flake.modules.nixos.hosts.lyndon = {
+  hosts.nixos.lyndon = {
     pkgs,
+    pkgs-unstable,
     config,
     ...
   }: {
@@ -22,22 +23,10 @@ in {
         common-cpu-amd-raphael-igpu
         common-gpu-nvidia-sync
         ;
+      hc = ./_hardware-configuration.nix;
     };
-
-    nixon.impermanence.enable = true;
 
     hardware.nvidia.modesetting.enable = true;
-
-    #TODO: move to feat module
-    environment = {
-      variables = {
-        # it's installed globally so make it global too
-        EDITOR = "nvim";
-      };
-      shellAliases = {
-        vim = "nvim";
-      };
-    };
 
     hardware.graphics = {
       enable = true;
@@ -67,7 +56,7 @@ in {
         in
           assert lib.assertMsg result "Nvidia driver version mismatch. ${supposed} vs actual ${version}"; package;
         stable = validateVer "570.153" config.boot.kernelPackages.nvidiaPackages.latest;
-        unstable = validateVer "575.64" (pkgs.unstable.linuxPackagesFor config.boot.kernelPackages.kernel).nvidiaPackages.latest;
+        unstable = validateVer "575.64" (pkgs-unstable.linuxPackagesFor config.boot.kernelPackages.kernel).nvidiaPackages.latest;
       in
         unstable;
     };
