@@ -1,27 +1,40 @@
 {
   lib,
-  flake,
+  nixonLib,
   ...
 }: {
+  wrapped.kanata.module = {pkgs-unstable, ...}: {
+    single = {
+      package = pkgs-unstable.kanata;
+      wrapper.prependArgs = [
+        "--cfg"
+        # for live-reload
+        # "/etc/nixos/modules/wrapper-manager/kanata/config.kbd"
+        ./config.kbd
+      ];
+    };
+  };
+
   flake.modules.nixos.pc = {
     config,
     pkgs,
+    self',
     ...
   }: let
-    package = pkgs.nixon.kanata;
+    package = self'.packages.kanata;
   in {
     hardware.uinput.enable = true;
     systemd.services.kanata = {
       wantedBy = ["multi-user.target"];
       description = "Kanata service";
-      serviceConfig = flake.lib.systemd.hardenServiceConfig {
+      serviceConfig = nixonLib.systemd.hardenServiceConfig {
         Type = "notify";
         ExecStart = ''
           ${lib.getExe package}
         '';
         DynamicUser = true;
         # RuntimeDirectory = "kanata";
-        SupplementaryGroups = flake.lib.systemd.mapGroups {
+        SupplementaryGroups = nixonLib.systemd.mapGroups {
           inherit
             (config.users.groups)
             input
