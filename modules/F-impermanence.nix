@@ -13,7 +13,7 @@
   };
 in {
   flake.modules.nixos = {
-    impermanence-pc = {
+    impermanence-pc = {config, ...}: {
       environment.persistence.${storagePath} = {
         hideMounts = true;
         directories = [
@@ -33,7 +33,7 @@ in {
         files = [
           "/etc/machine-id"
         ];
-        users.bartbie = let
+        users.${config.meta.owner.username} = let
           state = x: ".local/state/${x}";
           share = x: ".local/share/${x}";
           cache = x: ".cache/${x}";

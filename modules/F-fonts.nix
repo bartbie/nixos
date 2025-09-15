@@ -1,5 +1,5 @@
 let
-  pc = {pkgs}: {
+  pc = {pkgs, ...}: {
     fonts = {
       packages = builtins.attrValues {
         inherit
