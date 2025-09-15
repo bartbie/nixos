@@ -2,7 +2,9 @@
   initialPassword = "1";
 in {
   flake.modules.nixos = {
-    pc = {
+    pc = {config, ...}: let
+      ownername = config.meta.owner.username;
+    in {
       security = let
         mapCmds = options:
           builtins.map (cmd: {
@@ -17,12 +19,10 @@ in {
           }
         ];
       };
-    };
-    users-bartbie = {
-      nix.settings.trusted-users = ["bartbie"];
+      nix.settings.trusted-users = [ownername];
       users = {
         mutableUsers = false;
-        users.bartbie = {
+        users.${ownername} = {
           isNormalUser = true;
           inherit initialPassword;
           uid = 1000;
@@ -40,13 +40,21 @@ in {
     };
     persistPasswordFiles = {config, ...}: let
       enable = config.environment ? persistence;
+      ownername = config.meta.owner.username;
+      users = ["root" ownername];
+      mapUsers = fn: l: lib.genAttrs l fn;
     in {
-      users = lib.mkIf enable (
-        builtins.map (user: {
-          ${user}.hashedPasswordFile = lib.mkDefault "/persist/secrets/${user}";
+      users.users = lib.mkIf enable (
+        users
+        |> mapUsers (name: {
+          hashedPasswordFile = lib.mkDefault "/persist/secrets/${name}";
         })
-        config.users.users
       );
+      virtualisation.vmVariant.users.users =
+        users
+        |> mapUsers (name: {
+          hashedPasswordFile = null;
+        });
     };
   };
 }
