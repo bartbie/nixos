@@ -2,6 +2,7 @@
   lib,
   inputs,
   self,
+  nixonLib,
   ...
 }: let
   enableGpuFirmware = true;
@@ -64,7 +65,7 @@ in {
     boot = {
       blacklistedKernelModules = ["nouveau"];
 
-      extraModprobeConfig = self.lib.generators.mkModprobeConfig {
+      extraModprobeConfig = nixonLib.generators.mkModprobeConfig {
         nvidia = [
           # already enabled but let's make sure
           "NVreg_UsePageAttributeTable=1"
@@ -72,7 +73,7 @@ in {
           "NVreg_PreserveVideoMemoryAllocations=1"
         ];
         nvidia_drm = [
-          "NVreg_EnableGpuFirmware=${self.lib.boolToString enableGpuFirmware}"
+          "NVreg_EnableGpuFirmware=${nixonLib.boolToString enableGpuFirmware}"
         ];
       };
     };

@@ -2,6 +2,7 @@
   lib,
   self,
   inputs,
+  nixonLib,
   ...
 }: {
   perSystem = {
@@ -18,7 +19,7 @@
         });
       dev-pkgs = let
         flatten = lib.flip lib.pipe [
-          (self.lib.attrsets.bypath.flattenToListCond (x: !(lib.isDerivation x)))
+          (nixonLib.attrsets.bypath.flattenToListCond (x: !(lib.isDerivation x)))
           (builtins.map (x: x.value))
         ];
       in
