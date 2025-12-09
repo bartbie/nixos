@@ -24,7 +24,6 @@ in {
       mods (switchM tag {
         "disko" = [inputs.disko.nixosModules.disko];
         "impermanence" = [inputs.impermanence.nixosModules.impermanence];
-        "lix" = [inputs.lix-module.nixosModules.default];
         "minimal" = [(x: {imports = ["${x.modulesPath}/profiles/minimal.nix"];})];
         "pc" = [this.nixos.pc];
         "server" = [this.nixos.server];
@@ -33,7 +32,7 @@ in {
       lyndon = {
         arch = "x86_64";
         class = "nixos";
-        tags = ["disko" "impermanence" "lix" "pc"];
+        tags = ["disko" "impermanence" "pc"];
         modules = modsFor "nixos" (m: [
           m.allowUnfree
           m.disko-lyndon
@@ -49,7 +48,7 @@ in {
       Roosevelt = {
         arch = "aarch64";
         class = "darwin";
-        tags = ["lix" "pc"];
+        tags = ["pc"];
       };
     };
   };
