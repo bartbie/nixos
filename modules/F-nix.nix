@@ -32,7 +32,5 @@
         flake = "/etc/nixos";
       };
     };
-
-    lix = {};
   };
 }
