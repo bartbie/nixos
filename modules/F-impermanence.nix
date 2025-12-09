@@ -1,6 +1,6 @@
 {
   lib,
-  self,
+  nixonLib,
   ...
 }: let
   # TODO: make this options in future
@@ -122,7 +122,7 @@ in {
         unitConfig = {
           RequiresMountsFor = "/";
         };
-        serviceConfig = self.lib.systemd.hardenServiceConfig {
+        serviceConfig = nixonLib.systemd.hardenServiceConfig {
           Type = "oneshot";
           ExecStart = let
             btrfs = lib.getExe' pkgs.btrfs-progs "btrfs";
