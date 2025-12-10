@@ -25,8 +25,6 @@ in {
         "disko" = [inputs.disko.nixosModules.disko];
         "impermanence" = [inputs.impermanence.nixosModules.impermanence];
         "minimal" = [(x: {imports = ["${x.modulesPath}/profiles/minimal.nix"];})];
-        "pc" = [this.nixos.pc];
-        "server" = [this.nixos.server];
       });
     hosts = {
       lyndon = {
