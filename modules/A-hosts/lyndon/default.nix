@@ -32,7 +32,6 @@ in {
     hardware.graphics = {
       enable = true;
     };
-
     hardware.nvidia = {
       powerManagement = let
         inherit (config.hardware.nvidia.prime.offload) enable;
@@ -56,8 +55,8 @@ in {
           result = (mm supposed) == (mm version);
         in
           assert lib.assertMsg result "Nvidia driver version mismatch. ${supposed} vs actual ${version}"; package;
-        stable = validateVer "570.153" config.boot.kernelPackages.nvidiaPackages.latest;
-        unstable = validateVer "575.64" (pkgs-unstable.linuxPackagesFor config.boot.kernelPackages.kernel).nvidiaPackages.latest;
+        stable = validateVer "580.105" config.boot.kernelPackages.nvidiaPackages.latest;
+        unstable = validateVer "580.105" (pkgs-unstable.linuxPackagesFor config.boot.kernelPackages.kernel).nvidiaPackages.latest;
       in
         unstable;
     };

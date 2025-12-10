@@ -18,8 +18,7 @@
         };
       };
       system.switch = {
-        enable = false;
-        enableNg = true;
+        enable = true; # ng from 25.11 forward
       };
     };
     allowUnfree = {
