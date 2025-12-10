@@ -2,7 +2,7 @@
   wrapped.lsd = {
     tags = null;
     module = {pkgs, ...}: {
-      basePackages = [pkgs.lsd];
+      packagesToSymlink = [pkgs.lsd];
       wrappers = nixonLib.pkgh.mapArg0 pkgs.lsd "lsd" {
         ls.prependArgs = [];
         lsa.prependArgs = ["-a"];
