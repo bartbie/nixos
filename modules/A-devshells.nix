@@ -8,6 +8,7 @@
   perSystem = {
     self',
     pkgs,
+    pkgs-unstable,
     ...
   }: {
     devShells = let
@@ -50,7 +51,7 @@
               gobject-introspection
               ;
             inherit
-              (pkgs.unstable)
+              (pkgs-unstable)
               rust-analyzer
               ;
             inherit rust-toolchain;
@@ -83,7 +84,8 @@
         buildInputs =
           dev-pkgs
           ++ [
-            inputs.lix-module.packages.${pkgs.system}.default
+            # TODO
+            # inputs.lix-module.packages.${pkgs.system}.default
             pkgs.nh
             pkgs.nixos-rebuild
           ];

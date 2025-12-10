@@ -9,7 +9,7 @@
       inherit (theme.termcolors.simple) area lists indexed;
       concat-indexed = lib.pipe indexed [
         (builtins.mapAttrs (_: lib.strings.escapeNixString))
-        (pkgs.unstable.lib.concatMapAttrsStringSep ", " (n: v: "[${n}] = ${v}"))
+        (pkgs-unstable.lib.concatMapAttrsStringSep ", " (n: v: "[${n}] = ${v}"))
       ];
     in
       lib.generators.toLua {} {
