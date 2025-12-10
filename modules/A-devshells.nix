@@ -36,7 +36,7 @@
               (pkgs)
               nil
               ;
-            fmt = self.formatter.${pkgs.system};
+            fmt = self.formatter.${pkgs.hostPlatform.system};
           };
           nushell = {
             inherit
@@ -70,7 +70,7 @@
         })
         // args;
     in {
-      default = self.devShells.${pkgs.system}.devWithLix;
+      default = self.devShells.${pkgs.hostPlatform.system}.devWithLix;
       wrapped = pkgs.mkShell {
         name = "nixon-wrapped-shell";
         buildInputs = builtins.attrValues self'.packages;
