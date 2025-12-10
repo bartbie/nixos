@@ -40,8 +40,8 @@ lib.mergeAttrsList [
       nixonArgs = let
         # SAFETY:
         # set system from config.nixpkgs, otherwise infrec from specialArgs
-        # system = config.nixpkgs.localSystem;
-        inherit (pkgs) system;
+        # system = config.nixpkgs.hostPlatform;
+        inherit (pkgs.hostPlatform) system;
       in {
         inherit system;
         pkgs-unstable = mkNixpkgsUnstable system;

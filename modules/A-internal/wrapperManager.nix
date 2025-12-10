@@ -58,7 +58,7 @@
                 modules
                 extraWrapperModules
               ];
-              specialArgs = withSystem pkgs.system ({
+              specialArgs = withSystem pkgs.hostPlatform.system ({
                 self',
                 inputs',
                 ...
