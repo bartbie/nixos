@@ -80,6 +80,9 @@ in {
   options.wrapped = lib.mkOption {
     type = lib.types.lazyAttrsOf wrappedSubmodule;
     default = {};
+    description = ''
+      Set of modules defining package wrappers with attached respective metadata.
+    '';
   };
 
   config = let
@@ -99,36 +102,34 @@ in {
     # packages.nixos.pc = {};
     packages.generic =
       wrapped
-      |> builtins.mapAttrs (
-        name: {
+      # {name module}
+      |> lib.mapAttrsToList (
+        module-name: _v @ {
           module,
           tags,
           systems,
           ...
         }:
-          lib.genAttrs tags (_: {
-            ${name} = {
+          lib.genAttrs tags (
+            _tag: {
               pkgs,
               nixonArgs,
               system,
               ...
-            }:
-              lib.optionalAttrs (builtins.elem system systems)
-              {
-                add =
-                  lib.singleton
-                  ((mkWrapper {
-                      inherit pkgs nixonArgs;
-                      modules = module;
-                    }).override {
-                      extraWrapperModules = [
-                        {locale.enable = lib.mkDefault false;}
-                      ];
-                    });
-              };
-          })
+            }: {
+              add = lib.mkIf (builtins.elem system systems) [
+                ((mkWrapper {
+                    inherit pkgs nixonArgs;
+                    modules = module;
+                  }).override {
+                    extraWrapperModules = [
+                      {locale.enable = lib.mkDefault false;}
+                    ];
+                  })
+              ];
+            }
+          )
       )
-      |> builtins.attrValues
       |> (builtins.foldl' lib.recursiveUpdate {});
 
     perSystem = {

@@ -1,4 +1,5 @@
 {
+  lib,
   inputs,
   config,
   ...
@@ -7,7 +8,22 @@
   switch = default: tag: attrs: attrs.${tag} or default;
   switchM = switch [];
   mods = modules: {inherit modules;};
-  modsFor = class: fn: fn this.${class};
+
+  checkedTags = let
+    names = path:
+      this
+      |> lib.attrByPath [path] {}
+      |> builtins.attrNames;
+  in
+    class: tags:
+      assert lib.asserts.assertEachOneOf "tags" tags ((names class) ++ (names "generic")); tags;
+
+  tags = class: {
+    checked ? [],
+    unchecked ? [],
+  }:
+    unchecked
+    ++ (checkedTags class checked);
 in {
   imports = [inputs.easy-hosts.flakeModules.default];
   # extra machinery logic defined in ./machinery/easy-hosts.nix
@@ -30,18 +46,23 @@ in {
       lyndon = {
         arch = "x86_64";
         class = "nixos";
-        tags = ["disko" "impermanence" "pc"];
-        modules = modsFor "nixos" (m: [
-          m.allowUnfree
-          m.disko-lyndon
-          m.nh
-          m.impermanence-btrfs
-          m.impermanence-pc
-          m.persistPasswordFiles
-          m.ssh
-          m.hypr
-          m.wayland
-        ]);
+        tags = tags "nixos" {
+          unchecked = [
+            "disko"
+            "impermanence"
+            "pc"
+          ];
+          checked = [
+            "allowUnfree"
+            "nh"
+            "impermanence-btrfs"
+            "impermanence-pc"
+            "persistPasswordFiles"
+            "ssh"
+            "hypr"
+            "wayland"
+          ];
+        };
       };
       Roosevelt = {
         arch = "aarch64";
