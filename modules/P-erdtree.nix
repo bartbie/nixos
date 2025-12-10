@@ -22,7 +22,7 @@ in {
     tags = null;
     module = {pkgs, ...}: {
       drvName = "tree";
-      basePackages = [pkgs.erdtree];
+      packagesToSymlink = [pkgs.erdtree];
       wrappers =
         {
           tree = [ui];

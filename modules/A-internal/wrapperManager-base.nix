@@ -27,7 +27,7 @@ in {
                 type = types.deferredModule;
                 default = {};
               };
-              addToBasePackages = lib.mkOption {
+              symlinkPackage = lib.mkOption {
                 type = types.bool;
                 default = false;
               };
@@ -77,7 +77,7 @@ in {
               imports = [cfg.wrapper];
               arg0 = lib.mkDefault (getExe drv);
             };
-            basePackages = lib.mkIf (cfg.addToBasePackages) [drv];
+            packagesToSymlink = lib.mkIf (cfg.symlinkPackage) [drv];
             overrideAttrs = lib.mkMerge [
               (lib.mkIf (drv ? version) {
                 inherit (drv) version;
@@ -112,14 +112,49 @@ in {
           You can only return a one-arg function or attrset.
         '';
       };
+      packagesToSymlink = lib.mkOption {
+        type = types.listOf types.package;
+        description = ''
+          Packages to be symlinked in the wrapper package.
+        '';
+        default = [];
+        example = lib.literalExpression ''
+          with pkgs; [
+            yt-dlp
+          ]
+        '';
+      };
     };
     config = {
       locale.enable = lib.mkForce (!pkgs.stdenv.isDarwin);
       build = lib.mkIf (builtins.isList config.basePackages) {
         extraPassthru = {
           wrapperConfig = config;
-          inherit (config) basePackages;
+          inherit (config) basePackages packagesToSymlink;
         };
+        extraSetup =
+          config.packagesToSymlink
+          |> lib.concatMapStringsSep "\n" (
+            pkg:
+              pkg.outputs
+              |> lib.concatMapStringsSep "\n" (output:
+                #sh
+                ''
+                  # Symlink everything from original output of ${pkg.name}
+                  if [ -d "${pkg.${output}}" ]; then
+                    echo "Symlinking ${output}"
+                    set -x
+                    cp -rs --no-preserve=mode "${pkg.${output}}" "''${${output}}" || {
+                      set +x
+                      echo "Failed to symlink ${output}" >&2
+                      exit 1
+                    }
+                    set +x
+                  else
+                    echo "Warning: ${output} output not found" >&2
+                  fi
+                '')
+          );
       };
     };
   };
