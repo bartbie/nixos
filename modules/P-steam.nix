@@ -9,7 +9,7 @@
       inherit
         (pkgs)
         mangohud
-        protonup
+        protonup-ng
         protonup-qt
         ;
       bottles = pkgs.bottles.override {removeWarningPopup = true;};

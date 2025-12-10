@@ -15,8 +15,9 @@
     server = {config, ...}: {
     };
     ssh = {
-      programs.ssh.startAgent = lib.mkDefault true;
+      programs.ssh.startAgent = true;
       services.openssh.enable = true;
+      services.gnome.gcr-ssh-agent.enable = false;
     };
   };
 }
