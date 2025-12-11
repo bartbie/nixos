@@ -120,10 +120,7 @@ in {
       fs.toList
     ];
 
-  importsToAttrs = let
-    # TODO: remove this polyfill
-    takeEnd = n: xs: lib.drop (lib.max 0 (builtins.length xs - n)) xs;
-  in
+  importsToAttrs =
     lib.flip lib.pipe
     [
       (builtins.map (x: let
@@ -131,7 +128,7 @@ in {
           (x: assert lib.assertMsg (builtins.isPath x) "${x} must be a path!"; x)
           (y: "./${builtins.toString y}")
           lib.path.subpath.components
-          (takeEnd 2)
+          (lib.takeEnd 2)
           builtins.head
           (lib.removeSuffix ".nix")
         ];

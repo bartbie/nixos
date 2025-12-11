@@ -86,8 +86,7 @@ in {
                 outputs =
                   [drv.outputs "out"]
                   |> lib.flatten
-                  # TODO: after update switch stable lib
-                  |> pkgs-unstable.lib.lists.uniqueStrings;
+                  |> lib.lists.uniqueStrings;
               }
             ];
           };

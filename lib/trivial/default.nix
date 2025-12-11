@@ -4,8 +4,6 @@
   self,
   ...
 }: let
-  # TODO: remove this polyfill
-  takeEnd = n: xs: lib.drop (lib.max 0 (builtins.length xs - n)) xs;
 in {
   boolToString = b:
     if b
@@ -36,7 +34,7 @@ in {
 
   last = x:
     assert lib.assertMsg (x != []) "No elements in list!";
-      builtins.head (takeEnd 1 x);
+      builtins.head (lib.takeEnd 1 x);
 
   lastOrNull = x: self.nullish (x != []) (self.last x);
 

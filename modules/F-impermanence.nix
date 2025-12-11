@@ -86,9 +86,7 @@ in {
       pkgs-unstable,
       ...
     }: let
-      # INFO: added after 24.05
-      # https://github.com/NixOS/nixpkgs/pull/373287
-      osPath = pkgs-unstable.lib.types.pathWith {
+      osPath = lib.types.pathWith {
         inStore = false;
         absolute = true;
       };
