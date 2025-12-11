@@ -38,13 +38,7 @@ in {
       ...
     }: {
       single = {
-        package =
-          pkgs-unstable.fish
-          #               .overrideAttrs (old: {
-          #   # TODO: remove after fixed upstream
-          #   patches = old.patches ++ [./files/4f46d369c4e9d7ea2f76290c6cb3a0882014eb4a.patch];
-          # })
-          ;
+        package = pkgs-unstable.fish;
         wrapper = {
           xdg.dataDirs = wrapperManagerLib.getXdgDataDirs [(pkgs.callPackage ./_writeConfig.nix (nixonArgs // {inherit self';}))];
         };
