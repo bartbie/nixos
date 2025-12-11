@@ -24,4 +24,22 @@ in {
   hosts.shared = {pkgs-unstable, ...}: {
     nix.package = pkgs-unstable.lix;
   };
+
+  perSystem = {
+    pkgs,
+    pkgs-unstable,
+    system,
+    self',
+    ...
+  }: {
+    devShells.devWithLix = pkgs.mkShell {
+      name = "nixon-dev-lix-shell";
+      packages = [
+        pkgs-unstable.lix
+        pkgs.nh
+        pkgs.nixos-rebuild
+      ];
+      inputsFrom = [self'.devShells.devBasic];
+    };
+  };
 }

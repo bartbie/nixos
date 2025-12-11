@@ -4,25 +4,42 @@
   inputs,
   nixonLib,
   ...
-}: {
+}: let
+  rustToolchain = {
+    channel,
+    version,
+    extraExtensions ? [],
+  }: set:
+    set.rust-bin.${channel}.${version}.default.override (p: {
+      extensions = p.extensions ++ extraExtensions;
+    });
+in {
   perSystem = {
     self',
     pkgs,
     pkgs-unstable,
     ...
-  }: {
+  } @ args: {
     devShells = let
-      rust-toolchain = let
-        toolchain = channel: ver: pkgs.rust-bin.${channel}.${ver}.default;
-      in
-        (toolchain "stable" "latest").override (p: {
-          extensions = p.extensions ++ ["rust-src"];
-        });
+      # CORRECTNESS:
+      # only extend here to avoid unnecessary global overlay
+      pkgs-unstable = args.pkgs-unstable.extend inputs.rust-overlay.overlays.default;
+
+      rust-toolchain =
+        rustToolchain {
+          channel = "stable";
+          version = "latest";
+          extraExtensions = ["rust-src"];
+        }
+        pkgs-unstable;
+
+      RUST_SRC_PATH = "${rust-toolchain}/lib/rustlib/src/rust/library";
+
       dev-pkgs = let
-        flatten = lib.flip lib.pipe [
-          (nixonLib.attrsets.bypath.flattenToListCond (x: !(lib.isDerivation x)))
-          (builtins.map (x: x.value))
-        ];
+        flatten = l:
+          l
+          |> nixonLib.attrsets.bypath.flattenToListCond (x: !(lib.isDerivation x))
+          |> builtins.map (x: x.value);
       in
         flatten {
           common = {
@@ -57,38 +74,29 @@
             inherit rust-toolchain;
           };
         };
-
-      mkDevShell = args:
-        (pkgs.mkShell {
-          buildInputs = dev-pkgs;
-          nativeBuildInputs = builtins.attrValues {
-            inherit
-              (pkgs)
-              pkg-config
-              ;
-          };
-          RUST_SRC_PATH = "${rust-toolchain}/lib/rustlib/src/rust/library";
-        })
-        // args;
     in {
       default = self.devShells.${pkgs.hostPlatform.system}.devWithLix;
       wrapped = pkgs.mkShell {
         name = "nixon-wrapped-shell";
-        buildInputs = builtins.attrValues self'.packages;
+        packages = builtins.attrValues self'.packages;
       };
-      dev = mkDevShell {
+      dev = pkgs.mkShell {
         name = "nixon-dev-shell";
+        inputsFrom = [
+          self'.devShells.devWithLix
+          self'.devShells.devWithNvim
+        ];
       };
-      devWithLix = mkDevShell {
-        name = "nixon-dev-lix-shell";
-        buildInputs =
-          dev-pkgs
-          ++ [
-            # TODO
-            # inputs.lix-module.packages.${pkgs.system}.default
-            pkgs.nh
-            pkgs.nixos-rebuild
-          ];
+      devBasic = pkgs.mkShell {
+        name = "nixon-dev-shell-basic";
+        inherit RUST_SRC_PATH;
+        buildInputs = dev-pkgs;
+        nativeBuildInputs = builtins.attrValues {
+          inherit
+            (pkgs)
+            pkg-config
+            ;
+        };
       };
     };
   };
