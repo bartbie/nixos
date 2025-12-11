@@ -18,7 +18,7 @@ in {
     devShells.devWithNvim = pkgs.mkShell {
       name = "nixon-dev-nvim-shell";
       packages = [(nvimForSystem system)];
-      inputsFrom = self'.devShells.default;
+      inputsFrom = [self'.devShells.devBasic];
     };
   };
 }
