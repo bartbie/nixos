@@ -38,6 +38,10 @@ in {
         {
           meta._host = host;
         }
+        # import its disko config if tagged as such
+        (lib.optionalAttrs (builtins.elem "disko" tags) {
+          imports = [config.flake.diskoConfigurations.${name}];
+        })
       ];
   };
 }
