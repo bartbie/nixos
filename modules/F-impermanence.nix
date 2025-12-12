@@ -167,6 +167,9 @@ in {
       };
 
       fileSystems.${storagePath}.neededForBoot = true;
+      virtualisation.vmVariantWithDisko = {
+        virtualisation.fileSystems."/persist".neededForBoot = true;
+      };
     };
   };
 }
