@@ -53,6 +53,8 @@ in {
 
             # "VirtualBox VMs"
             ".mozilla"
+            ".thunderbird"
+            (cache "thunderbird")
             ".cargo"
             "tldrc/tldr"
             (withMode ".gnupg" "0700")
