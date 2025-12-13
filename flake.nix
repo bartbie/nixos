@@ -42,5 +42,9 @@
       url = "github:hyprwm/hyprland-guiutils";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    tuigreet = {
+      url = "github:NotAShelf/tuigreet";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 }
