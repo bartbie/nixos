@@ -2,7 +2,7 @@
   flake.modules.nixos.pc = {pkgs, ...}: {
     programs = {
       steam.enable = true;
-      steam.gamescopeSession.enable = true;
+      steam.gamescopeSession.enable = false;
       gamemode.enable = true;
     };
     environment.systemPackages = builtins.attrValues {
