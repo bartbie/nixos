@@ -3,6 +3,7 @@
   config,
   inputs,
   withSystem,
+  nixonLib,
   ...
 }: let
   inherit (lib) types;
@@ -49,32 +50,41 @@
     assert nixonArgs ? pkgs-unstable;
       lib.makeOverridable (
         {extraWrapperModules ? [], ...} @ overrideArgs: let
-          cfg =
+          result =
             (inputs.wrapper-manager.lib.eval {
               inherit pkgs;
               modules = lib.flatten [
                 config.flake.modules.wrapperManager.base
                 config.flake.modules.generic.meta
+                # NOTE:
+                # wrapper-manager already imports assertions from pgks.path
                 modules
                 extraWrapperModules
               ];
               specialArgs = withSystem pkgs.hostPlatform.system ({
                 self',
                 inputs',
+                system,
                 ...
               }:
                 {
                   inherit
-                    overrideArgs
                     self'
                     inputs'
                     nixonArgs
                     ;
+                  overrideArgs = builtins.removeAttrs overrideArgs ["extraWrapperModules"];
                 }
                 // nixonArgs);
             }).config;
-          overriden = cfg.build.toplevel.override cfg.override;
-        in (overriden.overrideAttrs cfg.overrideAttrs)
+          cfg = builtins.removeAttrs result ["assertions"];
+          overriden-1 = cfg.build.toplevel.override cfg.override;
+          overriden-2 = overriden-1.overrideAttrs cfg.overrideAttrs;
+          final =
+            cfg.finalMapDrv overriden-2;
+        in
+          assert nixonLib.assertions.checkAssertions result.assertions;
+          assert lib.isDerivation final; final
       ) {};
 in {
   options.wrapped = lib.mkOption {
@@ -86,51 +96,70 @@ in {
   };
 
   config = let
-    wrapped =
+    wrapper-modules-attr =
       config.wrapped
       |> (x: builtins.removeAttrs x ["base"])
       |> lib.filterAttrs (_: v: v.enable);
 
     wrappedForSystem = system:
-      wrapped
+      wrapper-modules-attr
       |> lib.filterAttrs (_: v: builtins.elem system v.systems);
 
     toModules = wrapped: wrapped |> builtins.mapAttrs (_: v: v.module);
   in {
-    flake.modules.wrapperManager = toModules wrapped;
+    flake.modules.wrapperManager = toModules wrapper-modules-attr;
 
     # packages.nixos.pc = {};
-    packages.generic =
-      wrapped
+    packages.generic = let
+      mkWrapperModForTag = (
+        {
+          tag,
+          systems,
+          module,
+          module-name,
+        }: let
+          inner = {
+            pkgs,
+            nixonArgs,
+            system,
+            ...
+          }: {
+            _file = __curPos.file;
+            config.add = lib.mkIf (builtins.elem system systems) [
+              ((mkWrapper {
+                  inherit pkgs nixonArgs;
+                  modules = module;
+                }).override {
+                  extraWrapperModules = [
+                    {locale.enable = lib.mkDefault false;}
+                  ];
+                })
+            ];
+          };
+        in {
+          key = "${module-name}-${tag}";
+          _file = __curPos.file;
+          imports = [inner];
+        }
+      );
+    in
+      wrapper-modules-attr
       # {name module}
       |> lib.mapAttrsToList (
-        module-name: _v @ {
+        module-name: {
           module,
           tags,
           systems,
           ...
         }:
-          lib.genAttrs tags (
-            _tag: {
-              pkgs,
-              nixonArgs,
-              system,
-              ...
-            }: {
-              add = lib.mkIf (builtins.elem system systems) [
-                ((mkWrapper {
-                    inherit pkgs nixonArgs;
-                    modules = module;
-                  }).override {
-                    extraWrapperModules = [
-                      {locale.enable = lib.mkDefault false;}
-                    ];
-                  })
-              ];
-            }
+          lib.forEach tags (
+            tag:
+              lib.nameValuePair tag (mkWrapperModForTag {inherit tag systems module module-name;})
           )
       )
-      |> (builtins.foldl' lib.recursiveUpdate {});
+      |> builtins.concatLists
+      |> builtins.groupBy (x: x.name)
+      |> builtins.mapAttrs (_: v: {imports = lib.getValues v;});
 
     perSystem = {
       pkgs,

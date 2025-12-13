@@ -28,7 +28,6 @@
   };
 in {
   wrapped.fish = {
-    tags = null;
     module = {
       pkgs,
       pkgs-unstable,

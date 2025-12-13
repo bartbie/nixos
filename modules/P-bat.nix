@@ -20,14 +20,14 @@ in {
     tags = null;
     module = {
       imports = [common];
-      single.name = "bat";
+      single.programName = "bat";
     };
   };
   wrapped.cat = {
     tags = null;
     module = {
       imports = [common];
-      single.name = "cat";
+      single.programName = "cat";
     };
   };
 }
