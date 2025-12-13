@@ -37,5 +37,10 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    # remove when upstream nixpkgs picks it up
+    hyprland-guiutils = {
+      url = "github:hyprwm/hyprland-guiutils";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 }

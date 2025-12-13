@@ -2,8 +2,7 @@
   lib,
   final,
   ...
-}:
-{
+}: {
   mkModprobeConfig = let
     # TODO: this only adds `options`, either rename or expand
     at = lib.attrsets;
@@ -18,5 +17,5 @@
       (at.mapAttrsToList (n: v: "options ${n} ${v}"))
       lib.concatLines
     ];
+  hypr = import ./tohyprconf.nix {inherit lib final;};
 }
-// (import ./tohyprconf.nix lib)
