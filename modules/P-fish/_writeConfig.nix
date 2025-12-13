@@ -52,10 +52,10 @@
   in
     # fish
     ''
-      set TMUX_SESSIONS (${tmux} list-sessions)
-      set NO_SESSIONS (echo "$TMUX_SESSIONS" | wc -l)
       # ignore when no GUI
       if not set -q TMUX; and set -q DISPLAY
+        set TMUX_SESSIONS (${tmux} list-sessions)
+        set NO_SESSIONS (echo "$TMUX_SESSIONS" | wc -l)
         if test $NO_SESSIONS -ge 2
           ${tmux} attach $(echo "$TMUX_SESSIONS" | ${lib.getExe' pkgs.skim "skim"})
         else

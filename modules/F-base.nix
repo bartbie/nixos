@@ -1,5 +1,5 @@
-let
-  common = {lib, ...}: {
+{lib, ...}: let
+  common = {
     time.timeZone = lib.mkDefault "Europe/Copenhagen";
     i18n.defaultLocale = "C.UTF-8";
 
