@@ -18,12 +18,12 @@ lib.mergeAttrsList [
     mkNixpkgs = system:
       import inputs.nixpkgs {
         inherit system;
-        inherit (config.overlays) stable;
+        overlays = config.overlays.stable;
       };
     mkNixpkgsUnstable = system:
       import inputs.nixpkgs-unstable {
         inherit system;
-        inherit (config.overlays) unstable;
+        overlays = config.overlays.unstable;
       };
   in {
     perSystem = {system, ...}: {
