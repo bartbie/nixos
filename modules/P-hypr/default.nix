@@ -26,13 +26,14 @@
       pkgs,
       pkgs-unstable,
       nixonLib,
+      theme,
       overrideArgs,
       self',
       wrapperManagerLib,
       ...
     }: let
       config = pkgs.callPackage ./_hyprland-config.nix {
-        inherit nixonLib;
+        inherit nixonLib theme;
         inherit
           (self'.packages)
           alacritty
@@ -57,7 +58,10 @@
           ];
         };
       };
-      build.extraPassthru = {inherit (config.passthru) runtimeInputs;};
+      build.extraPassthru = {
+        inherit (config.passthru) runtimeInputs;
+        configDrv = config;
+      };
     };
   };
 }

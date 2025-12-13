@@ -10,17 +10,67 @@
   swww,
   nixonLib,
   rand-wp,
+  theme,
 }: let
+  inherit (theme) palette;
+  fn_str = name: arg: "${name}(${arg})";
+
+  join_sp = lib.join " ";
+  join_cm = lib.join ",";
+
+  rgb_hex = val: let
+    normalized = builtins.replaceStrings ["#"] [""] val;
+    len = builtins.stringLength normalized;
+  in
+    assert len == 6; fn_str "rgb" normalized;
+
+  rgba_hex = val: let
+    normalized = builtins.replaceStrings ["#"] [""] val;
+    len = builtins.stringLength normalized;
+  in
+    assert len == 8; fn_str "rgba" normalized;
+
+  rgba_hex_alpha = val: alpha: let
+    normalized = builtins.replaceStrings ["#"] [""] val;
+    len = builtins.stringLength normalized;
+  in
+    assert len == 6;
+    assert builtins.stringLength alpha == 2;
+      fn_str "rgba" (normalized + alpha);
+
+  deg = num:
+    assert num >= 0; "${builtins.toString num}deg";
+
   # extra bins to package with in env
   getExe = x:
     assert x ? meta;
     assert x.meta ? mainProgram;
       lib.getExe' x x.meta.mainProgram;
 
+  hjkl-ldur = let
+    mapping = {
+      h = "l";
+      j = "d";
+      k = "u";
+      l = "r";
+    };
+  in
+    fn: lib.mapAttrsToList fn mapping;
+
+  mapRange = from: to: fn: lib.range from to |> builtins.map fn;
+
+  mapRow = fn: mapRange 1 10 (n: fn (lib.mod 10 n) n);
+
+  alpha_vis = "ee";
+
+  shadow_color = rgb_hex palette.sumiInk2;
+  border_active_color = join_sp [(rgba_hex_alpha palette.oniViolet alpha_vis) (rgba_hex_alpha palette.crystalBlue alpha_vis) (deg 45)];
+  border_inactive_color = rgba_hex_alpha palette.fujiGray "aa";
+
   notifs = getExe swaynotificationcenter;
   statusbar = getExe waybar;
   wallpaper = getExe swww;
-  #
+
   menu = "${getExe rofi} -show combi -combi-modes drun,window,power_menu";
   clipboard = getExe clipse;
   terminal = getExe alacritty;
@@ -48,9 +98,8 @@
       gaps_in = 0;
       gaps_out = 0;
       border_size = 1;
-      # TODO set colors here;
-      "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
-      "col.inactive_border" = "rgba(595959aa)";
+      "col.active_border" = border_active_color;
+      "col.inactive_border" = border_inactive_color;
       resize_on_border = true;
       hover_icon_on_border = true;
       allow_tearing = false;
@@ -74,7 +123,9 @@
     };
 
     monitor = [
-      ", highres@highrr, auto, 1.20"
+      "DP-4, highres@highrr, 0x0, 1.20"
+      "HDMI-A-3, highres@highrr, -1920x745"
+      ", preferred, auto, 1"
     ];
 
     input = {
@@ -95,10 +146,6 @@
       };
     };
 
-    gestures = {
-      workspace_swipe = true;
-    };
-
     ecosystem = {
       no_update_news = true;
       no_donation_nag = true;
@@ -108,6 +155,10 @@
       allow_workspace_cycles = true;
     };
 
+    gestures = [
+      "3, horizontal, workspace"
+    ];
+
     binde = [
       "${mainMod} CTRL, h, resizeactive, -10 0"
       "${mainMod} CTRL, l, resizeactive, 10 0"
@@ -115,16 +166,9 @@
       "${mainMod} CTRL, j, resizeactive, 0 10"
     ];
 
-    bind = [
-      "${mainMod}, h, movefocus, l"
-      "${mainMod}, l, movefocus, r"
-      "${mainMod}, k, movefocus, u"
-      "${mainMod}, j, movefocus, d"
-
-      "${mainMod} ALT, h, movewindow, l"
-      "${mainMod} ALT, l, movewindow, r"
-      "${mainMod} ALT, k, movewindow, u"
-      "${mainMod} ALT, j, movewindow, d"
+    bind = builtins.concatLists [
+      (hjkl-ldur (k: d: "${mainMod}, ${k}, movefocus, ${d}"))
+      (hjkl-ldur (k: d: "${mainMod} ALT, ${k}, movewindow, ${d}"))
 
       "${mainMod}, F, fullscreen, 1"
       "${mainMod} ALT, F, fullscreen, 0"
@@ -137,8 +181,8 @@
       "${mainMod}, W, exec, ${browser}"
       "${mainMod}, E, exec, ${fileManager}"
 
-      "${mainMod} ALT, Q, killactive,"
-      "${mainMod} BACKSPACE, forcekillactive,"
+      "${mainMod}, BACKSPACE, killactive,"
+      "${mainMod} ALT, BACKSPACE, forcekillactive,"
 
       # TODO: replace with script that handles uwsm
       "${mainMod} ALT, M, exit,"
@@ -156,28 +200,13 @@
       "${mainMod}, SPACE, exec, ${menu}"
 
       # Switch workspaces with mainMod + [0-9]
-      "${mainMod}, 1, workspace, 1"
-      "${mainMod}, 2, workspace, 2"
-      "${mainMod}, 3, workspace, 3"
-      "${mainMod}, 4, workspace, 4"
-      "${mainMod}, 5, workspace, 5"
-      "${mainMod}, 6, workspace, 6"
-      "${mainMod}, 7, workspace, 7"
-      "${mainMod}, 8, workspace, 8"
-      "${mainMod}, 9, workspace, 9"
-      "${mainMod}, 0, workspace, 10"
-
+      (mapRow (
+        k: n: "${mainMod}, ${builtins.toString k}, workspace, ${builtins.toString n}"
+      ))
       # Move active window to a workspace with mainMod + SHIFT + [0-9]
-      "${mainMod} ALT, 1, movetoworkspacesilent, 1"
-      "${mainMod} ALT, 2, movetoworkspacesilent, 2"
-      "${mainMod} ALT, 3, movetoworkspacesilent, 3"
-      "${mainMod} ALT, 4, movetoworkspacesilent, 4"
-      "${mainMod} ALT, 5, movetoworkspacesilent, 5"
-      "${mainMod} ALT, 6, movetoworkspacesilent, 6"
-      "${mainMod} ALT, 7, movetoworkspacesilent, 7"
-      "${mainMod} ALT, 8, movetoworkspacesilent, 8"
-      "${mainMod} ALT, 9, movetoworkspacesilent, 9"
-      "${mainMod} ALT, 0, movetoworkspacesilent, 10"
+      (mapRow (
+        k: n: "${mainMod} ALT, ${builtins.toString k}, movetoworkspacesilent, ${builtins.toString n}"
+      ))
 
       # game workspace
       "${mainMod}, G, workspace, name:game"
@@ -238,8 +267,7 @@
         enabled = true;
         range = 4;
         render_power = 3;
-        # TODO set colors here
-        color = "rgba(1a1aaee)";
+        color = shadow_color;
       };
 
       blur = {
