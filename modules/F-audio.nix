@@ -8,5 +8,6 @@
       pulse.enable = true;
       jack.enable = true;
     };
+    services.playerctld.enable = true;
   };
 }
