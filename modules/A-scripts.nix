@@ -12,6 +12,9 @@
     rand-wp = mkBash "rand-wp";
     linktree = mkBash "linktree";
     rebuild = mkNu "rebuild";
+    "comma" = mkBash ",";
+    "dcomma" = mkBash ",,";
+    "browser" = mkBash "browser";
   };
 in {
   hosts.shared = {pkgs, ...}: {
