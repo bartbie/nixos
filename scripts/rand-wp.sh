@@ -8,7 +8,7 @@ case "$(echo $WALLPAPERS | wc -l)" in
       # noop
       ;;
   1)
-      swww img $WALLPAPERS
+      swww img $WALLPAPERS "$@"
       ;;
   *)
       CURRENT_WALL=$(swww query | sed "s/.*image: //")
@@ -16,6 +16,6 @@ case "$(echo $WALLPAPERS | wc -l)" in
       WALLPAPER=$(fd . "$WALLPAPER_DIR" --type symlink --type file --exclude "$(basename "$CURRENT_WALL")" | shuf -n 1)
 
       # Apply the selected wallpaper
-      swww img $WALLPAPER
+      swww img $WALLPAPER "$@"
       ;;
 esac
