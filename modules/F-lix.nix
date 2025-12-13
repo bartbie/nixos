@@ -1,28 +1,36 @@
 {lib, ...}: let
   lix-version = "lix_2_94";
   downstreamers = [
-    "nixpkgs-review"
+    # FIXME: this infrecs for whatever reason
+    # "nixpkgs-review"
     "nix-eval-jobs"
     "nix-fast-build"
     "colmena"
-    "lix"
   ];
+  getSet = x: x.lixPackageSets.${lix-version};
+  disable = p:
+    lib.recursiveUpdate p {
+      meta = {
+        available = false;
+        broken = true;
+      };
+    };
 in {
   # Overlay the downstreamers in unstable and disable in stable
   overlays = {
     stable = [
-      (_: prev:
-        lib.genAttrs downstreamers (n:
-          lib.recursiveUpdate prev.${n} {meta.available = false;}))
+      # (_: prev: {lix = disable prev.lix;})
+      (_: prev: lib.genAttrs downstreamers (n: disable prev.${n}))
+      (_: prev: {nixpkgs-review = disable prev.nixpkgs-review;})
     ];
     unstable = [
-      (_: prev:
-        prev.lixPackageSets.${lix-version}
-        |> lib.getAttrs (lib.flatten [downstreamers]))
+      (_: prev: {lix = (getSet prev).lix;})
+      (_: prev: lib.genAttrs downstreamers (n: (getSet prev).${n}))
+      # (_: prev: {nixpkgs-review = (getSet prev).nixpkgs-review;})
     ];
   };
   hosts.shared = {pkgs-unstable, ...}: {
-    nix.package = pkgs-unstable.lix;
+    nix.package = lib.mkForce pkgs-unstable.lix;
   };
 
   perSystem = {
@@ -32,6 +40,7 @@ in {
     self',
     ...
   }: {
+    packages.lix = pkgs-unstable.lix;
     devShells.devWithLix = pkgs.mkShell {
       name = "nixon-dev-lix-shell";
       packages = [
