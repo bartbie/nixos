@@ -10,6 +10,7 @@
   in {
     # home-export = mkBash "home-export";
     rand-wp = mkBash "rand-wp";
+    linktree = mkBash "linktree";
     rebuild = mkNu "rebuild";
   };
 in {
