@@ -10,5 +10,6 @@
   };
 in {
   flake.templates = {
+    rust = mk /rust "basic rust template";
   };
 }
