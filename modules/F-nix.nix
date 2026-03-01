@@ -1,4 +1,9 @@
-{inputs, ...}: {
+{
+  inputs,
+  self,
+  nixonLib,
+  ...
+}: {
   flake.modules.nixos = {
     base = {
       nix = {
@@ -15,6 +20,7 @@
         registry = {
           nixpkgs.flake = inputs.nixpkgs;
           nixpkgs-unstable.flake = inputs.nixpkgs-unstable;
+          nixon.flake = self;
         };
       };
       system.switch = {
