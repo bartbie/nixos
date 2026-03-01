@@ -5,6 +5,7 @@ lib.fix (
       modulesPath = ../modules;
       libPath = ./.;
       scriptsPath = ../scripts;
+      templatesPath = ../templates;
     };
 
     internalPath = ./_zinternal;
