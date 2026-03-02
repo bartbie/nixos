@@ -54,7 +54,7 @@ in {
               (pkgs)
               nil
               ;
-            fmt = self.formatter.${pkgs.hostPlatform.system};
+            fmt = self'.formatter;
           };
           nushell = {
             inherit

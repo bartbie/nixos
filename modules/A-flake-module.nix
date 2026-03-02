@@ -20,7 +20,5 @@
     ...
   }: {
     overlayAttrs = config.packages;
-    # TODO: checkout nix-treefmt-rfc
-    formatter = pkgs.alejandra;
   };
 }
