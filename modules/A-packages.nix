@@ -40,6 +40,7 @@ in {
         mk {
           inherit
             (pkgs-unstable)
+            nix-eval-jobs
             ;
           inherit
             (pkgs)
