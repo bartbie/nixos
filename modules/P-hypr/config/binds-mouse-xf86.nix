@@ -7,7 +7,6 @@
         "mouse_up" = "-1";
       }
       |> lib.mapAttrsToList (key: arg: {
-        useMainMod = false;
         keys = key;
         action = "workspace";
         args = arg;
