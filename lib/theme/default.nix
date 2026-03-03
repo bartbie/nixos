@@ -2,40 +2,40 @@
   lib,
   final,
   ...
-} @ inputs: let
+}@inputs:
+let
   /*
-  color_01: '#090618'    # Black (Host)
-  color_02: '#C34043'    # Red (Syntax string)
-  color_03: '#76946A'    # Green (Command)
-  color_04: '#C0A36E'    # Yellow (Command second)
-  color_05: '#7E9CD8'    # Blue (Path)
-  color_06: '#957FB8'    # Magenta (Syntax var)
-  color_07: '#6A9589'    # Cyan (Prompt)
-  color_08: '#C8C093'    # White
+    color_01: '#090618'    # Black (Host)
+    color_02: '#C34043'    # Red (Syntax string)
+    color_03: '#76946A'    # Green (Command)
+    color_04: '#C0A36E'    # Yellow (Command second)
+    color_05: '#7E9CD8'    # Blue (Path)
+    color_06: '#957FB8'    # Magenta (Syntax var)
+    color_07: '#6A9589'    # Cyan (Prompt)
+    color_08: '#C8C093'    # White
 
-  color_09: '#727169'    # Bright Black
-  color_10: '#E82424'    # Bright Red (Command error)
-  color_11: '#98BB6C'    # Bright Green (Exec)
-  color_12: '#E6C384'    # Bright Yellow
-  color_13: '#7FB4CA'    # Bright Blue (Folder)
-  color_14: '#938AA9'    # Bright Magenta
-  color_15: '#7AA89F'    # Bright Cyan
-  color_16: '#DCD7BA'    # Bright White
+    color_09: '#727169'    # Bright Black
+    color_10: '#E82424'    # Bright Red (Command error)
+    color_11: '#98BB6C'    # Bright Green (Exec)
+    color_12: '#E6C384'    # Bright Yellow
+    color_13: '#7FB4CA'    # Bright Blue (Folder)
+    color_14: '#938AA9'    # Bright Magenta
+    color_15: '#7AA89F'    # Bright Cyan
+    color_16: '#DCD7BA'    # Bright White
 
-  background: '#1F1F28'  # Background
-  foreground: '#DCD7BA'  # Foreground (Text)
+    background: '#1F1F28'  # Background
+    foreground: '#DCD7BA'  # Foreground (Text)
 
-  cursor: '#DCD7BA'      # Cursor
+    cursor: '#DCD7BA'      # Cursor
   */
   palette = import ./palette.nix inputs;
 
-  colorWithId = hex: id: {inherit hex id;};
-  color = hex: {inherit hex;};
+  colorWithId = hex: id: { inherit hex id; };
+  color = hex: { inherit hex; };
 
   # mapColors = fn:
   #   lib.attrsets.mapAttrs (_: lib.attrsets.mapAttrs fn);
-  mapColors' = fn:
-    lib.attrsets.mapAttrs (_: lib.attrsets.mapAttrs' fn);
+  mapColors' = fn: lib.attrsets.mapAttrs (_: lib.attrsets.mapAttrs' fn);
 
   # flattenColors = lib.flip lib.pipe [
   #   builtins.attrValues
@@ -43,37 +43,28 @@
   # ];
 
   joinAB = as: as.ansi // as.brights;
-  pickAB = as: {inherit (as) ansi brights;};
+  pickAB = as: { inherit (as) ansi brights; };
 
   # name -> "#hex"
-  mapHex = let
-    mapA = lib.flip lib.pipe [
-      (final.attrsets.filterMapRec
-        (as: as ? "hex" -> (builtins.isAttrs as.hex))
-        (_: v: (v ? "hex"))
-        (_: v: v.hex))
-    ];
-  in
-    x:
-      if builtins.isAttrs x
-      then (mapA {inherit x;}).x or {}
-      else builtins.map mapHex x;
+  mapHex =
+    let
+      mapA = lib.flip lib.pipe [
+        (final.attrsets.filterMapRec (as: as ? "hex" -> (builtins.isAttrs as.hex)) (_: v: (v ? "hex")) (
+          _: v: v.hex
+        ))
+      ];
+    in
+    x: if builtins.isAttrs x then (mapA { inherit x; }).x or { } else builtins.map mapHex x;
 
-  mapHex' = let
-    mapA = lib.flip lib.pipe [
-      (final.attrsets.filterMapRec
-        (as: as ? "hex" -> (builtins.isAttrs as.hex))
-        (_: _: true)
-        (_: v:
-          if (v ? "hex")
-          then v.hex
-          else v))
-    ];
-  in
-    x:
-      if builtins.isAttrs x
-      then (mapA {inherit x;}).x or {}
-      else builtins.map mapHex x;
+  mapHex' =
+    let
+      mapA = lib.flip lib.pipe [
+        (final.attrsets.filterMapRec (as: as ? "hex" -> (builtins.isAttrs as.hex)) (_: _: true) (
+          _: v: if (v ? "hex") then v.hex else v
+        ))
+      ];
+    in
+    x: if builtins.isAttrs x then (mapA { inherit x; }).x or { } else builtins.map mapHex x;
 
   colorsToList = lib.flip lib.pipe [
     builtins.attrValues
@@ -81,14 +72,15 @@
     mapHex
   ];
 
-  mapFGBG = {
-    fg ? null,
-    bg ? null,
-    ...
-  }:
+  mapFGBG =
+    {
+      fg ? null,
+      bg ? null,
+      ...
+    }:
     lib.mergeAttrsList [
-      (lib.optionalAttrs (fg != null) {foreground = fg;})
-      (lib.optionalAttrs (bg != null) {background = bg;})
+      (lib.optionalAttrs (fg != null) { foreground = fg; })
+      (lib.optionalAttrs (bg != null) { background = bg; })
     ];
 
   raw = {
@@ -146,25 +138,29 @@
     inherit raw;
     simple = lib.mergeAttrsList [
       termcolors.hex
-      {inherit (termcolors.ab) lists;}
+      { inherit (termcolors.ab) lists; }
       (mapHex' termcolors.ab.renamed)
     ];
     hex = mapHex' termcolors.raw;
     ab = {
       joined = joinAB termcolors.raw;
-      by-index = mapColors' (name: v: lib.nameValuePair (builtins.toString v.id) (v // {inherit name;})) (pickAB termcolors.raw);
+      by-index = mapColors' (
+        name: v: lib.nameValuePair (builtins.toString v.id) (v // { inherit name; })
+      ) (pickAB termcolors.raw);
       lists = lib.attrsets.mapAttrs (_: colorsToList) (pickAB termcolors.raw);
-      renamed = let
-        rename = lib.flip lib.pipe [
-          (lib.strings.splitString " ")
-          final.last
-          lib.toLower
-        ];
-      in
+      renamed =
+        let
+          rename = lib.flip lib.pipe [
+            (lib.strings.splitString " ")
+            final.last
+            lib.toLower
+          ];
+        in
         mapColors' (n: v: lib.nameValuePair (rename n) v) (pickAB termcolors.raw);
     };
   };
-in {
+in
+{
   inherit
     mapFGBG
     joinAB

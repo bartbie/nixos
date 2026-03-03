@@ -1,12 +1,13 @@
 let
-  mk = l: {add = l;};
-in {
+  mk = l: { add = l; };
+in
+{
   packages = {
     generic = {
-      base = {pkgs, ...}:
+      base =
+        { pkgs, ... }:
         mk {
-          inherit
-            (pkgs)
+          inherit (pkgs)
             gcc
             vim
             wget
@@ -32,18 +33,17 @@ in {
             lsof # list open files
             ;
         };
-      pc = {
-        pkgs,
-        pkgs-unstable,
-        ...
-      }:
+      pc =
+        {
+          pkgs,
+          pkgs-unstable,
+          ...
+        }:
         mk {
-          inherit
-            (pkgs-unstable)
+          inherit (pkgs-unstable)
             nix-eval-jobs
             ;
-          inherit
-            (pkgs)
+          inherit (pkgs)
             ## gui
             discord-canary
             spotify
@@ -77,19 +77,19 @@ in {
         };
     };
     nixos = {
-      base = {pkgs, ...}:
+      base =
+        { pkgs, ... }:
         mk {
-          inherit
-            (pkgs)
+          inherit (pkgs)
             ltrace # library call monitoring
             strace # system call monitoring
             ;
         };
-      server = {pkgs, ...}: mk {};
-      pc = {pkgs, ...}:
+      server = { pkgs, ... }: mk { };
+      pc =
+        { pkgs, ... }:
         mk {
-          inherit
-            (pkgs)
+          inherit (pkgs)
             # clipboard
             wl-clipboard
             clipse
@@ -108,7 +108,7 @@ in {
     };
 
     darwin = {
-      pc = {pkgs, ...}: mk {inherit (pkgs);};
+      pc = { pkgs, ... }: mk { inherit (pkgs) ; };
     };
   };
 }

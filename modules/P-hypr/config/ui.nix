@@ -2,44 +2,58 @@
   lib,
   theme,
   ...
-}: {
+}:
+{
   flake.modules.hypr.ui = lib.mkMerge [
-    ({hyprLib, ...}: let
-      inherit (hyprLib) typed typedApply gradientType rgbType rgbaType fnStr;
-    in {
-      options.land = {
-        general = {
-          "col.active_border" = typed gradientType;
-          "col.inactive_border" = typedApply rgbaType (s: s |> (lib.removePrefix "#") |> fnStr "rgba");
-        };
-        decoration.shadow.color = typedApply rgbType (s: s |> (lib.removePrefix "#") |> fnStr "rgb");
-      };
-      config = let
-        inherit (theme) palette;
-        alpha_vis = "ee";
-        border_active_color = {
-          topColor = palette.oniViolet + alpha_vis;
-          bottomColor = palette.crystalBlue + alpha_vis;
-          deg = 45;
-        };
-        border_inactive_color = palette.fujiGray + "aa";
-
-        shadow_color = palette.sumiInk2;
-      in {
-        land = {
-          env = [
-            "XCURSOR_SIZE,24"
-            "GDK_SCALE,2"
-            "HYPRCURSOR_SIZE,24"
-          ];
+    (
+      { hyprLib, ... }:
+      let
+        inherit (hyprLib)
+          typed
+          typedApply
+          gradientType
+          rgbType
+          rgbaType
+          fnStr
+          ;
+      in
+      {
+        options.land = {
           general = {
-            "col.active_border" = border_active_color;
-            "col.inactive_border" = border_inactive_color;
+            "col.active_border" = typed gradientType;
+            "col.inactive_border" = typedApply rgbaType (s: s |> (lib.removePrefix "#") |> fnStr "rgba");
           };
-          decoration.shadow.color = shadow_color;
+          decoration.shadow.color = typedApply rgbType (s: s |> (lib.removePrefix "#") |> fnStr "rgb");
         };
-      };
-    })
+        config =
+          let
+            inherit (theme) palette;
+            alpha_vis = "ee";
+            border_active_color = {
+              topColor = palette.oniViolet + alpha_vis;
+              bottomColor = palette.crystalBlue + alpha_vis;
+              deg = 45;
+            };
+            border_inactive_color = palette.fujiGray + "aa";
+
+            shadow_color = palette.sumiInk2;
+          in
+          {
+            land = {
+              env = [
+                "XCURSOR_SIZE,24"
+                "GDK_SCALE,2"
+                "HYPRCURSOR_SIZE,24"
+              ];
+              general = {
+                "col.active_border" = border_active_color;
+                "col.inactive_border" = border_inactive_color;
+              };
+              decoration.shadow.color = shadow_color;
+            };
+          };
+      }
+    )
     {
       land = {
         general = {

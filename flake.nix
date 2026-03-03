@@ -2,11 +2,15 @@
   description = "Nixon: bartbie's multi-system config";
 
   nixConfig = {
-    extra-experimental-features = ["flakes" "nix-command" "pipe-operator" "no-url-literals"];
+    extra-experimental-features = [
+      "flakes"
+      "nix-command"
+      "pipe-operator"
+      "no-url-literals"
+    ];
   };
 
-  outputs = inputs:
-    inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";

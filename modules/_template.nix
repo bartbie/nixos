@@ -1,6 +1,7 @@
-{lib, ...}: {
+{ lib, ... }:
+{
   flake.modules = {
-    nixos.pc = {};
-    darwin.base = {};
+    nixos.pc = { };
+    darwin.base = { };
   };
 }

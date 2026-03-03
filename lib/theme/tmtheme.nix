@@ -2,16 +2,18 @@
   lib,
   final,
   ...
-}: let
+}:
+let
   inherit (final) theme;
   c = theme.termcolors.simple;
   p = theme.palette;
 
-  mk = name: scope: settings:
+  mk =
+    name: scope: settings:
     lib.mergeAttrsList [
-      (lib.optionalAttrs (name != null) {inherit name;})
-      (lib.optionalAttrs (scope != null) {inherit scope;})
-      {inherit settings;}
+      (lib.optionalAttrs (name != null) { inherit name; })
+      (lib.optionalAttrs (scope != null) { inherit scope; })
+      { inherit settings; }
     ];
 
   raw = {
@@ -21,8 +23,7 @@
     semanticClass = "theme.dark.kanagawa";
     settings = [
       (mk null null {
-        inherit
-          (theme.mapFGBG c.area.primary)
+        inherit (theme.mapFGBG c.area.primary)
           background
           foreground
           ;
@@ -47,7 +48,7 @@
       (mk "Built-in constant" "constant.language" {
         foreground = p.surimiOrange;
       })
-      (mk "User-defined constant" ["constant.character" "constant.other"] {
+      (mk "User-defined constant" [ "constant.character" "constant.other" ] {
         foreground = p.carpYellow;
       })
       (mk "Variable" "variable" {
@@ -57,15 +58,18 @@
         fontStyle = "";
         foreground = p.carpYellow;
       })
-      (mk "String interpolation" [
+      (mk "String interpolation"
+        [
           "constant.character.escaped"
           "constant.character.escape"
           "string source"
           "string source.ruby"
-        ] {
+        ]
+        {
           fontStyle = "";
           foreground = p.boatYellow2;
-        })
+        }
+      )
       (mk "Keyword" "keyword" {
         foreground = p.oniViolet;
       })
@@ -105,7 +109,7 @@
         fontStyle = "";
         foreground = p.springBlue;
       })
-      (mk "Library class/type" ["support.type" "support.class"] {
+      (mk "Library class/type" [ "support.type" "support.class" ] {
         foreground = p.waveAqua2;
       })
       (mk "Library variable" "support.other.variable" {
@@ -121,7 +125,7 @@
       (mk "JSON String" "meta.structure.dictionary.json string.quoted.double.json" {
         foreground = p.oniViolet;
       })
-      (mk "diff.header" ["meta.diff" "meta.diff.header"] {
+      (mk "diff.header" [ "meta.diff" "meta.diff.header" ] {
         foreground = p.crystalBlue;
       })
       (mk "diff.deleted" "markup.deleted" {
@@ -142,12 +146,15 @@
       (mk null "message.error" {
         foreground = p.lotusRed3;
       })
-      (mk "JSON Punctuation" [
+      (mk "JSON Punctuation"
+        [
           "punctuation.definition.string.begin.json - meta.structure.dictionary.value.json"
           "punctuation.definition.string.end.json - meta.structure.dictionary.value.json"
-        ] {
+        ]
+        {
           foreground = p.springViolet2;
-        })
+        }
+      )
       (mk "JSON Structure" "meta.structure.dictionary.json string.quoted.double.json" {
         foreground = p.oniViolet;
       })
@@ -163,8 +170,9 @@
     ];
   };
 
-  plist = lib.generators.toPlist {} raw;
-in {
+  plist = lib.generators.toPlist { } raw;
+in
+{
   inherit raw plist;
   writeTmTheme = pkgs: pkgs.writeText "kanagawa.tmTheme" plist;
 }

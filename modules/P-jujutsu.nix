@@ -2,7 +2,8 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   jj-config = {
     user = {
       inherit (config.meta.defaultOwner.git) name email;
@@ -12,26 +13,39 @@
       editor = "nvim";
       pager = ":builtin";
     };
-    aliases = let
-      split = x:
-        if builtins.isList x
-        then x
-        else
-          assert builtins.isString x;
+    aliases =
+      let
+        split =
+          x:
+          if builtins.isList x then
             x
-            |> (builtins.split " ")
-            |> (builtins.filter (x: x != "" && x != []));
+          else
+            assert builtins.isString x;
+            x |> (builtins.split " ") |> (builtins.filter (x: x != "" && x != [ ]));
 
-      mapSplit = lib.attrsets.mapAttrs (_: split);
-    in
+        mapSplit = lib.attrsets.mapAttrs (_: split);
+      in
       mapSplit {
         wip = "commit -m WIP";
         anc = "log -r anc(5)";
         slast = "show -r anc(2)~@";
         rdown = "rebase -r @ --before anc(2)~@";
         rup = "rebase -r @ --after desc(2)~@";
-        tug = ["bookmark" "move" "--from" "heads(::@- & bookmarks())" "--to" "@-"];
-        rebase-all = ["rebase" "-s" "all:roots(trunk()..mutable())" "-d" "trunk()"];
+        tug = [
+          "bookmark"
+          "move"
+          "--from"
+          "heads(::@- & bookmarks())"
+          "--to"
+          "@-"
+        ];
+        rebase-all = [
+          "rebase"
+          "-s"
+          "all:roots(trunk()..mutable())"
+          "-d"
+          "trunk()"
+        ];
       };
     revset-aliases = {
       "anc(x)" = "ancestors(@, x)";
@@ -51,20 +65,23 @@
       '';
     };
   };
-in {
+in
+{
   wrapped.jujutsu = {
     tags = null;
-    module = {
-      pkgs,
-      pkgs-unstable,
-      ...
-    }: {
-      single = {
-        package = pkgs-unstable.jujutsu;
-        wrapper = {
-          env.JJ_CONFIG.value = (pkgs.formats.toml {}).generate "jujutsu-config.toml" jj-config;
+    module =
+      {
+        pkgs,
+        pkgs-unstable,
+        ...
+      }:
+      {
+        single = {
+          package = pkgs-unstable.jujutsu;
+          wrapper = {
+            env.JJ_CONFIG.value = (pkgs.formats.toml { }).generate "jujutsu-config.toml" jj-config;
+          };
         };
       };
-    };
   };
 }

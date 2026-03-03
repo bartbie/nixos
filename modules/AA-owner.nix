@@ -1,10 +1,13 @@
-{lib, ...}: let
-  mkGlobal = type: default:
+{ lib, ... }:
+let
+  mkGlobal =
+    type: default:
     lib.mkOption {
       inherit type default;
       readOnly = true;
     };
-in {
+in
+{
   options = {
     meta.defaultOwner = {
       username = mkGlobal lib.types.str "bartbie";

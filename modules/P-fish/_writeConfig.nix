@@ -3,13 +3,13 @@
   lib,
   self',
   ...
-} @ inputs: let
+}@inputs:
+let
   writeVendor = type: x: pkgs.writeTextDir "share/fish/vendor_${type}.d/${x}";
   writeVendorConf = writeVendor "conf";
 
   plugins = builtins.attrValues {
-    inherit
-      (pkgs.fishPlugins)
+    inherit (pkgs.fishPlugins)
       foreign-env
       fzf-fish
       ;
@@ -20,13 +20,14 @@
     (lib.concatStringsSep "\n")
   ];
 
-  starship-config = (pkgs.formats.toml {}).generate "starship.toml" (import ./_starship.nix inputs);
+  starship-config = (pkgs.formats.toml { }).generate "starship.toml" (import ./_starship.nix inputs);
 
   kanagawa = pkgs.writeText "kanagawa.fish" (import ./_kanagawa.nix inputs);
 
-  zellij-hook = let
-    zel = lib.getExe' self'.packages.zellij "zellij";
-  in
+  zellij-hook =
+    let
+      zel = lib.getExe' self'.packages.zellij "zellij";
+    in
     # fish
     ''
       if not set -q TMUX
@@ -47,9 +48,10 @@
       end
     '';
 
-  tmux-hook = let
-    tmux = lib.getExe' self'.packages.tmux "tmux";
-  in
+  tmux-hook =
+    let
+      tmux = lib.getExe' self'.packages.tmux "tmux";
+    in
     # fish
     ''
       # ignore when no GUI
@@ -65,13 +67,14 @@
     '';
 
   # TODO: maybe add override so standalone installs without this by default
-  command-not-found-hook = let
-    wrapper = pkgs.writeScript "command-not-found" ''
-      #!${pkgs.bash}/bin/bash
-      source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
-      command_not_found_handle "$@"
-    '';
-  in
+  command-not-found-hook =
+    let
+      wrapper = pkgs.writeScript "command-not-found" ''
+        #!${pkgs.bash}/bin/bash
+        source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
+        command_not_found_handle "$@"
+      '';
+    in
     # fish
     ''
       function __fish_command_not_found_handler --on-event fish_command_not_found
@@ -79,7 +82,7 @@
       end
     '';
 in
-  writeVendorConf "bartbie_config.fish"
+writeVendorConf "bartbie_config.fish"
   # fish
   ''
     source ${./files/load_plugin.fish}

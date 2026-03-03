@@ -2,13 +2,15 @@
   lib,
   nixonLib,
   ...
-}: let
+}:
+let
   inherit (nixonLib) templatesPath;
   mk = path: name: {
     inherit name;
     path = templatesPath + path;
   };
-in {
+in
+{
   flake.templates = {
     rust = mk /rust "basic rust template";
   };

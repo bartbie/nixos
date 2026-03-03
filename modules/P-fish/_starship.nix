@@ -2,9 +2,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   withCount = s: "${s}\${count}";
-in {
+in
+{
   add_newline = false;
   time = {
     disabled = false;

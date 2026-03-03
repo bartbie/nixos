@@ -1,4 +1,5 @@
-{inputs, ...}: {
+{ inputs, ... }:
+{
   imports = [
     inputs.disko.flakeModules.default
   ];
@@ -22,7 +23,7 @@
                   type = "filesystem";
                   format = "vfat";
                   mountpoint = "/boot";
-                  mountOptions = ["umask=0077"];
+                  mountOptions = [ "umask=0077" ];
                 };
               };
               root = {
@@ -48,7 +49,7 @@
               size = "50%FREE";
               content = {
                 type = "btrfs";
-                extraArgs = ["-f"];
+                extraArgs = [ "-f" ];
 
                 subvolumes = {
                   "/root" = {
@@ -56,12 +57,18 @@
                   };
 
                   "/persist" = {
-                    mountOptions = ["subvol=persist" "noatime"];
+                    mountOptions = [
+                      "subvol=persist"
+                      "noatime"
+                    ];
                     mountpoint = "/persist";
                   };
 
                   "/nix" = {
-                    mountOptions = ["subvol=nix" "noatime"];
+                    mountOptions = [
+                      "subvol=nix"
+                      "noatime"
+                    ];
                     mountpoint = "/nix";
                   };
                 };

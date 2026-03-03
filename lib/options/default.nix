@@ -3,16 +3,19 @@
   final,
   self,
   ...
-}: let
+}:
+let
   inherit (lib) types;
-  mkMarker = default: type:
+  mkMarker =
+    default: type:
     lib.mkOption {
       inherit type default;
       internal = true;
       readOnly = true;
     };
   mkMarkerWith = default: fn: mkMarker default (fn types);
-in {
+in
+{
   inherit
     mkMarker
     mkMarkerWith

@@ -1,4 +1,5 @@
-{lib, ...}: let
+{ lib, ... }:
+let
   common = {
     time.timeZone = lib.mkDefault "Europe/Copenhagen";
     i18n.defaultLocale = "C.UTF-8";
@@ -14,7 +15,8 @@
     # see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
     system.stateVersion = "23.11"; # Did you read the comment?
   };
-in {
+in
+{
   flake.modules.nixos.base = common;
   flake.modules.darwin.base = common;
 }

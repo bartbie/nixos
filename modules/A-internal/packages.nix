@@ -2,36 +2,50 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   inherit (lib) types;
 
-  optionsModule = {config, ...}: {
-    options = {
-      add = lib.mkOption {
-        type = lib.types.coercedTo (types.attrsOf types.package) builtins.attrValues (types.listOf types.package);
-        default = [];
+  optionsModule =
+    { config, ... }:
+    {
+      options = {
+        add = lib.mkOption {
+          type = lib.types.coercedTo (types.attrsOf types.package) builtins.attrValues (
+            types.listOf types.package
+          );
+          default = [ ];
+        };
       };
     };
-  };
 
-  eval = mod: {
-    pkgs,
-    pkgs-unstable,
-    nixonArgs,
-    ...
-  }: (
-    if mod == {}
-    then []
-    else
-      (lib.evalModules {
-        modules = [
-          mod
-          optionsModule
-          {_module.args = {inherit pkgs pkgs-unstable nixonArgs;} // nixonArgs;}
-        ];
-      }).config.add
-  );
-in {
+  eval =
+    mod:
+    {
+      pkgs,
+      pkgs-unstable,
+      nixonArgs,
+      ...
+    }:
+    (
+      if mod == { } then
+        [ ]
+      else
+        (lib.evalModules {
+          modules = [
+            mod
+            optionsModule
+            {
+              _module.args = {
+                inherit pkgs pkgs-unstable nixonArgs;
+              }
+              // nixonArgs;
+            }
+          ];
+        }).config.add
+    );
+in
+{
   options = {
     packages = lib.mkOption {
       #       class              tag/mod-name
@@ -40,7 +54,7 @@ in {
         Define systemPackages for class and tag/module name.
         Can be packages.<class>.<name> = <module> or packages.generic.<name> = <module>
       '';
-      default = {};
+      default = { };
     };
   };
 
@@ -49,22 +63,27 @@ in {
   config.hosts.shared.imports =
     config.packages.generic
     |> lib.mapAttrsToList (
-      tag: module: (
+      tag: module:
+      (
         # SAFETY:
         # need to request args explicitly from module system
-        ({
+        (
+          {
             pkgs,
             pkgs-unstable,
             nixonArgs,
             ...
-          } @ args: let
+          }@args:
+          let
             config' = args.config;
-          in {
+          in
+          {
             # TODO: make base tag attached to everyone be default
             environment.systemPackages = lib.mkIf (tag == "base" || builtins.elem tag config'.meta.tags) (
               eval module args
             );
-          })
+          }
+        )
       )
     );
 
@@ -72,21 +91,26 @@ in {
   # packages {<class> { <name> <module> }}
   config.flake.modules =
     config.packages
-    |> (x: builtins.removeAttrs x ["generic"])
-    |> builtins.mapAttrs (_class: tagged-modules:
+    |> (x: builtins.removeAttrs x [ "generic" ])
+    |> builtins.mapAttrs (
+      _class: tagged-modules:
       tagged-modules
       # |> (x: x // {base = x.base or {};})
       |> builtins.mapAttrs (
         _tag: module:
         # SAFETY:
         # need to request args explicitly from module system
-        ({
+        (
+          {
             pkgs,
             pkgs-unstable,
             nixonArgs,
             ...
-          } @ args: {
+          }@args:
+          {
             environment.systemPackages = eval module args;
-          })
-      ));
+          }
+        )
+      )
+    );
 }

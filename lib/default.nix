@@ -1,6 +1,7 @@
-{lib}:
+{ lib }:
 lib.fix (
-  final: let
+  final:
+  let
     paths = {
       modulesPath = ../modules;
       libPath = ./.;
@@ -10,7 +11,19 @@ lib.fix (
 
     internalPath = ./_zinternal;
 
-    callLibs = file: lib.fix (self: import file {inherit lib final self internalPath;});
+    callLibs =
+      file:
+      lib.fix (
+        self:
+        import file {
+          inherit
+            lib
+            final
+            self
+            internalPath
+            ;
+        }
+      );
 
     # check ./_zinternal/file-finding.nix docs
     inherit (callLibs ./import) findImports importsToAttrs;
@@ -23,11 +36,11 @@ lib.fix (
 
     namespaces-imported = builtins.mapAttrs (_: callLibs) namespaces;
   in
-    namespaces-imported
-    // paths
-    // (callLibs ./trivial)
-    // {
-      inherit findImports;
-      inherit (final.attrsets) flattenAttrs optionalAttr;
-    }
+  namespaces-imported
+  // paths
+  // (callLibs ./trivial)
+  // {
+    inherit findImports;
+    inherit (final.attrsets) flattenAttrs optionalAttr;
+  }
 )

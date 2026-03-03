@@ -2,7 +2,8 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   #                  class                 name                   module
   regularHostsType = lib.types.lazyAttrsOf (lib.types.lazyAttrsOf (lib.types.deferredModule));
 
@@ -11,27 +12,29 @@
     description = "Hosts attribute set with special 'shared' key";
     descriptionClass = "composite";
     check = builtins.isAttrs;
-    merge = loc: defs: let
-      # split into shared and non-shared parts
-      regulars =
-        defs
-        |> builtins.map (def: def // {value = builtins.removeAttrs def.value ["shared"];})
-        |> regularHostsType.merge loc;
-
-      shared = let
-        filtered =
+    merge =
+      loc: defs:
+      let
+        # split into shared and non-shared parts
+        regulars =
           defs
-          |> builtins.filter (def: def.value ? shared);
-        merged =
-          filtered
-          |> builtins.map (def: def // {value = def.value.shared;})
-          |> lib.types.deferredModule.merge (loc ++ ["shared"]);
+          |> builtins.map (def: def // { value = builtins.removeAttrs def.value [ "shared" ]; })
+          |> regularHostsType.merge loc;
+
+        shared =
+          let
+            filtered = defs |> builtins.filter (def: def.value ? shared);
+            merged =
+              filtered
+              |> builtins.map (def: def // { value = def.value.shared; })
+              |> lib.types.deferredModule.merge (loc ++ [ "shared" ]);
+          in
+          lib.optionalAttrs (filtered != [ ]) { shared = merged; };
       in
-        lib.optionalAttrs (filtered != []) {shared = merged;};
-    in
       regulars // shared;
   };
-in {
+in
+{
   options.hosts = lib.mkOption {
     type = hostsType;
     description = "Hosts attribute set with special 'shared' key";

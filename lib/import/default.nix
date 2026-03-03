@@ -4,8 +4,10 @@
   self,
   internalPath,
   ...
-} @ args: let
+}@args:
+let
   _ff = import (internalPath + /file-finding.nix) args;
-in {
+in
+{
   inherit (_ff) findImports importsToAttrs;
 }

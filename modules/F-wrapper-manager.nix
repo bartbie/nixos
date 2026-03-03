@@ -1,4 +1,5 @@
-{lib, ...}: {
+{ lib, ... }:
+{
   flake.modules = {
     nixos.base = {
       wrapper-manager = {

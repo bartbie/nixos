@@ -2,15 +2,17 @@
   lib,
   final,
   ...
-}: {
+}:
+{
   mapGroups = a: builtins.map (x: x.name) (builtins.attrValues a);
-  hardenServiceConfig = x:
+  hardenServiceConfig =
+    x:
     {
       # hardening
-      CapabilityBoundingSet = [""];
+      CapabilityBoundingSet = [ "" ];
       DevicePolicy = "closed";
-      IPAddressAllow = [];
-      IPAddressDeny = ["any"];
+      IPAddressAllow = [ ];
+      IPAddressDeny = [ "any" ];
       LockPersonality = true;
       MemoryDenyWriteExecute = true;
       PrivateNetwork = true;
@@ -24,11 +26,15 @@
       ProtectKernelModules = true;
       ProtectKernelTunables = true;
       ProtectProc = "invisible";
-      RestrictAddressFamilies = ["AF_UNIX"];
+      RestrictAddressFamilies = [ "AF_UNIX" ];
       RestrictNamespaces = true;
       RestrictRealtime = true;
-      SystemCallArchitectures = ["native"];
-      SystemCallFilter = ["@system-service" "~@privileged" "~@resources"];
+      SystemCallArchitectures = [ "native" ];
+      SystemCallFilter = [
+        "@system-service"
+        "~@privileged"
+        "~@resources"
+      ];
       UMask = "0077";
     }
     // x;

@@ -3,7 +3,8 @@
   self,
   nixonLib,
   ...
-}: {
+}:
+{
   flake.modules.nixos = {
     base = {
       nix = {
@@ -15,7 +16,11 @@
           warn-dirty = false;
           flake-registry = "/etc/nix/registry.json";
           commit-lockfile-summary = "chore: Update flake.lock";
-          extra-experimental-features = ["flakes" "nix-command" "pipe-operator"];
+          extra-experimental-features = [
+            "flakes"
+            "nix-command"
+            "pipe-operator"
+          ];
         };
         registry = {
           nixpkgs.flake = inputs.nixpkgs;
@@ -28,7 +33,9 @@
       };
     };
     allowUnfree = {
-      nixpkgs.config = {allowUnfree = true;};
+      nixpkgs.config = {
+        allowUnfree = true;
+      };
     };
     nh = {
       programs.nh = {

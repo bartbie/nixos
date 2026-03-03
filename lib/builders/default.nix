@@ -2,26 +2,38 @@
   lib,
   final,
   ...
-} @ args: pkgs: let
+}@args:
+pkgs:
+let
   self = args.self pkgs;
   safeInherit = basePackage: list: lib.filterAttrs (n: v: basePackage ? ${n}) list;
-  _symlinkDrv = drv: let
-    outputs = drv.outputs or ["out"];
-    attrs =
-      (safeInherit drv ["meta" "version" "meta" "name" "pname"])
-      // {
-        inherit outputs;
-        passthru = (drv.passthru or {}) // {unwrapped = drv;};
-      };
-  in
+  _symlinkDrv =
+    drv:
+    let
+      outputs = drv.outputs or [ "out" ];
+      attrs =
+        (safeInherit drv [
+          "meta"
+          "version"
+          "meta"
+          "name"
+          "pname"
+        ])
+        // {
+          inherit outputs;
+          passthru = (drv.passthru or { }) // {
+            unwrapped = drv;
+          };
+        };
+    in
     pkgs.runCommand "${drv.name}-symlinked" attrs
-    #sh
-    ''
-      set -euo pipefail
+      #sh
+      ''
+        set -euo pipefail
 
-      ${
-        outputs
-        |> lib.concatMapStringsSep "\n" (output:
+        ${
+          outputs
+          |> lib.concatMapStringsSep "\n" (output:
           #sh
           ''
             # Symlink everything from original output
@@ -38,16 +50,15 @@
               echo "Warning: ${output} output not found" >&2
             fi
           '')
-      }
-    '';
-in {
-  symlinkDrv = drv:
+        }
+      '';
+in
+{
+  symlinkDrv =
+    drv:
     assert lib.isDerivation drv;
-      if drv ? override
-      then
-        lib.makeOverridable (
-          new:
-            _symlinkDrv (drv.override new)
-        ) {}
-      else _symlinkDrv drv;
+    if drv ? override then
+      lib.makeOverridable (new: _symlinkDrv (drv.override new)) { }
+    else
+      _symlinkDrv drv;
 }

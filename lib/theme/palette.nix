@@ -1,7 +1,8 @@
 # source
 # https://github.com/rebelot/kanagawa.nvim/tree/709018d5af92d2e5780bfb8a6d36e9cad01a6402/lua/kanagawa/colors.lua
 # converted to nix
-{...}: {
+{ ... }:
+{
   # Bg Shades
   sumiInk0 = "#16161D";
   sumiInk1 = "#181820";
@@ -9,7 +10,7 @@
   sumiInk3 = "#1F1F28";
   sumiInk4 = "#2A2A37";
   sumiInk5 = "#363646";
-  sumiInk6 = "#54546D"; #fg
+  sumiInk6 = "#54546D"; # fg
 
   # Popup and Floats
   waveBlue1 = "#223249";
@@ -83,7 +84,7 @@
   dragonAqua = "#8ea4a2";
   dragonAsh = "#737c73";
   dragonTeal = "#949fb5";
-  dragonYellow = "#c4b28a"; #"#a99c8b",
+  dragonYellow = "#c4b28a"; # "#a99c8b",
   # "#8a9aa3",
 
   lotusInk1 = "#545464";
