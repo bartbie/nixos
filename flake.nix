@@ -35,7 +35,13 @@
     #
     bartbie-nvim = {
       url = "github:bartbie/nvim";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs = {
+        # TODO: remove after updating nixpkgs-unstable
+        # nixpkgs.follows = "nixpkgs-unstable";
+        flake-parts.follows = "flake-parts";
+        import-tree.follows = "import-tree";
+        systems.follows = "systems";
+      };
     };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
