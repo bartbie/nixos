@@ -168,6 +168,7 @@ in
                     ])
                     {
                       defaultName = name;
+                      persistent = true;
                       match.goto.id = slot.id;
                     }
                   ];
