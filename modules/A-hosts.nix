@@ -68,6 +68,7 @@ in
             "ssh"
             "hypr"
             "wayland"
+            "cuda"
           ];
         };
       };

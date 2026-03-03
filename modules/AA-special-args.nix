@@ -4,6 +4,9 @@
   config,
   ...
 }:
+let
+  flakeConfig = config;
+in
 lib.mergeAttrsList [
   # lib
   (
@@ -20,16 +23,18 @@ lib.mergeAttrsList [
   (
     let
       mkNixpkgs =
-        system:
+        system: config:
         import inputs.nixpkgs {
           inherit system;
-          overlays = config.overlays.stable;
+          overlays = flakeConfig.overlays.stable;
+          inherit config;
         };
       mkNixpkgsUnstable =
-        system:
+        system: config:
         import inputs.nixpkgs-unstable {
           inherit system;
-          overlays = config.overlays.unstable;
+          overlays = flakeConfig.overlays.unstable;
+          inherit config;
         };
     in
     {
@@ -37,16 +42,16 @@ lib.mergeAttrsList [
         { system, ... }:
         {
           nixonArgs = {
-            pkgs = mkNixpkgs system;
-            pkgs-unstable = mkNixpkgsUnstable system;
+            pkgs = mkNixpkgs system { };
+            pkgs-unstable = mkNixpkgsUnstable system { };
           };
         };
 
       hosts.shared =
-        { pkgs, ... }:
+        { pkgs, config, ... }:
         {
           nixpkgs = {
-            overlays = config.overlays.stable;
+            overlays = flakeConfig.overlays.stable;
           };
           nixonArgs =
             let
@@ -57,7 +62,7 @@ lib.mergeAttrsList [
             in
             {
               inherit system;
-              pkgs-unstable = mkNixpkgsUnstable system;
+              pkgs-unstable = mkNixpkgsUnstable system config.nixpkgs.config;
             };
         };
     }
