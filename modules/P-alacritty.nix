@@ -24,6 +24,7 @@
         };
       config = {
         inherit colors;
+        font.normal.family = "JetBrainsMono Nerd Font";
       };
     in
     {
