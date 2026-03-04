@@ -118,21 +118,27 @@ let
           ];
         }
         (
+          let
+            tags = [
+              "local"
+              "wip"
+              "private"
+            ];
+            inner-log = ''jj log -r "''${1:-@}" -T 'description' --no-graph'';
+          in
           [
-            "local"
-            "wip"
-            "private"
+            (
+              tags
+              |> builtins.map (tag: {
+                "tag-${tag}" = exec ''jj describe -r "''${1:-@}" -m "[${tag}] $(${inner-log})"'';
+                "untag-${tag}" =
+                  exec ''jj describe -r "''${1:-@}" -m "$(${inner-log} | sed 's/^\[${tag}\][[:space:]]*//')"'';
+              })
+            )
+            ({
+              untag = ''jj describe -r "''${1:-@}" -m "$(${inner-log} | sed 's/^\[(${tags |> lib.join "|"})\][[:space:]]*//')"'';
+            })
           ]
-          |> builtins.map (
-            tag:
-            let
-              inner-log = ''jj log -r "''${1:-@}" -T 'description' --no-graph'';
-            in
-            {
-              "tag-${tag}" = exec ''jj describe -r "''${1:-@}" -m "[${tag}] $(${inner-log})"'';
-              "untag-${tag}" = exec ''jj describe -r "''${1:-@}" -m "$(${inner-log} | sed 's/^\[${tag}\]//')"'';
-            }
-          )
         )
         (
           let
@@ -145,6 +151,7 @@ let
               |> exec;
           in
           {
+
             bubble = mk "bubble";
             unbubble = mk "unbubble";
 
@@ -181,8 +188,10 @@ let
         {
           "anchors()" = ''bookmarks(regex:'^anchor/.*')'';
           "blocked()" = "local() | wip() | private() | anchors()";
-          "unpushable()" =
-            "(description(exact:'') | empty() | blocked() | conflicts() | divergent() | hidden())::";
+          # after update add divergent
+          # "blocking()" = "mutable() & (description(exact:'') | empty() | blocked() | conflicts() | divergent() | hidden())";
+          "blocking()" = "mutable() & (description(exact:'') | empty() | blocked() | conflicts() | hidden())";
+          "unpushable()" = "mutable() & blocking()::";
           "pushable()" = "mutable() ~ unpushable()";
           "movable_bookmarks()" = "bookmarks() ~ anchors()";
         }
@@ -215,17 +224,32 @@ let
       ];
     template-aliases = {
       "in_branch(commit)" = ''commit.contained_in("immutable_heads()..bookmarks()")'';
-      "is_base(c)" = ''if(c.contained_in("base()"), label("base", "base() "), "")'';
+      "is_anchor(commit)" = ''commit.contained_in("anchors()")'';
+      "is_blocking(commit)" = ''commit.contained_in("blocking()")'';
+      "is_unpushable(commit)" = ''commit.contained_in("unpushable()")'';
+      "is_bookmark(commit)" = ''commit.contained_in("bookmarks()")'';
+      "is_base(c)" = ''c.contained_in("base()")'';
+      "base(c)" = ''if(is_base(c), label("base", "base() "), "")'';
       "anchor_line(c)" =
         "c.change_id().short() ++ \" \" ++ c.bookmarks() ++ \" \" ++ c.description().first_line() ++ \"\\n\"";
     };
     templates = {
       redacted = ''builtin_log_redacted'';
       detailed = ''builtin_log_detailed'';
-      log = "is_base(self) ++ builtin_log_compact";
+      log = "base(self) ++ builtin_log_compact";
+      # ◇ in_branch  ❖ bookmark  ⊙ base  ◈ base+bookmark  (conflict/wc → builtin)
+      #  ∅ blocking ⊘ blocked (unpushable)
+      # after update add divergent in if
       log_node = ''
-        if(self && !current_working_copy && !immutable && !conflict && in_branch(self),
-          "◇",
+        coalesce(
+          if(!self, builtin_log_node),
+          if(current_working_copy || immutable || conflict, builtin_log_node),
+          if(is_blocking(self), "∅"),
+          if(is_unpushable(self), "⊘"),
+          if(is_bookmark(self),
+              if(is_base(self), "◈", "❖")),
+          if(is_base(self), "⊙"),
+          if(in_branch(self), "◇"),
           builtin_log_node
         )
       '';
