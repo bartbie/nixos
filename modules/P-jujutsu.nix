@@ -212,8 +212,8 @@ let
           "mutstack(x)" = "mutstack(x, x)";
           "mutstack()" = "mutstack(@)";
 
-          "before_local(x)" = "heads(mutbase(x)::local()-)";
-          "after_local(x)" = "roots(mutbase(x) & local()+::x)";
+          "before_local(x)" = "coalesce(heads(mutbase(x)::local()-), base(x))";
+          "after_local(x)" = "coalesce(roots(mutbase(x):: & local()+::x), x-)";
           "before_local()" = "before_local(@)";
           "after_local()" = "after_local(@)";
 
