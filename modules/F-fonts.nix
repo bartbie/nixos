@@ -8,24 +8,43 @@ let
             noto-fonts
             noto-fonts-cjk-sans
             noto-fonts-color-emoji
+            atkinson-hyperlegible-next
+            twemoji-color-font
+            charis-sil
+            dejavu_fonts
             ;
           inherit (pkgs.nerd-fonts)
             jetbrains-mono
             terminess-ttf
             ;
         };
-        # ++ [
-        #   (.override {fonts = ["JetBrainsMono" "Terminus"];})
-        # ];
+        enableDefaultPackages = false;
         fontconfig = {
-          defaultFonts = {
-            monospace = [
-              "JetBrainsMono"
-              "JetBrainsMono Nerd Font"
-              "Noto Color Emoji"
-            ];
-            emoji = [ "Noto Color Emoji" ];
-          };
+          defaultFonts =
+            let
+              emoji = [
+                "twemoji-color-font"
+                "Noto Color Emoji"
+              ];
+            in
+            {
+              inherit emoji;
+              monospace = [
+                "JetBrainsMono Nerd Font"
+                "JetBrainsMono"
+                "Noto Sans Symbols 2" # braille etc. fallback
+              ]
+              ++ emoji;
+              sansSerif = [
+                "Atkinson Hyperlegible Next"
+                "Atkinson Hyperlegible"
+                "Noto Sans"
+              ];
+              serif = [
+                "Charis Sil"
+                "Noto Serif"
+              ];
+            };
         };
       };
     };
