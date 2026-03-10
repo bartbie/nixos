@@ -136,7 +136,7 @@ let
               })
             )
             ({
-              untag = ''jj describe -r "''${1:-@}" -m "$(${inner-log} | sed 's/^\[(${tags |> lib.join "|"})\][[:space:]]*//')"'';
+              untag = exec ''jj describe -r "''${1:-@}" -m "$(${inner-log} | sed 's/^\[(${tags |> lib.join "|"})\][[:space:]]*//')"'';
             })
           ]
         )
@@ -154,6 +154,8 @@ let
 
             bubble = mk "bubble";
             unbubble = mk "unbubble";
+
+            bst = exec "jj bubble && jj strip && jj tug";
 
             newl = [
               "new"
