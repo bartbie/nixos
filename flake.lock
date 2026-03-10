@@ -45,16 +45,18 @@
         "neorocks": "neorocks",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixpkgs": "nixpkgs_4",
+        "org-modern-nvim": "org-modern-nvim",
+        "org-super-agenda-nvim": "org-super-agenda-nvim",
         "systems": [
           "systems"
         ]
       },
       "locked": {
-        "lastModified": 1772491564,
-        "narHash": "sha256-kPzgzpAnlLQXrQTmorbJwPwxQbnUmOXgLU7xYl0JITc=",
+        "lastModified": 1773153006,
+        "narHash": "sha256-ZzmqnGvk4ynSkCbYJ3Z/nojRkvu5eZ5FWXvqSnoWrMw=",
         "owner": "bartbie",
         "repo": "nvim",
-        "rev": "112ac9124aa174a63d3d78cf45fe53bf606b3b93",
+        "rev": "22afa5b09daa4c5190fa42bc64031496b90f3140",
         "type": "github"
       },
       "original": {
@@ -694,11 +696,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1772479524,
-        "narHash": "sha256-u7nCaNiMjqvKpE+uZz9hE7pgXXTmm5yvdtFaqzSzUQI=",
+        "lastModified": 1772173633,
+        "narHash": "sha256-MOH58F4AIbCkh6qlQcwMycyk5SWvsqnS/TCfnqDlpj4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "4215e62dc2cd3bc705b0a423b9719ff6be378a43",
+        "rev": "c0f3d81a7ddbc2b1332be0d8481a672b4f6004d6",
         "type": "github"
       },
       "original": {
@@ -721,6 +723,38 @@
         "owner": "nixos",
         "ref": "nixos-25.11",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "org-modern-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1683841146,
+        "narHash": "sha256-TYs3g5CZDVXCFXuYaj3IriJ4qlIOxQgArVOzT7pqkqs=",
+        "owner": "danilshvalov",
+        "repo": "org-modern.nvim",
+        "rev": "c024900b7ee78a0274036025569b47001ef3e6aa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "danilshvalov",
+        "repo": "org-modern.nvim",
+        "type": "github"
+      }
+    },
+    "org-super-agenda-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772038867,
+        "narHash": "sha256-BuI5kO4OyZ/OTB32WR9O89lW+xPI6v/L2o7UliUfJWk=",
+        "owner": "hamidi-dev",
+        "repo": "org-super-agenda.nvim",
+        "rev": "f25f4079a0aae1773cbd2cca9cc17da9ea705434",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hamidi-dev",
+        "repo": "org-super-agenda.nvim",
         "type": "github"
       }
     },
