@@ -7,6 +7,7 @@ lib.fix (
       libPath = ./.;
       scriptsPath = ../scripts;
       templatesPath = ../templates;
+      qkshellPath = ../qkshell;
     };
 
     internalPath = ./_zinternal;

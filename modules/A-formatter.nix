@@ -13,6 +13,7 @@
             [
               pkgs.nixfmt
               pkgs.prettier
+              pkgs.qt6.qtdeclarative
             ]
             |> builtins.map (x: "${x}/bin");
         };

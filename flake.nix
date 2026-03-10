@@ -47,6 +47,10 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     # remove when upstream nixpkgs picks it up
     hyprland-guiutils = {
       url = "github:hyprwm/hyprland-guiutils";
@@ -56,5 +60,6 @@
       url = "github:NotAShelf/tuigreet";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
   };
 }

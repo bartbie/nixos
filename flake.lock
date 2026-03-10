@@ -52,11 +52,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773153006,
-        "narHash": "sha256-ZzmqnGvk4ynSkCbYJ3Z/nojRkvu5eZ5FWXvqSnoWrMw=",
+        "lastModified": 1773155664,
+        "narHash": "sha256-iUBnJYGN8bZevDUVwoWkGLinYxEmEH93TQ63n4F2M6c=",
         "owner": "bartbie",
         "repo": "nvim",
-        "rev": "22afa5b09daa4c5190fa42bc64031496b90f3140",
+        "rev": "98808b61eb6cda8e0f83e0e4aee40cab329c7b71",
         "type": "github"
       },
       "original": {
@@ -758,6 +758,26 @@
         "type": "github"
       }
     },
+    "quickshell": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773129285,
+        "narHash": "sha256-7G6x33z271v/jhBC5Le7NPOZhv9902+MfCkC9poMwf0=",
+        "ref": "refs/heads/master",
+        "rev": "bd6217927739a79c1c4ff279051f9625cd4b2b5e",
+        "revCount": 752,
+        "type": "git",
+        "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
+      }
+    },
     "root": {
       "inputs": {
         "bartbie-nvim": "bartbie-nvim",
@@ -771,6 +791,7 @@
         "import-tree": "import-tree",
         "nixpkgs": "nixpkgs_5",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "quickshell": "quickshell",
         "rust-overlay": "rust-overlay",
         "systems": "systems_2",
         "tuigreet": "tuigreet",

@@ -78,7 +78,7 @@ in
             };
         in
         {
-          default = self.devShells.${pkgs.hostPlatform.system}.devWithLix;
+          default = self.devShells.${pkgs.hostPlatform.system}.dev;
           wrapped = pkgs.mkShell {
             name = "nixon-wrapped-shell";
             packages = builtins.attrValues self'.packages;
@@ -86,8 +86,15 @@ in
           dev = pkgs.mkShell {
             name = "nixon-dev-shell";
             inputsFrom = [
+              self'.devShells.devWithQml
+            ];
+          };
+          devBootstrap = pkgs.mkShell {
+            name = "nixon-dev-shell";
+            inputsFrom = [
               self'.devShells.devWithLix
               self'.devShells.devWithNvim
+              self'.devShells.devWithQml
             ];
           };
           devBasic = pkgs.mkShell {

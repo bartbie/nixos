@@ -11,7 +11,6 @@
       inherit (hyprLib) getExe;
 
       inherit (self'.packages)
-        waybar
         rand-wp
         ;
 
@@ -20,22 +19,21 @@
         ;
 
       notifs = getExe pkgs.swaynotificationcenter;
-      statusbar = getExe waybar;
+      statusbar = self'.packages.qkshell; # has own systemd service
       wallpaper = "${getExe swww}-daemon";
     in
     {
       runCmd = x: "${getExe pkgs-unstable.runapp} ${x}";
 
       runtimeInputs.land = [
-        waybar
         rand-wp
         swww
+        statusbar
         pkgs-unstable.runapp
       ];
 
       runOnStart = [
         notifs
-        statusbar
         "${wallpaper}"
         "${rand-wp}/bin/rand-wp --transition-step 255"
       ];
