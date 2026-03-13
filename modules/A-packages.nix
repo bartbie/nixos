@@ -53,6 +53,7 @@ in
             ffmpeg
             lazygit
             glow
+            gh
             zoxide
             # nix
             alejandra
