@@ -26,7 +26,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "";
+      inputs.home-manager.follows = "";
+    };
     wrapper-manager.url = "github:foo-dogsquared/nix-module-wrapper-manager-fds";
     #
     flake-parts.url = "github:hercules-ci/flake-parts";

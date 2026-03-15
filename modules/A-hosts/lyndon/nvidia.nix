@@ -6,8 +6,8 @@ let
   };
   # keep in sync after nixpkgs lock update
   driver-versions = {
-    stable = "580.105";
-    unstable = "590.48";
+    stable = "580.142";
+    unstable = "595.58";
   };
   useStableDriver = false;
   # modified slightly from

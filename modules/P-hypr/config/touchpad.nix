@@ -5,7 +5,7 @@
       natural_scroll = true;
       clickfinger_behavior = true;
     };
-    gestures = [
+    gesture = [
       "3, horizontal, workspace"
     ];
   };

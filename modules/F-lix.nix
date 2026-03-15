@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  lix-version = "lix_2_94";
+  lix-version = "lix_2_95";
   downstreamers = [
     # FIXME: this infrecs for whatever reason
     # "nixpkgs-review"
