@@ -73,7 +73,7 @@ in
             # misc
             cowsay
             # langs
-            rustup
+            # rustup
             ;
         };
     };

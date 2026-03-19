@@ -35,7 +35,10 @@
         }:
         let
           toolchain = pkgs.rust-bin.stable.latest.default.override (p: {
-            extensions = p.extensions ++ [ "rust-src" ];
+            extensions = p.extensions ++ [
+              "rust-src"
+              "rust-analyzer"
+            ];
           });
 
           naersk' = pkgs.callPackage naersk {
