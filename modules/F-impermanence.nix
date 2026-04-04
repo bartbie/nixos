@@ -81,6 +81,7 @@ in
                 (cache "spotify")
                 (share "TelegramDesktop")
                 (cache "swww")
+                ".claude"
               ];
               files = [
                 (share "fish/fish_history")
