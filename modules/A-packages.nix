@@ -75,6 +75,7 @@ in
             # langs
             # rustup
             ;
+
         };
     };
     nixos = {
@@ -98,12 +99,14 @@ in
             qimgv
             # utils
             # system tools
-            sysstat
-            usbutils # lsusb
+            dmidecode
             ethtool
+            iotop # io monitoring
             lm_sensors # for `sensors` command
             pciutils # lspci
-            iotop # io monitoring
+            smartmontools
+            sysstat
+            usbutils # lsusb
             ;
         };
     };

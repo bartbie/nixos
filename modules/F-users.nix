@@ -42,6 +42,7 @@ in
               "input"
               "kvm"
               "wireshark"
+              "i2c"
             ];
           };
         };

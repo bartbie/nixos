@@ -18,6 +18,14 @@
           dag.appendOf (
             dag.dagConfigSubmodule {
               options.scale = typed types.numbers.positive;
+              options.vrr = typed (
+                hyprLib.namedEnumList [
+                  "off"
+                  "on"
+                  "fullscreen"
+                  "fullscreen-video-game"
+                ]
+              );
             }
           )
         );
@@ -43,6 +51,7 @@
                 position = "0x0";
                 scale = 1.20;
                 bitdepth = 10;
+                vrr = "on";
               })
               (mkMonitor config.monitors.secondary {
                 mode = "highres@highrr";
