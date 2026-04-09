@@ -119,7 +119,11 @@ in
     {
       flake.modules.wrapperManager = toModules wrapper-modules-attr;
 
-      # packages.nixos.pc = {};
+      flake.modules.nixos.pc =
+        { inputs, system, ... }:
+        {
+          environment.systemPackages = inputs.wrapper-manager.devPackages.${system} |> builtins.attrValues;
+        };
       packages.generic =
         let
           mkWrapperModForTag = (
