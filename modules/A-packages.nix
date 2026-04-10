@@ -5,7 +5,7 @@ in
   packages = {
     generic = {
       base =
-        { pkgs, ... }:
+        { pkgs, pkgs-unstable, ... }:
         mk {
           inherit (pkgs)
             gcc
@@ -31,6 +31,9 @@ in
             ipcalc # it is a calculator for the IPv4/v6 addresses
             # system call
             lsof # list open files
+            ;
+          inherit (pkgs-unstable)
+            just
             ;
         };
       pc =
