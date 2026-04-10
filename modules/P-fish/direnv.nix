@@ -4,7 +4,7 @@
     let
       rc-extra =
         #sh
-        '''';
+        "";
 
       rc =
         #sh
