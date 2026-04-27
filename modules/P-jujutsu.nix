@@ -31,11 +31,11 @@
               |> builtins.attrNames
               |> (x: x ++ [ "help-custom" ])
               |> lib.lists.naturalSort
-              |> lib.join "\\\n";
+              |> lib.join "\n";
           in
           aliases
           // {
-            help-custom = (exec "echo \\\n${aliasNames}");
+            help-custom = (exec "echo '${aliasNames}'");
           };
 
         exec = s: [
