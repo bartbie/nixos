@@ -80,6 +80,8 @@
               rdown = "rebase -r @ --before anc(2)~@";
               rup = "rebase -r @ --after desc(2)~@";
 
+              logb = "log -r base()::";
+
               tug = [
                 "bookmark"
                 "move"
