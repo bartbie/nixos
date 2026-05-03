@@ -170,7 +170,7 @@ let
     ];
   };
 
-  plist = lib.generators.toPlist { } raw;
+  plist = lib.generators.toPlist { escape = true; } raw;
 in
 {
   inherit raw plist;

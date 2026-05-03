@@ -57,8 +57,8 @@ lib.mergeAttrsList [
             let
               # SAFETY:
               # set system from config.nixpkgs, otherwise infrec from specialArgs
-              # system = config.nixpkgs.hostPlatform;
-              inherit (pkgs.hostPlatform) system;
+              # system = config.nixpkgs.stdenv.hostPlatform;
+              inherit (pkgs.stdenv.hostPlatform) system;
             in
             {
               inherit system;

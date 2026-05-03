@@ -13,7 +13,7 @@ in
 
   orId = cond: x: if cond then x else lib.Id;
 
-  or =
+  or_ =
     cond: x: y:
     if cond then x else y;
 

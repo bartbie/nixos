@@ -12,7 +12,6 @@
       "flakes"
       "nix-command"
       "pipe-operator"
-      "no-url-literals"
     ];
   };
 

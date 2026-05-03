@@ -69,7 +69,7 @@ let
               modules
               extraWrapperModules
             ];
-            specialArgs = withSystem pkgs.hostPlatform.system (
+            specialArgs = withSystem pkgs.stdenv.hostPlatform.system (
               {
                 self',
                 inputs',

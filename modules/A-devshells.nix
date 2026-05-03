@@ -78,7 +78,7 @@ in
             };
         in
         {
-          default = self.devShells.${pkgs.hostPlatform.system}.dev;
+          default = self.devShells.${pkgs.stdenv.hostPlatform.system}.dev;
           wrapped = pkgs.mkShell {
             name = "nixon-wrapped-shell";
             packages = builtins.attrValues self'.packages;
