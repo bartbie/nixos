@@ -54,6 +54,9 @@ in
                   git
                   jujutsu
                   ;
+                inherit (pkgs)
+                  just
+                  ;
               };
               nix = {
                 inherit (pkgs)
