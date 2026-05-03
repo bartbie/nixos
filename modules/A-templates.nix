@@ -5,8 +5,8 @@
 }:
 let
   inherit (nixonLib) templatesPath;
-  mk = path: name: {
-    inherit name;
+  mk = path: description: {
+    inherit description;
     path = templatesPath + path;
   };
 in
