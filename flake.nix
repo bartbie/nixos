@@ -2,6 +2,12 @@
   description = "Nixon: bartbie's multi-system config";
 
   nixConfig = {
+    extra-substituters = [
+      "https://bartbie.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "bartbie.cachix.org-1:sX0rzre7TKHN949pzOO5mWubI/6uXKIoMCzRZPnHbDI="
+    ];
     extra-experimental-features = [
       "flakes"
       "nix-command"

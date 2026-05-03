@@ -82,6 +82,7 @@ in
                 (share "TelegramDesktop")
                 (cache "swww")
                 ".claude"
+                (conf "cachix")
               ];
               files = [
                 (share "fish/fish_history")
