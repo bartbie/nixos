@@ -93,5 +93,37 @@
         PermitRootLogin = "prohibit-password";
       };
     };
+    tailscale =
+      { config, pkgs-unstable, ... }:
+      {
+        services.tailscale = {
+          enable = true;
+          package = pkgs-unstable.tailscale;
+        };
+        networking = {
+          nftables.enable = true;
+          firewall = {
+            enable = true;
+            trustedInterfaces = [ "tailscale0" ];
+            allowedUDPPorts = [ config.services.tailscale.port ];
+          };
+        };
+        # Force tailscaled to use nftables (Critical for clean nftables-only systems)
+        # This avoids the "iptables-compat" translation layer issues
+        systemd.services.tailscaled.serviceConfig.Environment =
+          lib.mkIf (config.networking.nftables.enable)
+            [
+              "TS_DEBUG_FIREWALL_MODE=nftables"
+            ];
+        # faster boot for vpns
+        systemd.network.wait-online.enable = false;
+        boot.initrd.systemd.network.wait-online.enable = false;
+        networking.nameservers = [
+          "100.100.100.100"
+          "8.8.8.8"
+          "1.1.1.1"
+        ];
+        networking.search = [ "yattle-ruler.ts.net" ];
+      };
   };
 }

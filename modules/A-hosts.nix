@@ -67,6 +67,7 @@ in
             "persistPasswordFiles"
             "ssh-client"
             "ssh-server"
+            "tailscale"
             "hypr"
             "wayland"
             "cuda"
