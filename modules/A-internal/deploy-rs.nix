@@ -41,6 +41,7 @@ in
   flake.checks =
     deploy-rs.lib |> builtins.mapAttrs (system: deployLib: deployLib.deployChecks config.flake.deploy);
 
+  flake.deploy.sudo = "doas -u";
   flake.deploy.nodes =
     config.easy-hosts.hosts
     |> lib.filterAttrs (_: v: v.deployable or false)
@@ -76,5 +77,4 @@ in
         };
       }
     );
-
 }

@@ -20,7 +20,26 @@ in
           };
         };
       };
-    server = { };
+    server =
+      { config, ... }:
+      let
+        ownername = config.meta.owner.username;
+      in
+      {
+        security = {
+          sudo.enable = false;
+          doas = {
+            enable = true;
+            extraRules = [
+              {
+                users = [ ownername ];
+                noPass = true;
+                keepEnv = true;
+              }
+            ];
+          };
+        };
+      };
     pc =
       { config, ... }:
       let
