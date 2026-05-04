@@ -71,8 +71,27 @@
         ];
         services.gnome.gcr-ssh-agent.enable = false;
       };
-    ssh-server = {
-      services.openssh.enable = true;
+    ssh-server =
+      { config, ... }:
+      {
+        services.openssh = {
+          enable = true;
+          openFirewall = false;
+        };
+        users.users =
+          let
+            keys = config.meta.owner.keys.ssh;
+          in
+          {
+            bartbie.openssh.authorizedKeys = { inherit keys; };
+            root.openssh.authorizedKeys = { inherit keys; };
+          };
+      };
+    ssh-server-nopasswd = {
+      services.openssh.settings = {
+        PasswordAuthentication = false;
+        PermitRootLogin = "prohibit-password";
+      };
     };
   };
 }

@@ -15,6 +15,11 @@ in
         name = mkGlobal lib.types.str "bartbie";
         email = mkGlobal lib.types.str "bartbie37@gmail.com";
       };
+      keys = {
+        ssh = mkGlobal (lib.types.listOf lib.types.str) [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIg9rfjOQyZBf1HsrLD3PxG8dhbJbX6Spn9XHDJpJTj bartbie@lyndon"
+        ];
+      };
     };
   };
 }

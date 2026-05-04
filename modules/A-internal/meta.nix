@@ -28,17 +28,18 @@ let
       readOnly = true;
     };
 
-  mapGlobals =
-    opts:
-    opts
-    |> lib.mapAttrsRecursiveCond (x: !(lib.isOption x)) (
-      _: opt:
-      lib.mkOption {
+  mapGlobal =
+    opt: rest:
+    lib.mkOption (
+      {
         inherit (opt) type;
-        readOnly = true;
         default = opt.value;
       }
+      // rest
     );
+
+  mapGlobals =
+    opts: rest: opts |> lib.mapAttrsRecursiveCond (x: !(lib.isOption x)) (_: opts: mapGlobal opts rest);
 in
 {
   options.meta = {
@@ -51,24 +52,9 @@ in
     flake.modules.generic.meta = {
       imports = [
         # Add globals from flake scope to inner scopes
-        { options.meta = mapGlobals options.meta; }
+        { options.meta = mapGlobals options.meta { readOnly = true; }; }
         # Add overridable owner
-        (
-          let
-            owner =
-              options.meta.defaultOwner
-              |> builtins.mapAttrs (
-                _: opt:
-                lib.mkOption {
-                  inherit (opt) type;
-                  default = opt.value;
-                }
-              );
-          in
-          {
-            options.meta.owner = owner;
-          }
-        )
+        { options.meta.owner = mapGlobals options.meta.defaultOwner { }; }
       ];
     };
     hosts.shared =
