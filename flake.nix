@@ -37,6 +37,7 @@
       inputs.home-manager.follows = "";
     };
     wrapper-manager.url = "github:foo-dogsquared/nix-module-wrapper-manager-fds";
+    deploy-rs.url = "github:serokell/deploy-rs";
     #
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";

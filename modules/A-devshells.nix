@@ -56,6 +56,7 @@ in
                   ;
                 inherit (pkgs)
                   just
+                  deploy-rs
                   ;
               };
               nix = {

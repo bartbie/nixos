@@ -37,3 +37,23 @@ cache-packages-all-systems:
 
 clean-results:
     rm {{ flake }}/result*
+
+deploy host *args:
+    deploy .#{{ host }} {{args}} --skip-checks
+
+provision config-name ip *args:
+    nix run github:nix-community/nixos-anywhere \
+    -- \
+    --flake {{ flake }}#{{ config-name }} \
+    --target-host root@{{ ip }} \
+    --option extra-experimental-features pipe-operators \
+    {{ args }}
+
+provision-with-hw config-name ip *args:
+    nix run github:nix-community/nixos-anywhere \
+    -- \
+    --flake {{ flake }}#{{ config-name }} \
+    --target-host root@{{ ip }} \
+    --option extra-experimental-features pipe-operators \
+    --generate-hardware-config nixos-generate-config {{ flake }}/modules/A-hosts/{{ config-name }}/hardware-configuration.nix
+    {{ args }}
