@@ -55,6 +55,8 @@ in
         { options.meta = mapGlobals options.meta { readOnly = true; }; }
         # Add overridable owner
         { options.meta.owner = mapGlobals options.meta.defaultOwner { }; }
+        # Add overridable flakePath
+        { options.meta.flakePath = mapGlobal options.meta.defaultFlakePath { }; }
       ];
     };
     hosts.shared =

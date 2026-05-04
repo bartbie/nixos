@@ -21,5 +21,9 @@ in
         ];
       };
     };
+    meta.defaultFlakePath = mkGlobal (lib.types.pathWith {
+      inStore = false;
+      absolute = true;
+    }) "/etc/nixos";
   };
 }

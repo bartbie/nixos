@@ -37,12 +37,14 @@
         allowUnfree = true;
       };
     };
-    nh = {
-      programs.nh = {
-        enable = true;
-        clean.enable = false;
-        flake = "/etc/nixos";
+    nh =
+      { config, ... }:
+      {
+        programs.nh = {
+          enable = true;
+          clean.enable = false;
+          flake = config.meta.flakePath;
+        };
       };
-    };
   };
 }
