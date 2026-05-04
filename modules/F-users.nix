@@ -52,7 +52,7 @@ in
           ];
         };
       };
-    persistPasswordFiles =
+    persist-password-files =
       { config, ... }:
       let
         enable = config.environment ? persistence;

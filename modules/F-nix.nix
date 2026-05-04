@@ -32,7 +32,7 @@
         enable = true; # ng from 25.11 forward
       };
     };
-    allowUnfree = {
+    allow-unfree = {
       nixpkgs.config = {
         allowUnfree = true;
       };

@@ -60,11 +60,11 @@ in
             "pc"
           ];
           checked = [
-            "allowUnfree"
+            "allow-unfree"
             "nh"
             "impermanence-btrfs"
             "impermanence-pc"
-            "persistPasswordFiles"
+            "persist-password-files"
             "ssh-client"
             "ssh-server"
             "tailscale"
