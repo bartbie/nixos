@@ -7,7 +7,6 @@
 {
   systems = import inputs.systems;
   imports = [
-    inputs.flake-parts.flakeModules.flakeModules
     inputs.flake-parts.flakeModules.modules
     inputs.flake-parts.flakeModules.easyOverlay
   ];
