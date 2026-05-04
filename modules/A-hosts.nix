@@ -75,6 +75,24 @@ in
           ];
         };
       };
+      eleanor = {
+        arch = "x86_64";
+        class = "nixos";
+        tags = tags "nixos" {
+          unchecked = [
+            "disko"
+            "server"
+          ];
+          checked = [
+            "allow-unfree"
+            "ssh-server"
+            "ssh-server-nopasswd"
+            "kvm-guest"
+            "tailscale"
+          ];
+        };
+        deployable = true;
+      };
       Roosevelt = {
         arch = "aarch64";
         class = "darwin";
