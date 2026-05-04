@@ -19,5 +19,12 @@
       (at.mapAttrsToList (n: v: "options ${n} ${v}"))
       lib.concatLines
     ];
+  mapCmdsForSudo =
+    options:
+    builtins.map (cmd: {
+      inherit options;
+      command = "/run/current-system/sw/bin/${cmd}";
+    });
+
   hypr = import ./tohyprconf.nix { inherit lib final; };
 }

@@ -84,6 +84,7 @@ in
                 ".claude"
                 (conf "cachix")
                 (conf "signal")
+                (conf "easyeffects")
               ];
               files = [
                 (share "fish/fish_history")

@@ -20,6 +20,7 @@ let
       "comma" = mkBash ",";
       "dcomma" = mkBash ",,";
       "browser" = mkBash "browser";
+      "toggle-cam-mic" = mkBash "toggle-cam-mic";
     };
 in
 {

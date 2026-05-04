@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, nixonLib, ... }:
 let
   initialPassword = "1";
 in
@@ -44,17 +44,11 @@ in
       { config, ... }:
       let
         ownername = config.meta.owner.username;
-        mapCmds =
-          options:
-          builtins.map (cmd: {
-            inherit options;
-            command = "/run/current-system/sw/bin/${cmd}";
-          });
       in
       {
         security.sudo.extraRules = [
           {
-            commands = mapCmds [ "NOPASSWD" ] [ "poweroff" "reboot" ];
+            commands = nixonLib.generators.mapCmdsForSudo [ "NOPASSWD" ] [ "poweroff" "reboot" ];
             groups = [ "wheel" ];
           }
         ];
