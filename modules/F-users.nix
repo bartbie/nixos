@@ -4,47 +4,52 @@ let
 in
 {
   flake.modules.nixos = {
-    pc =
+    base =
       { config, ... }:
       let
         ownername = config.meta.owner.username;
       in
       {
-        security =
-          let
-            mapCmds =
-              options:
-              builtins.map (cmd: {
-                inherit options;
-                command = "/run/current-system/sw/bin/${cmd}";
-              });
-          in
-          {
-            sudo.extraRules = [
-              {
-                commands = mapCmds [ "NOPASSWD" ] [ "poweroff" "reboot" ];
-                groups = [ "wheel" ];
-              }
-            ];
-          };
         nix.settings.trusted-users = [ ownername ];
         users = {
           mutableUsers = false;
           users.${ownername} = {
             isNormalUser = true;
-            inherit initialPassword;
             uid = 1000;
-            extraGroups = [
-              "wheel"
-              "networkmanager"
-              "audio"
-              "video"
-              "input"
-              "kvm"
-              "wireshark"
-              "i2c"
-            ];
+            extraGroups = [ "wheel" ];
           };
+        };
+      };
+    server = { };
+    pc =
+      { config, ... }:
+      let
+        ownername = config.meta.owner.username;
+        mapCmds =
+          options:
+          builtins.map (cmd: {
+            inherit options;
+            command = "/run/current-system/sw/bin/${cmd}";
+          });
+      in
+      {
+        security.sudo.extraRules = [
+          {
+            commands = mapCmds [ "NOPASSWD" ] [ "poweroff" "reboot" ];
+            groups = [ "wheel" ];
+          }
+        ];
+        users.users.${ownername} = {
+          inherit initialPassword;
+          extraGroups = [
+            "networkmanager"
+            "audio"
+            "video"
+            "input"
+            "kvm"
+            "wireshark"
+            "i2c"
+          ];
         };
       };
     persistPasswordFiles =
