@@ -163,7 +163,7 @@
               ];
 
               stage = [
-                "mstack"
+                "stack"
                 "closest_merge(@)+:: ~ empty()"
               ];
 
