@@ -59,6 +59,16 @@
                   mountpoint = "/persist";
                 };
 
+                # nested subvol so snapper snapshots of /persist
+                # don't recursively contain prior snapshots
+                "/persist/.snapshots" = {
+                  mountOptions = [
+                    "subvol=persist/.snapshots"
+                    "noatime"
+                  ];
+                  mountpoint = "/persist/.snapshots";
+                };
+
                 "/nix" = {
                   mountOptions = [
                     "subvol=nix"

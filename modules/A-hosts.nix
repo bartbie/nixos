@@ -64,6 +64,7 @@ in
             "nh"
             "impermanence-btrfs"
             "impermanence-pc"
+            "snapper-persist"
             "persist-password-files"
             "ssh-client"
             "ssh-server"
