@@ -58,7 +58,7 @@
                 pkgs.curl
               ]
             }"
-            "QT_LOGGING_RULES=*.debug=true"
+            "QT_LOGGING_RULES=*.debug=true;qt.*.debug=false"
 
           ];
 
