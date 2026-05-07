@@ -28,11 +28,13 @@
 
 
 (defalias
-  HPR (t! smart-shift-tap-hold $timeout $timeout caps esc $hyper))
+  HPR (t! smart-shift-tap-hold $timeout $timeout caps esc $hyper)
+  ;; hyper + del = print (kanata can't see fn on this kbd)
+  del-prnt (fork del prnt (lmet rmet)))
   ;; HPR hyper)
 
 (deflayer base
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    @del-prnt
   _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   @HPR _    _    _    _    _    _    _    _    _    _    _    _         _
   _    _    _    _    _    _    _    _    _    _    _    _         _

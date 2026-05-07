@@ -22,13 +22,40 @@
             fi
           '';
 
+      screenshot =
+        pkgs.writers.writeBashBin "screenshot"
+          # bash
+          ''
+            set -euo pipefail
+            mode="''${1:-copy}"
+            target="''${2:-area}"
+            if [ -d "$HOME/Eternal" ]; then
+              dir="$HOME/Eternal/Pictures/screenshots"
+            else
+              dir="$HOME/Pictures/screenshots"
+            fi
+            mkdir -p "$dir"
+            file="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"
+            case "$mode" in
+              copy) ${lib.getExe pkgs.grimblast} --notify copy "$target" ;;
+              save) ${lib.getExe pkgs.grimblast} --notify save "$target" "$file" ;;
+              edit) ${lib.getExe pkgs.grimblast} --notify edit "$target" ;;
+              *)    echo "screenshot: unknown mode '$mode'" >&2; exit 2 ;;
+            esac
+          '';
+
       inherit (config) programs;
     in
     {
       config = {
         mainMod = "SUPER";
 
-        runtimeInputs.land = [ exit-hypr ];
+        runtimeInputs.land = [
+          exit-hypr
+          screenshot
+          pkgs.grimblast
+          pkgs.swappy
+        ];
 
         keybinds = lib.flatten [
           # focus movement / window movement (ALT)
@@ -98,6 +125,22 @@
           {
             keys = "V";
             exec = "${programs.terminal} --class clipse -e ${programs.clipboard}";
+          }
+          # screenshots (kanata maps hyper+del -> print)
+          {
+            keys = "Print";
+            exec = "${screenshot}/bin/screenshot copy area";
+            altBehavior.exec = "${screenshot}/bin/screenshot edit area";
+          }
+          {
+            mods = "SHIFT";
+            keys = "Print";
+            exec = "${screenshot}/bin/screenshot save area";
+          }
+          {
+            mods = "CTRL";
+            keys = "Print";
+            exec = "${screenshot}/bin/screenshot save output";
           }
           # workspace switching / move window to workspace silently (ALT)
           (mapRow (
