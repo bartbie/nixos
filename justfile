@@ -7,6 +7,9 @@ default:
 boot *args:
     nh os boot --accept-flake-config {{ args }}
 
+build-host host=`hostname` *args:
+    nh os build --accept-flake-config .#{{ host }} {{ args }}
+
 switch *args:
     nh os switch --accept-flake-config {{ args }}
 
@@ -14,7 +17,7 @@ fmt *args:
     nix fmt --accept-flake-config {{ args }}
 
 dev target="" *args:
-    nix develop --accept-flake-config {{ args }} .#{{ target }} -c $SHELL
+    nom develop --accept-flake-config {{ args }} .#{{ target }} -c $SHELL
 
 repl-host host=`hostname`:
     nix repl .#nixosConfigurations.{{ host }}
@@ -25,6 +28,8 @@ update *input:
       --commit-lock-file \
       --commit-lockfile-summary "flake: update {{ if input == "" { "all" } else { input } }}"
 
+update-nvim: (update "nvim")
+
 cache-packages:
     nix flake show --json \
     | jq -r '.packages."x86_64-linux" | keys[]' \
@@ -34,6 +39,9 @@ cache-packages-all-systems:
     nix flake show --json \
     | jq -r '.packages."x86_64-linux" | keys[]' \
     | xargs -I{} sh -c 'nix build .#{} --accept-flake-config --no-link --print-out-paths --all-systems | cachix push bartbie'
+
+run cmd:
+    XDG_DATA_DIRS="$(nix build .#{{ cmd }} --print-out-paths --no-link)/share:$XDG_DATA_DIRS" nix run .#{{ cmd }}
 
 clean-results:
     rm {{ flake }}/result*
@@ -50,10 +58,4 @@ provision config-name ip *args:
     {{ args }}
 
 provision-with-hw config-name ip *args:
-    nix run github:nix-community/nixos-anywhere \
-    -- \
-    --flake {{ flake }}#{{ config-name }} \
-    --target-host root@{{ ip }} \
-    --option extra-experimental-features pipe-operators \
-    --generate-hardware-config nixos-generate-config {{ flake }}/modules/A-hosts/{{ config-name }}/hardware-configuration.nix
-    {{ args }}
+    @just provision {{ config-name }} {{ ip }} --generate-hardware-config nixos-generate-config {{ flake }}/modules/A-hosts/{{ config-name }}/hardware-configuration.nix {{ args }}
