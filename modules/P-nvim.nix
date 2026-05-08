@@ -22,9 +22,9 @@ in
     }:
     {
       devShells.devWithNvim = pkgs.mkShell {
-        name = "nixon-dev-nvim-shell";
+        name = "nixon-shell-nvim";
         packages = [ (nvimForSystem system) ];
-        inputsFrom = [ self'.devShells.devBasic ];
+        inputsFrom = [ self'.devShells.devBase ];
       };
     };
 }

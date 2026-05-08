@@ -1,116 +1,59 @@
 {
-  lib,
-  self,
-  inputs,
-  nixonLib,
-  ...
-}:
-let
-  rustToolchain =
-    {
-      channel,
-      version,
-      extraExtensions ? [ ],
-    }:
-    set:
-    set.rust-bin.${channel}.${version}.default.override (p: {
-      extensions = p.extensions ++ extraExtensions;
-    });
-in
-{
   perSystem =
     {
       self',
       pkgs,
       pkgs-unstable,
       ...
-    }@args:
+    }:
+    let
+      sh = self'.devShells;
+    in
     {
-      devShells =
-        let
-          # CORRECTNESS:
-          # only extend here to avoid unnecessary global overlay
-          pkgs-unstable = args.pkgs-unstable.extend inputs.rust-overlay.overlays.default;
+      devShells = {
+        wrappedOutputs = pkgs.mkShell {
+          name = "nixon-shell-wrapped";
+          packages = builtins.attrValues self'.packages;
+        };
 
-          rust-toolchain = rustToolchain {
-            channel = "stable";
-            version = "latest";
-            extraExtensions = [ "rust-src" ];
-          } pkgs-unstable;
+        default = sh.dev;
 
-          RUST_SRC_PATH = "${rust-toolchain}/lib/rustlib/src/rust/library";
-
-          dev-pkgs =
-            let
-              flatten =
-                l:
-                l
-                |> nixonLib.attrsets.bypath.flattenToListCond (x: !(lib.isDerivation x))
-                |> builtins.map (x: x.value);
-            in
-            flatten {
-              common = {
-                inherit (self'.packages)
-                  git
-                  jujutsu
-                  ;
-                inherit (pkgs)
-                  just
-                  deploy-rs
-                  ;
-              };
-              nix = {
-                inherit (pkgs)
-                  nil
-                  ;
-                fmt = self'.formatter;
-              };
-              nushell = {
-                inherit (pkgs)
-                  nushell
-                  ;
-              };
-              rust = {
-                inherit (pkgs)
-                  gobject-introspection
-                  ;
-                inherit (pkgs-unstable)
-                  rust-analyzer
-                  ;
-                inherit rust-toolchain;
-              };
-            };
-        in
-        {
-          default = self.devShells.${pkgs.stdenv.hostPlatform.system}.dev;
-          wrapped = pkgs.mkShell {
-            name = "nixon-wrapped-shell";
-            packages = builtins.attrValues self'.packages;
-          };
-          dev = pkgs.mkShell {
-            name = "nixon-dev-shell";
-            inputsFrom = [
-              self'.devShells.devWithQml
-            ];
-          };
-          devBootstrap = pkgs.mkShell {
-            name = "nixon-dev-shell";
-            inputsFrom = [
-              self'.devShells.devWithLix
-              self'.devShells.devWithNvim
-              self'.devShells.devWithQml
-            ];
-          };
-          devBasic = pkgs.mkShell {
-            name = "nixon-dev-shell-basic";
-            inherit RUST_SRC_PATH;
-            buildInputs = dev-pkgs;
-            nativeBuildInputs = builtins.attrValues {
-              inherit (pkgs)
-                pkg-config
-                ;
-            };
+        devBase = pkgs.mkShell {
+          name = "nixon-shell-devBase";
+          packages = builtins.attrValues {
+            inherit (self'.packages)
+              git
+              jujutsu
+              ;
+            inherit (pkgs)
+              nil
+              just
+              deploy-rs
+              nushell
+              ;
+            fmt = self'.formatter;
           };
         };
+
+        dev = pkgs.mkShell {
+          name = "nixon-shell-dev";
+          inputsFrom = [
+            sh.devBase
+            sh.rust
+            sh.qml
+          ];
+          env = { inherit (sh.rust) RUST_SRC_PATH; };
+          shellHook = sh.qml.shellHook;
+        };
+
+        devFull = pkgs.mkShell {
+          name = "nixon-shell-devFull";
+          inputsFrom = [
+            sh.dev
+            sh.lix
+            sh.nvim
+          ];
+        };
+      };
     };
 }

@@ -49,13 +49,13 @@ in
     {
       packages.lix = pkgs-unstable.lix;
       devShells.devWithLix = pkgs.mkShell {
-        name = "nixon-dev-lix-shell";
+        name = "nixon-shell-lix";
         packages = [
           pkgs-unstable.lix
           pkgs.nh
           pkgs.nixos-rebuild
         ];
-        inputsFrom = [ self'.devShells.devBasic ];
+        inputsFrom = [ self'.devShells.devBase ];
       };
     };
 }

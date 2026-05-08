@@ -28,7 +28,7 @@ update *input:
       --commit-lock-file \
       --commit-lockfile-summary "flake: update {{ if input == "" { "all" } else { input } }}"
 
-update-nvim: (update "nvim")
+update-rust: (update "rust-overlay" "naersk")
 
 cache-packages:
     nix flake show --json \

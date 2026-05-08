@@ -15,9 +15,9 @@
       ...
     }:
     {
-      devShells.devWithQml = pkgs.mkShell {
-        name = "nixon-dev-lix-shell";
-        inputsFrom = [ self'.devShells.devBasic ];
+      devShells.qml = pkgs.mkShell {
+        name = "nixon-shell-qml";
+        inputsFrom = [ self'.devShells.devBase ];
         packages = [
           inputs'.quickshell.packages.default
           pkgs.qt6.qtdeclarative # qmlls, qmllint
