@@ -28,6 +28,11 @@
       };
     in
     {
+      packages.garden = naersk'.buildPackage {
+        src = nixonLib.srcPath + /garden;
+        stdenv = moldStdenv;
+      };
+
       devShells.rust = (pkgs.mkShell.override { stdenv = moldStdenv; }) {
         name = "nixon-shell-rust";
         inputsFrom = [ self'.devShells.devBase ];
@@ -59,4 +64,11 @@
         # CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER = "${pkgs.stdenv.cc.targetPrefix}cc";
       };
     };
+
+  flake.modules.nixos.base =
+    { self', ... }:
+    {
+      environment.systemPackages = [ self'.packages.garden ];
+    };
+
 }

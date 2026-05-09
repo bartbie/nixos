@@ -52,7 +52,7 @@
             display = {
               show_time = true;
               show_title = true;
-              # issue = true;
+              issue = true;
             };
             layout = {
               # window_padding = 1;
