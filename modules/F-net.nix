@@ -43,11 +43,17 @@
     server =
       { config, ... }:
       {
-        networking.firewall.allowPing = true;
-        networking.firewall.allowedTCPPorts = [
-          80
-          443
-        ];
+        networking = {
+          firewall = {
+            allowPing = true;
+            allowedTCPPorts = [
+              80
+              443
+            ];
+          };
+          useDHCP = false;
+        };
+        systemd.network.enable = true;
       };
     ssh-client =
       { config, ... }:
