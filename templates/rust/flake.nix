@@ -34,6 +34,8 @@
           ...
         }:
         let
+          moldStdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.stdenv;
+
           toolchain = pkgs.rust-bin.stable.latest.default.override (p: {
             extensions = p.extensions ++ [
               "rust-src"
@@ -45,6 +47,26 @@
             cargo = toolchain;
             rustc = toolchain;
           };
+
+          cargo_toml_optimizations = # toml
+            ''
+              [profile.dev]
+              debug = "line-tables-only"
+              split-debuginfo = "unpacked"
+
+              [profile.dev.build-override]
+              opt-level = 3
+
+              [profile.dev.package."*"]
+              debug = false
+
+              [profile.debugging]
+              inherits = "dev"
+              debug = true
+
+              [profile.dev.package.backtrace]
+              opt-level = 3
+            '';
         in
         {
           _module.args.pkgs = import nixpkgs {
@@ -54,9 +76,19 @@
 
           packages.default = naersk'.buildPackage {
             src = ./.;
+            stdenv = moldStdenv;
           };
 
-          devShells.default = pkgs.mkShell {
+          packages.cargo_toml_opts =
+            pkgs.writers.writeBash { }
+              # bash
+              ''
+                echo <<EOF
+                ${cargo_toml_optimizations}
+                EOF
+              '';
+
+          devShells.default = (pkgs.mkShell.override { stdenv = moldStdenv; }) {
             # Build-time dependencies. build = host = your-machine, target = aarch64
             # Typically contains,
             # - Configure-related: cmake, pkg-config
