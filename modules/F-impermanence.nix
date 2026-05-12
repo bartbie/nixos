@@ -83,6 +83,7 @@ in
                 (cache "swww")
                 ".claude"
                 (conf "cachix")
+                (conf "signal")
               ];
               files = [
                 (share "fish/fish_history")
