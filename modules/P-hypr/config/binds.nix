@@ -109,7 +109,10 @@
           {
             mods = "ALT";
             keys = "slash";
-            exec = "${exit-hypr}/bin/exit-hypr";
+            exec = {
+              cmd = "${exit-hypr}/bin/exit-hypr";
+              wrap = false;
+            };
           }
 
           {

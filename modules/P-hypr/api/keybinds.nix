@@ -103,7 +103,7 @@ in
                   else
                     {
                       action = "exec";
-                      args = lib.singleton (if (exec.wrap) then top-level-config.runCmd exec.cmd else exec.dmd);
+                      args = lib.singleton (if (exec.wrap) then top-level-config.runCmd exec.cmd else exec.cmd);
                     };
 
                 imports = [
