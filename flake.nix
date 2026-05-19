@@ -70,6 +70,11 @@
       url = "github:hyprwm/hyprland-guiutils";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    hypridle = {
+      url = "github:hyprwm/hypridle";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.systems.follows = "systems";
+    };
     tuigreet = {
       url = "github:NotAShelf/tuigreet";
       inputs.nixpkgs.follows = "nixpkgs-unstable";

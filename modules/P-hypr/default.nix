@@ -2,6 +2,7 @@
   lib,
   config,
   withSystem,
+  nixonLib,
   ...
 }:
 let
@@ -17,6 +18,7 @@ in
     }:
     let
       package = self'.packages.hypr;
+      hypridle = self'.packages.hypridle;
     in
     {
       programs.hyprland = {
@@ -33,6 +35,25 @@ in
       environment.systemPackages = package.passthru.runtimeInputs ++ [
         inputs'.hyprland-guiutils.packages.default
       ];
+      systemd.user.services = {
+        hypridle = {
+          # hyprctl is invoked by basename from hypridle's config (after_sleep_cmd,
+          # on-timeout dpms, on-resume); hyprlock + procps are no longer needed
+          # since we hand off via systemctl and rely on unit single-instance semantics
+          description = "Hyprland's idle daemon";
+          partOf = [ "graphical-session.target" ];
+          after = [ "graphical-session.target" ];
+          wantedBy = [ "graphical-session.target" ];
+          path = [ package ];
+          serviceConfig = nixonLib.systemd.hardenServiceConfig {
+            Type = "simple";
+            ExecStart = lib.getExe hypridle;
+            # /run/user/$UID holds wayland + session dbus sockets hypridle needs
+            ProtectHome = false;
+            Restart = "on-failure";
+          };
+        };
+      };
     };
   wrapped.hypr = {
     systems = config.meta.systemsNoDarwin;
@@ -244,6 +265,21 @@ in
               '';
             }
           ];
+      };
+  };
+
+  wrapped.hypridle = {
+    systems = config.meta.systemsNoDarwin;
+    module =
+      { self', inputs', ... }:
+      {
+        single = {
+          package = inputs'.hypridle.packages.default;
+          wrapper.prependArgs = [
+            "--config"
+            self'.packages.hypr.configDrvs.idle
+          ];
+        };
       };
   };
 }

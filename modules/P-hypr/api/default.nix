@@ -36,6 +36,7 @@ in
           default = [
             "land"
             "lock"
+            "idle"
           ];
         };
         land = mkHyprTopOption {
@@ -44,6 +45,10 @@ in
         };
         lock = mkHyprTopOption {
           description = "Hyprlock config.";
+          default = { };
+        };
+        idle = mkHyprTopOption {
+          description = "Hypridle config.";
           default = { };
         };
         runtimeInputs = lib.mkOption {
