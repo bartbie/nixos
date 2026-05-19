@@ -97,7 +97,7 @@
           wrapper = {
             prependArgs = [
               "-p"
-              nixonLib.qkshellPath
+              (nixonLib.srcPath + /qkshell)
             ];
           };
         };
