@@ -23,14 +23,44 @@ let
     };
 in
 {
-  hosts.shared =
-    { pkgs, ... }:
-    {
-      environment.systemPackages = builtins.attrValues (mkScripts pkgs);
-    };
   perSystem =
     { pkgs, ... }:
     {
       packages = mkScripts pkgs;
     };
+  flake.modules = {
+    nixos.base =
+      { self', ... }:
+      {
+        environment.systemPackages = builtins.attrValues {
+          inherit (self'.packages)
+            linktree
+            ;
+        };
+      };
+    nixos.pc =
+      { self', ... }:
+      {
+        environment.systemPackages = builtins.attrValues {
+          inherit (self'.packages)
+            comma
+            dcomma
+            browser
+            rebuild
+            toggle-cam-mic
+            ;
+        };
+      };
+    darwin.base =
+      { self', ... }:
+      {
+        environment.systemPackages = builtins.attrValues {
+          inherit (self'.packages)
+            comma
+            dcomma
+            rebuild
+            ;
+        };
+      };
+  };
 }
