@@ -18,6 +18,7 @@ in
     }:
     let
       package = self'.packages.hypr;
+      hyprlock = self'.packages.hyprlock;
       hypridle = self'.packages.hypridle;
     in
     {
@@ -53,7 +54,19 @@ in
             Restart = "on-failure";
           };
         };
+
+        hyprlock = {
+          description = "Hyprlock screen locker";
+          partOf = [ "graphical-session.target" ];
+          after = [ "graphical-session.target" ];
+          serviceConfig = {
+            Type = "simple";
+            ExecStart = lib.getExe hyprlock;
+            Restart = "no";
+          };
+        };
       };
+      security.pam.services.hyprlock = { };
     };
   wrapped.hypr = {
     systems = config.meta.systemsNoDarwin;
@@ -265,6 +278,21 @@ in
               '';
             }
           ];
+      };
+  };
+
+  wrapped.hyprlock = {
+    systems = config.meta.systemsNoDarwin;
+    module =
+      { pkgs-unstable, self', ... }:
+      {
+        single = {
+          package = pkgs-unstable.hyprlock;
+          wrapper.prependArgs = [
+            "--config"
+            self'.packages.hypr.configDrvs.lock
+          ];
+        };
       };
   };
 

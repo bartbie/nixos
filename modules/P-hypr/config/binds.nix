@@ -114,6 +114,13 @@
               wrap = false;
             };
           }
+          {
+            keys = "slash";
+            exec = {
+              cmd = "hyprlock";
+              wrap = false;
+            };
+          }
 
           {
             keys = "T";
