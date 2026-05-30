@@ -3,8 +3,8 @@
   flake.modules.nixos.cuda = {
     nix.settings = {
       substituters = [
-        "https://cache.nixos-cuda.org"
-        "https://cache.flox.dev"
+        "https://cache.nixos-cuda.org?priority=21"
+        "https://cache.flox.dev?priority=22"
       ];
       trusted-public-keys = [
         "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="

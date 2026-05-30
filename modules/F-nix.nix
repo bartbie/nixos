@@ -21,6 +21,15 @@
             "nix-command"
             "pipe-operator"
           ];
+          substituters = [
+            "https://cache.nixos.org?priority=10"
+            "https://nix-community.cachix.org?priority=20"
+          ];
+          trusted-public-keys = [
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+          ];
+          max-substitution-jobs = 128;
+          http-connections = 128;
         };
         registry = {
           nixpkgs.flake = inputs.nixpkgs;

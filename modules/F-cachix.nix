@@ -1,5 +1,5 @@
 let
-  cache = "https://bartbie.cachix.org";
+  cache = "https://bartbie.cachix.org?priority=15";
 in
 {
   flake.modules.nixos = {
