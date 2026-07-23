@@ -31,7 +31,6 @@ lib.fix (
   in
   namespaces
   // paths
-  // (callLibs "trivial")
   // {
     inherit (final.attrsets) flattenAttrs optionalAttr;
   }

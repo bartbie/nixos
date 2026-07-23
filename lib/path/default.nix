@@ -1,9 +1,4 @@
+{ lib, ... }:
 {
-  lib,
-  final,
-  self,
-  ...
-}:
-{
-  toDir = x: final.condApply (!lib.pathIsDirectory x) builtins.dirOf x;
+  toDir = x: if !lib.pathIsDirectory x then builtins.dirOf x else x;
 }

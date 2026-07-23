@@ -152,7 +152,7 @@ let
         let
           rename = lib.flip lib.pipe [
             (lib.strings.splitString " ")
-            final.last
+            lib.last
             lib.toLower
           ];
         in

@@ -1,6 +1,5 @@
 {
   lib,
-  final,
   self,
   ...
 }:
@@ -24,7 +23,7 @@ in
   flatten =
     at:
     let
-      mapNVP = x: lib.nameValuePair (final.last x.path) x.value;
+      mapNVP = x: lib.nameValuePair (lib.last x.path) x.value;
     in
     lib.pipe at [
       self.bypath.flattenToList
