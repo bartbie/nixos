@@ -10,38 +10,29 @@ lib.fix (
       srcPath = ../src;
     };
 
-    internalPath = ./_zinternal;
+    # self: intra-module recursion. final: cross-namespace references.
+    callLibs = name: lib.fix (self: import (./. + "/${name}") { inherit lib final self; });
 
-    callLibs =
-      file:
-      lib.fix (
-        self:
-        import file {
-          inherit
-            lib
-            final
-            self
-            internalPath
-            ;
-        }
-      );
-
-    # check ./_zinternal/file-finding.nix docs
-    inherit (callLibs ./import) findImports importsToAttrs;
-
-    namespaces = importsToAttrs (findImports {
-      from = ./default.nix;
-      depth = 1;
-      defaultOnly = true;
-    });
-
-    namespaces-imported = builtins.mapAttrs (_: callLibs) namespaces;
+    nsPaths = [
+      ./attrsets
+      ./assertions
+      ./builders
+      ./dag
+      ./fs
+      ./generators
+      ./hypr
+      ./options
+      ./path
+      ./pkgh
+      ./systemd
+      ./theme
+    ];
+    namespaces = lib.genAttrs (map baseNameOf nsPaths) callLibs;
   in
-  namespaces-imported
+  namespaces
   // paths
-  // (callLibs ./trivial)
+  // (callLibs "trivial")
   // {
-    inherit findImports;
     inherit (final.attrsets) flattenAttrs optionalAttr;
   }
 )
